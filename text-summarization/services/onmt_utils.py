@@ -10,13 +10,25 @@ import torch
 from onmt.translate.translator import build_translator
 import onmt.opts
 
+CORENLP_PATH = os.path.join(ROOT_DIR, "models/stanford-corenlp-full-2018-01-31/stanford-corenlp-3.9.0.jar")
 
-def stanford_tokenizer(text):
-    os.environ["CLASSPATH"] = os.path.join(ROOT_DIR, "models/stanford-corenlp-full-2018-01-31/stanford-corenlp-3.9.0.jar")
+def stanford_ptb_tokenizer(text):
+    os.environ["CLASSPATH"] = CORENLP_PATH
 
     command = ['java', 'edu.stanford.nlp.process.PTBTokenizer', '-preserveLines']
     p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
     out, err = p.communicate(input=text.encode())
+    if p.returncode != 0:
+        raise Exception("Failed to tokenize", err)
+    return out.decode()
+
+
+def stanford_ptb_detokenizer(token_string):
+    os.environ["CLASSPATH"] = CORENLP_PATH
+
+    command = ['java', 'edu.stanford.nlp.process.PTBTokenizer', '-untok']
+    p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    out, err = p.communicate(input=token_string.encode())
     if p.returncode != 0:
         raise Exception("Failed to tokenize", err)
     return out.decode()
@@ -70,4 +82,5 @@ def summary(tokenized):
 
     scores, predictions = translator.translate(src_data_iter=[tokenized], batch_size=1)
 
+    del translator
     return scores[0], predictions[0]
