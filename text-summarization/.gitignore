@@ -105,4 +105,5 @@ venv.bak/
 
 .idea/
 models/
+extra-models/
 snet.config
