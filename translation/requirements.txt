@@ -1,0 +1,6 @@
+aiohttp
+jsonrpcserver
+jsonrpcclient
+pyyaml
+snetd-alpha
+sentencepiece
