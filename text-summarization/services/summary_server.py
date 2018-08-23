@@ -19,7 +19,7 @@ log = logging.getLogger(__package__ + "." + __name__)
 def summarise_text(text):
     tokens = stanford_ptb_tokenizer(text)
     score, p = summary(tokens)
-    result = p[0].replace(' <t>', '').replace(' </t>', '')
+    result = p[0].replace(' <t>', '').replace(' </t>', '').replace('<t>', '')
     return stanford_ptb_detokenizer(result)
 
 

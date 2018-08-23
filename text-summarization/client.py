@@ -27,7 +27,7 @@ def main():
         text = f.read()
     params = {'text': text}
     if args.snet:
-        endpoint, job_address, job_signature = snet_setup(service_name="text_summarization")
+        endpoint, job_address, job_signature = snet_setup(service_name="text_summarization", max_price=10000000)
         params['job_address'] = job_address
         params['job_signature'] = job_signature
 
