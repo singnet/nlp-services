@@ -1,1 +1,3 @@
 extra-models/*
+opennmt-py/data
+opennmt-py/onmt/tests
