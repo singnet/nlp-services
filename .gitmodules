@@ -1,6 +1,6 @@
-[submodule "opennmt-py"]
-	path = text-summarization/opennmt-py
-	url = git@github.com:OpenNMT/OpenNMT-py.git
 [submodule "text-summarization/opennmt-py"]
 	path = text-summarization/opennmt-py
+	url = https://github.com/OpenNMT/OpenNMT-py.git
+[submodule "translation/opennmt-py"]
+	path = translation/opennmt-py
 	url = https://github.com/OpenNMT/OpenNMT-py.git
