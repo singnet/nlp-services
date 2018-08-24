@@ -1,6 +1,6 @@
 aiohttp
 jsonrpcserver
-jsonrpcclient
+jsonrpcclient==2.6.0
 pyyaml
 snetd-alpha
 sentencepiece

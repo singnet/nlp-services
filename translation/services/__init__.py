@@ -1,5 +1,5 @@
 registry = {
-    'summary_server': {
+    'translate_server': {
         'grpc': 6008,
         'jsonrpc': 6108,
         'snetd': 6208,

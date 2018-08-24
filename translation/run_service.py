@@ -41,7 +41,7 @@ def start_snetd(cwd, daemon_config_path=None):
 
 
 def start_service(cwd):
-    return subprocess.Popen(["python3.6", "-m", "services.summary_server"])
+    return subprocess.Popen(["python3.6", "-m", "services.translate_server"])
 
 
 if __name__ == "__main__":

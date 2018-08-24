@@ -73,7 +73,7 @@ def translate_text(text, source, target):
 
     t = translations[source_language][target_language]
     s = spm.SentencePieceProcessor()
-    s.Load(os.path.join(ROOT_DIR, 'models', t["sentencepiece_model"])
+    s.Load(os.path.join(ROOT_DIR, 'models', t["sentencepiece_model"]))
     x = s.encode_as_pieces(text)
     complete_result = []
     for i in x.finditer(b'.'):

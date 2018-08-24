@@ -19,9 +19,9 @@ def main():
                         action='store_true')
     parser.add_argument("--source-text", help="path to txt file to translate",
                         type=str, required=True)
-    parser.add_argument("--source-languare", help="language to tranlate from",
+    parser.add_argument("--source-language", help="language to tranlate from",
                         type=str, required=True)
-    parser.add_argument("--target-languare", help="language to tranlate to",
+    parser.add_argument("--target-language", help="language to tranlate to",
                         type=str, required=True)
     args = parser.parse_args(sys.argv[1:])
 
