@@ -18,9 +18,9 @@ Now install the python dependencies for both OpenNMT and this project. Numpy is 
 with the version from opennmt-py's requirements.
 
 ```
-pip install -r nlp-services/text-summarization/opennmt-py/requirements.txt
-pip install numpy -I
 cd nlp-services/translation
+pip install -r opennmt-py/requirements.txt
+pip install numpy -I
 pip install -r requirements.txt
 ```
 
@@ -64,7 +64,7 @@ Save the utf-8 decoded string to a file. One sentence per line.
 To translate, from the opennmt-py dir:
 
 ```
-python translate.py -gpu 0 -model  ../../translation/models/en_to_de_omnt_averaged_10_epoch.pt -src my_sentencepiece_output.txt -replace_unk -verbose -output my_output
+python translate.py -gpu 0 -model  ../models/en_to_de_omnt_averaged_10_epoch.pt -src my_sentencepiece_output.txt -replace_unk -verbose -output my_output
 ```
 
 The result will be in `my_output`

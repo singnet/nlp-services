@@ -12,7 +12,7 @@ import torch
 import sentencepiece as spm
 
 ROOT_DIR = os.path.join(os.path.dirname(__file__), '..')
-sys.path.insert(0, os.path.join(ROOT_DIR, '..', 'text-summarization', 'opennmt-py'))
+sys.path.insert(0, os.path.join(ROOT_DIR, 'opennmt-py'))
 
 from onmt.translate.translator import build_translator
 import onmt.opts
