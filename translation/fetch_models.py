@@ -8,7 +8,7 @@ import pathlib
 from tqdm import tqdm
 
 model_urls = [
-    "https://s3.amazonaws.com/jpwp-ml/models/translation/en_de_translation.tar.bz2"
+    "https://s3-us-west-2.amazonaws.com/jpwp-ml/models/translation/en_de_translation.tar.bz2"    
 ]
 
 my_path = os.path.dirname(__file__)
