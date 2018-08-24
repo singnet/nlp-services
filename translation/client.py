@@ -11,7 +11,7 @@ from services import registry
 def main():
     script_name = sys.argv[0]
     parser = argparse.ArgumentParser(prog=script_name)
-    server_name = "summary_server"
+    server_name = "translate_server"
     default_endpoint = "http://127.0.0.1:{}".format(registry[server_name]['jsonrpc'])
     parser.add_argument("--endpoint", help="jsonrpc server to connect to", default=default_endpoint,
                         type=str, required=False)

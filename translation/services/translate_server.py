@@ -22,12 +22,13 @@ from jsonrpcserver.aio import methods
 from jsonrpcserver.exceptions import InvalidParams
 
 import services.common
+from services import translations
 
 
 log = logging.getLogger(__package__ + "." + __name__)
 
 
-def translate(tokenized, translate_model):
+def _translate(tokenized, translate_model):
     # OpenNMT is awkwardly designed which makes it annoying to programmatic load a model.
     # Their server uses this appraoch to load a model by manipulating the command
     # line arguments, parsing, and then restoring them.
@@ -42,7 +43,7 @@ def translate(tokenized, translate_model):
         'replace_unk': True,
         'gpu': 0
     }
-    opt['model'] = os.path.join(ROOT_DIR, 'models', summary_model)
+    opt['model'] = os.path.join(ROOT_DIR, 'models', translate_model)
     opt['src'] = "dummy_src"
 
     for (k, v) in opt.items():
@@ -71,18 +72,20 @@ def translate_text(text, source, target):
         # The easy case ;-)
         return text
 
-    t = translations[source_language][target_language]
+    t = translations[source][target]
     s = spm.SentencePieceProcessor()
     s.Load(os.path.join(ROOT_DIR, 'models', t["sentencepiece_model"]))
-    x = s.encode_as_pieces(text)
+    pieces = s.encode_as_pieces(text)
+
+    indices = [i for i, _x in enumerate(pieces) if _x == b"."]
     complete_result = []
-    for i in x.finditer(b'.'):
-        i = x.index(b'.', x.index(b'.') + 1)
-    
-        x = " ".join([e.decode('utf-8') for e in x[:i+1]])
-        result = translate(x, t['translate_model'])
+    start=0
+    for i in indices:
+        x = " ".join([e.decode('utf-8') for e in pieces[start:i+1]])
+        result = _translate(x, translate_model=t['translate_model'])
         y = s.decode_pieces(result[1][0].split(" "))
         complete_result.append(y.decode('utf-8'))
+        start = i
     return "\n".join(complete_result)
 
 
