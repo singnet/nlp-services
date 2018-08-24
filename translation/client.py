@@ -11,7 +11,7 @@ from services import registry
 def main():
     script_name = sys.argv[0]
     parser = argparse.ArgumentParser(prog=script_name)
-    server_name = "summary_server"
+    server_name = "translate_server"
     default_endpoint = "http://127.0.0.1:{}".format(registry[server_name]['jsonrpc'])
     parser.add_argument("--endpoint", help="jsonrpc server to connect to", default=default_endpoint,
                         type=str, required=False)
@@ -19,9 +19,9 @@ def main():
                         action='store_true')
     parser.add_argument("--source-text", help="path to txt file to translate",
                         type=str, required=True)
-    parser.add_argument("--source-languare", help="language to tranlate from",
+    parser.add_argument("--source-language", help="language to tranlate from",
                         type=str, required=True)
-    parser.add_argument("--target-languare", help="language to tranlate to",
+    parser.add_argument("--target-language", help="language to tranlate to",
                         type=str, required=True)
     args = parser.parse_args(sys.argv[1:])
 
