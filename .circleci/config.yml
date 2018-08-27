@@ -1,4 +1,54 @@
+default_steps: &default_steps
+  - checkout
+  - run:
+      name: "Pull Submodules"
+      command: |
+        git submodule update --init -- $SERVICE_NAME/opennmt-py
+  - setup_remote_docker
+  - run:
+      name: Install dependencies
+      command: |
+        apk add --no-cache \
+          py-pip=9.0.0-r1
+        pip install \
+          docker-compose==1.12.0 \
+          awscli==1.11.76
+  - restore_cache:
+      keys:
+        - v1-{{ .Branch }}
+      paths:
+        - /caches/$SERVICE_NAME.tar
+  - run:
+      name: Load Docker image layer cache
+      command: |
+        set +o pipefail
+        docker load -i /caches/$SERVICE_NAME.tar | true
+  - run:
+      name: Build application Docker image
+      command: |
+        cd $SERVICE_NAME
+        docker build --cache-from=$SERVICE_NAME -t $SERVICE_NAME .
+  - run:
+      name: Save Docker image layer cache
+      command: |
+        mkdir -p /caches
+        docker save -o /caches/$SERVICE_NAME.tar $SERVICE_NAME
+  - save_cache:
+      key: v1-{{ .Branch }}-{{ epoch }}
+      paths:
+        - /caches/$SERVICE_NAME.tar
+  - deploy:
+      name: Push Docker image
+      command: |
+        if [ "$CIRCLE_BRANCH" == "master" ]; then
+          docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
+          docker tag $SERVICE_NAME $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
+          docker tag $SERVICE_NAME $DOCKER_ORG/$SERVICE_NAME:latest
+          docker push $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
+          docker push $DOCKER_ORG/$SERVICE_NAME:latest
+        fi
 version: 2
+
 jobs:
   build_translation:
     working_directory: /translation
@@ -9,54 +59,7 @@ jobs:
       ORG: singnet
       DOCKER_ORG: singularitynet
     steps:
-      - checkout
-      - run:
-          name: "Pull Submodules"
-          command: |
-            git submodule update --init -- $SERVICE_NAME/opennmt-py
-      - setup_remote_docker
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --no-cache \
-              py-pip=9.0.0-r1
-            pip install \
-              docker-compose==1.12.0 \
-              awscli==1.11.76
-      - restore_cache:
-          keys:
-            - v1-{{ .Branch }}
-          paths:
-            - /caches/${SERVICE_NAME}.tar
-      - run:
-          name: Load Docker image layer cache
-          command: |
-            set +o pipefail
-            docker load -i /caches/${SERVICE_NAME}.tar | true
-      - run:
-          name: Build application Docker image
-          command: |
-            cd $SERVICE_NAME
-            docker build --cache-from=${SERVICE_NAME} -t ${SERVICE_NAME} .
-      - run:
-          name: Save Docker image layer cache
-          command: |
-            mkdir -p /caches
-            docker save -o /caches/${SERVICE_NAME}.tar ${SERVICE_NAME}
-      - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
-          paths:
-            - /caches/${SERVICE_NAME}.tar
-      - deploy:
-          name: Push Docker image
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
-              docker tag ${SERVICE_NAME} $DOCKER_ORG/${SERVICE_NAME}:$CIRCLE_SHA1
-              docker tag ${SERVICE_NAME} $DOCKER_ORG/${SERVICE_NAME}:latest
-              docker push $DOCKER_ORG/${SERVICE_NAME}:$CIRCLE_SHA1
-              docker push $DOCKER_ORG/${SERVICE_NAME}:latest
-            fi
+      <<: *default_steps
 workflows:
   version: 2
   build_containers:
