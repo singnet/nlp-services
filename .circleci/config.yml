@@ -74,3 +74,4 @@ workflows:
   build_containers:
     jobs:
       - build_translation
+      - build_text_summarization
