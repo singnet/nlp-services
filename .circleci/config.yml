@@ -51,7 +51,7 @@ jobs:
           name: Push Docker image
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              docker login -u $DOCKER_HUB_USER_ID $DOCKER_HUB_PWD
+              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
               docker tag ${SERVICE_NAME} $DOCKER_ORG/${SERVICE_NAME}:$CIRCLE_SHA1
               docker tag ${SERVICE_NAME} $DOCKER_ORG/${SERVICE_NAME}:latest
               docker push $DOCKER_ORG/${SERVICE_NAME}:$CIRCLE_SHA1
