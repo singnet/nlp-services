@@ -21,7 +21,8 @@ defaults: &default_steps
         name: Load Docker image layer cache
         command: |
           set +o pipefail
-          ls -la /caches/
+          mkdir -p /caches
+          ls -la /caches
           docker load -i /caches/$SERVICE_NAME.tar | true
     - run:
         name: Build application Docker image
