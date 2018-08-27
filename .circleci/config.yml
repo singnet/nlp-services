@@ -1,4 +1,4 @@
-default_steps: &default_steps
+defaults: &default_steps
   - checkout
   - run:
       name: "Pull Submodules"
@@ -48,7 +48,6 @@ default_steps: &default_steps
           docker push $DOCKER_ORG/$SERVICE_NAME:latest
         fi
 version: 2
-
 jobs:
   build_translation:
     working_directory: /translation
