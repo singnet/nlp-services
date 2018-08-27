@@ -23,6 +23,7 @@ defaults: &default_steps
         name: Load Docker image layer cache
         command: |
           set +o pipefail
+          ls -la /caches/
           docker load -i /caches/$SERVICE_NAME.tar | true
     - run:
         name: Build application Docker image
@@ -34,6 +35,7 @@ defaults: &default_steps
         command: |
           mkdir -p /caches
           docker save -o /caches/$SERVICE_NAME.tar $SERVICE_NAME
+          ls -la /caches/
     - save_cache:
         key: v1-{{ .Branch }}-{{ epoch }}
         paths:
