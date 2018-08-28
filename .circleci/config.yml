@@ -18,7 +18,7 @@ defaults: &default_steps
             tqdm
     - restore_cache:
         keys:
-          - v1-{{ .Branch }}
+          - v2-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}
     - run:
         name: Load Docker image layer cache
         command: |
@@ -44,7 +44,7 @@ defaults: &default_steps
           docker save -o /caches/docker_image.tar $SERVICE_NAME
           ls -la /caches/
     - save_cache:
-        key: v1-{{ .Branch }}-{{ epoch }}
+        key: v2-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ epoch }}
         paths:
           - /caches/docker_image.tar
           - /caches/models
