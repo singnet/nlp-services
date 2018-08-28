@@ -12,14 +12,17 @@ model_urls = [
 
 my_path = os.path.dirname(__file__)
 
-pathlib.Path(os.path.join(my_path, "models")).mkdir(parents=True, exist_ok=True)
-pathlib.Path(os.path.join(my_path, "downloads")).mkdir(parents=True, exist_ok=True)
-
 if __name__ == "__main__":
+    pathlib.Path(os.path.join(my_path, "models")).mkdir(parents=True, exist_ok=True)
+    download_dir = os.path.join(my_path, "downloads")
+    if len(sys.argv) > 1:
+        download_dir = sys.argv[1]
+    pathlib.Path(download_dir).mkdir(parents=True, exist_ok=True)
+
     for url, file_filter in model_urls:
         model_dir = os.path.join(my_path, "models")
 
-        local_name = os.path.join(my_path, "downloads", url.split('/')[-1])
+        local_name = os.path.join(download_dir, url.split('/')[-1])
         print("Downloading %s => %s" % (url, local_name))
 
         response = requests.get(url, stream=True)
