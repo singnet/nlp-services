@@ -11,7 +11,8 @@ model_urls = []
 with open("models.json", "r") as f:
     model_urls = json.load(f)["model_urls"]
 
-my_path = os.path.dirname(__file__)
+# TODO maybe make models.json a parameter and use it's location as the root/my_path
+my_path = os.getcwd()
 
 if __name__ == "__main__":
     pathlib.Path(os.path.join(my_path, "models")).mkdir(parents=True, exist_ok=True)
