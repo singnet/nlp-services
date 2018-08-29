@@ -35,7 +35,8 @@ The above will download archives and extract to the `nlp-services/translation/mo
 
 ## Testing locally
 
-A script that does what the service does and tests if the model/tokenization setup is working okay is available in the translate.py script
+A script that does what the service does and tests if the model/tokenization setup is working okay
+is available in the translate.py script
 
 ```
 python translate.py
