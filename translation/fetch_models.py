@@ -60,7 +60,7 @@ if __name__ == "__main__":
                 with bz2.BZ2File(local_name) as f:
                     with open(local_name_unzip, 'wb') as dest:
                         dest.write(f.read())
-        if local_name.endswith('.zip'):
+        elif local_name.endswith('.zip'):
             from zipfile import ZipFile
             zfile = ZipFile(local_name)
             for filename in zfile.namelist():

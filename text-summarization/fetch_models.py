@@ -47,13 +47,22 @@ if __name__ == "__main__":
                 raise Exception("ERROR, total size does not match total written bytes")
 
         if local_name.endswith('.bz2'):
-            import bz2
-            local_name_unzip = os.path.join(model_dir, url.split('/')[-1].split('.')[:-1])
-            print("Extracting %s => %s" % (local_name, local_name_zip))
-            with bz2.BZ2File(local_name) as f:
-                with open(local_name_unzip, 'wb') as dest:
-                    dest.write(f.read())
-        if local_name.endswith('.zip'):
+            if '.tar.' in local_name:
+                import tarfile
+                tar = tarfile.open(local_name, "r:bz2")  
+                for tar_item in tar:
+                    if file_filter is None or tar_item.name in file_filter:
+                        print("Extracting %s : %s => %s" % (local_name, tar_item.name, os.path.join(model_dir, tar_item.name)))
+                        tar.extract(tar_item, path=model_dir)
+                tar.close()
+            else:
+                import bz2
+                local_name_unzip = os.path.join(model_dir, url.split('/')[-1].split('.')[:-1])
+                print("Extracting %s => %s" % (local_name, local_name_zip))
+                with bz2.BZ2File(local_name) as f:
+                    with open(local_name_unzip, 'wb') as dest:
+                        dest.write(f.read())
+        elif local_name.endswith('.zip'):
             from zipfile import ZipFile
             zfile = ZipFile(local_name)
             for filename in zfile.namelist():
