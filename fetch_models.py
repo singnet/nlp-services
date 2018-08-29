@@ -57,8 +57,8 @@ if __name__ == "__main__":
                 tar.close()
             else:
                 import bz2
-                local_name_unzip = os.path.join(model_dir, url.split('/')[-1].split('.')[:-1])
-                print("Extracting %s => %s" % (local_name, local_name_zip))
+                local_name_unzip = os.path.join(model_dir, '.'.join(url.split('/')[-1].split('.')[:-1]))
+                print("Extracting %s => %s" % (local_name, local_name_unzip))
                 with bz2.BZ2File(local_name) as f:
                     with open(local_name_unzip, 'wb') as dest:
                         dest.write(f.read())
