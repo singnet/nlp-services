@@ -83,7 +83,10 @@ workflows:
   build_containers:
     jobs:
       - build_translation
+          filters:
+            branches:
+              only: master
       - build_text_summarization
-    filters:
-      branches:
-        only: master
+          filters:
+            branches:
+              only: master
