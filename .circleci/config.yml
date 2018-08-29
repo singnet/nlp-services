@@ -84,3 +84,6 @@ workflows:
     jobs:
       - build_translation
       - build_text_summarization
+    filters:
+      branches:
+        only: master
