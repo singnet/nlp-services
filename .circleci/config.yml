@@ -63,7 +63,7 @@ jobs:
   build_translation:
     working_directory: /translation
     docker:
-      - image: docker:18.09-rc-git
+      - image: docker:18.06.1-ce-git
     environment:
       SERVICE_NAME: translation
       ORG: singnet
@@ -72,7 +72,7 @@ jobs:
   build_text_summarization:
     working_directory: /text-summarization
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: docker:18.06.1-ce-git
     environment:
       SERVICE_NAME: text-summarization
       ORG: singnet
