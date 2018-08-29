@@ -1,0 +1,6 @@
+{
+    "model_urls": [
+        ["https://s3.amazonaws.com/opennmt-models/sum_transformer_model_acc_57.25_ppl_9.22_e16.pt", null],
+        ["http://nlp.stanford.edu/software/stanford-corenlp-full-2018-01-31.zip", ["stanford-corenlp-full-2018-01-31/stanford-corenlp-3.9.0.jar"]]
+    ]
+}

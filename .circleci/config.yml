@@ -30,7 +30,7 @@ defaults: &default_steps
         name: Fetch models
         command: |
           cd $SERVICE_NAME
-          python3 fetch_models.py /caches/models
+          python3 ../fetch_models.py /caches/models
           ls -la models
     - run:
         name: Build application Docker image

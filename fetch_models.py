@@ -1,18 +1,17 @@
 import requests
 import os
 import sys
+import json
 import math
 import pathlib
 
 from tqdm import tqdm
 
-model_urls = [
-    ("https://s3.amazonaws.com/opennmt-models/sum_transformer_model_acc_57.25_ppl_9.22_e16.pt", None),
-    ("http://nlp.stanford.edu/software/stanford-corenlp-full-2018-01-31.zip", ('stanford-corenlp-full-2018-01-31/stanford-corenlp-3.9.0.jar',))
-]
+model_urls = []
+with open("models.json", "r") as f:
+    model_urls = json.load(f)["model_urls"]
 
 my_path = os.path.dirname(__file__)
-
 
 if __name__ == "__main__":
     pathlib.Path(os.path.join(my_path, "models")).mkdir(parents=True, exist_ok=True)
