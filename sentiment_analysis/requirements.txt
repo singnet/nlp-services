@@ -1,0 +1,8 @@
+grpcio==1.14.1
+grpcio-tools==1.14.1
+nltk
+tweepy
+twython
+scikit-learn
+numpy
+scipy
