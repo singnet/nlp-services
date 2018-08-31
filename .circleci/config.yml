@@ -121,7 +121,7 @@ workflows:
   build-and-maybe-deploy:
     jobs:
       - build-translation-container
-      - deploy-translation
+      - deploy-translation:
           requires:
             - build-translation-container
           filters:
