@@ -12,9 +12,19 @@ message OutputMessage {
     string value = 1;
 }
 
+message TwitterCredentials {
+    string consumer_key = 1;
+    string consumer_secret = 2;
+    string access_token = 3;
+    string token_secret = 4;
+}
+
 message TwitterInputMessage {
-    string languages = 1;
-    string sentences = 2;
+    TwitterCredentials credentials = 1;
+    string languages = 2;
+    string sentences = 3;
+    int64 time_limit = 4;
+    int64 msg_limit = 5;
 }
 
 message TwitterOutputMessage {
@@ -35,6 +45,10 @@ service CustomCorpusAnalysis {
 
 service TwitterAnalysis {
     rpc twitterAnalysis(TwitterInputMessage) returns (OutputMessage) {}
+}
+
+service TwitterStreamAnalysis {
+    rpc streamAnalysis(TwitterInputMessage) returns (OutputMessage) {}
 }
 
 service TrainData {

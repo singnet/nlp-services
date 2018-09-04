@@ -1,9 +1,10 @@
 import grpc
 
 # import the generated classes
-import services.model.sentiment_analysis_rpc_pb2_grpc as grpc_bt_grpc
-import services.model.sentiment_analysis_rpc_pb2 as grpc_bt_pb2
-from tests_data import b64_sentences
+from services.model import sentiment_analysis_rpc_pb2_grpc as grpc_bt_grpc
+from services.model import sentiment_analysis_rpc_pb2 as grpc_bt_pb2
+from test_data import b64_sentences
+from test_data import twitter_credentials
 from services import registry
 
 if __name__ == '__main__':
@@ -85,19 +86,29 @@ if __name__ == '__main__':
 
     try:
 
-        # print("TwitterAnalysis() Method Test Starting... ")
-        # print()
-        # TwitterAnalysis() Method Test
+        print("TwitterStreamAnalysis() Method Test Starting... ")
+        print()
+        # TwitterStreamAnalysis() Method Test
         # create a stub (client)
-        # stub = grpc_bt_grpc.TwitterAnalysisStub(channel)
-        # create a valid request message
-        # languages = 'pt'
-        # sentences = 'Lula presidente'
-        # message = grpc_bt_pb2.TwitterInputMessage(languages=languages, sentences=sentences)
+        stub = grpc_bt_grpc.TwitterStreamAnalysisStub(channel)
+
+        # Setting the credentials up
+        credentials = grpc_bt_pb2.TwitterCredentials(consumer_key=twitter_credentials.consumer_key,
+                                                     consumer_secret=twitter_credentials.consumer_secret,
+                                                     access_token=twitter_credentials.access_token,
+                                                     token_secret=twitter_credentials.token_secret)
+        # Setting the input message up
+        message = grpc_bt_pb2.TwitterInputMessage(
+            credentials=credentials,
+            languages=twitter_credentials.languages,
+            sentences=twitter_credentials.sentences,
+            time_limit=twitter_credentials.time_limit,
+            msg_limit=twitter_credentials.msg_limit)
+
         # make the call
-        # response = stub.twitterAnalysis(message)
-        # print("TwitterAnalysis() Method Test Passed => " + response.value)
+        response = stub.streamAnalysis(message)
+        print("TwitterStreamAnalysis() Method Test Passed => " + response.value)
         print()
 
     except KeyError as e:
-        print(e)
+        print("TwitterStreamAnalysis() Method Test Error => " + str(e))

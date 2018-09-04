@@ -214,6 +214,48 @@ def add_TwitterAnalysisServicer_to_server(servicer, server):
   server.add_generic_rpc_handlers((generic_handler,))
 
 
+class TwitterStreamAnalysisStub(object):
+  # missing associated documentation comment in .proto file
+  pass
+
+  def __init__(self, channel):
+    """Constructor.
+
+    Args:
+      channel: A grpc.Channel.
+    """
+    self.streamAnalysis = channel.unary_unary(
+        '/TwitterStreamAnalysis/streamAnalysis',
+        request_serializer=services_dot_model_dot_sentiment__analysis__rpc__pb2.TwitterInputMessage.SerializeToString,
+        response_deserializer=services_dot_model_dot_sentiment__analysis__rpc__pb2.OutputMessage.FromString,
+        )
+
+
+class TwitterStreamAnalysisServicer(object):
+  # missing associated documentation comment in .proto file
+  pass
+
+  def streamAnalysis(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
+
+def add_TwitterStreamAnalysisServicer_to_server(servicer, server):
+  rpc_method_handlers = {
+      'streamAnalysis': grpc.unary_unary_rpc_method_handler(
+          servicer.streamAnalysis,
+          request_deserializer=services_dot_model_dot_sentiment__analysis__rpc__pb2.TwitterInputMessage.FromString,
+          response_serializer=services_dot_model_dot_sentiment__analysis__rpc__pb2.OutputMessage.SerializeToString,
+      ),
+  }
+  generic_handler = grpc.method_handlers_generic_handler(
+      'TwitterStreamAnalysis', rpc_method_handlers)
+  server.add_generic_rpc_handlers((generic_handler,))
+
+
 class TrainDataStub(object):
   # missing associated documentation comment in .proto file
   pass

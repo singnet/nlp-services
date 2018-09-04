@@ -6,8 +6,9 @@ import sys
 import argparse
 import logging
 import threading
-
 from services import registry
+
+# sys.path = [os.path.abspath(os.path.dirname(__file__))] + sys.path
 
 logging.basicConfig(
     level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")

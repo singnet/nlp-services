@@ -6,3 +6,4 @@ twython
 scikit-learn
 numpy
 scipy
+pymongo

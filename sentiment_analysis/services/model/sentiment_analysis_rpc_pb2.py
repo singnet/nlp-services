@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='services/model/sentiment_analysis_rpc.proto',
   package='',
   syntax='proto3',
-  serialized_pb=_b('\n+services/model/sentiment_analysis_rpc.proto\"\x1d\n\x0cInputMessage\x12\r\n\x05value\x18\x01 \x01(\t\"\x1e\n\rOutputMessage\x12\r\n\x05value\x18\x01 \x01(\t\";\n\x13TwitterInputMessage\x12\x11\n\tlanguages\x18\x01 \x01(\t\x12\x11\n\tsentences\x18\x02 \x01(\t\"%\n\x14TwitterOutputMessage\x12\r\n\x05value\x18\x01 \x01(\t26\n\x0bShowMessage\x12\'\n\x04show\x12\r.InputMessage\x1a\x0e.OutputMessage\"\x00\x32T\n\x1aSentimentIntensityAnalysis\x12\x36\n\x13intensivityAnalysis\x12\r.InputMessage\x1a\x0e.OutputMessage\"\x00\x32N\n\x18SentimentComplexAnalysis\x12\x32\n\x0f\x63omplexAnalysis\x12\r.InputMessage\x1a\x0e.OutputMessage\"\x00\x32O\n\x14\x43ustomCorpusAnalysis\x12\x37\n\x14\x63ustomCorpusAnalysis\x12\r.InputMessage\x1a\x0e.OutputMessage\"\x00\x32L\n\x0fTwitterAnalysis\x12\x39\n\x0ftwitterAnalysis\x12\x14.TwitterInputMessage\x1a\x0e.OutputMessage\"\x00\x32\x35\n\tTrainData\x12(\n\x05train\x12\r.InputMessage\x1a\x0e.OutputMessage\"\x00\x62\x06proto3')
+  serialized_pb=_b('\n+services/model/sentiment_analysis_rpc.proto\"\x1d\n\x0cInputMessage\x12\r\n\x05value\x18\x01 \x01(\t\"\x1e\n\rOutputMessage\x12\r\n\x05value\x18\x01 \x01(\t\"o\n\x12TwitterCredentials\x12\x14\n\x0c\x63onsumer_key\x18\x01 \x01(\t\x12\x17\n\x0f\x63onsumer_secret\x18\x02 \x01(\t\x12\x14\n\x0c\x61\x63\x63\x65ss_token\x18\x03 \x01(\t\x12\x14\n\x0ctoken_secret\x18\x04 \x01(\t\"\x8c\x01\n\x13TwitterInputMessage\x12(\n\x0b\x63redentials\x18\x01 \x01(\x0b\x32\x13.TwitterCredentials\x12\x11\n\tlanguages\x18\x02 \x01(\t\x12\x11\n\tsentences\x18\x03 \x01(\t\x12\x12\n\ntime_limit\x18\x04 \x01(\x03\x12\x11\n\tmsg_limit\x18\x05 \x01(\x03\"%\n\x14TwitterOutputMessage\x12\r\n\x05value\x18\x01 \x01(\t26\n\x0bShowMessage\x12\'\n\x04show\x12\r.InputMessage\x1a\x0e.OutputMessage\"\x00\x32T\n\x1aSentimentIntensityAnalysis\x12\x36\n\x13intensivityAnalysis\x12\r.InputMessage\x1a\x0e.OutputMessage\"\x00\x32N\n\x18SentimentComplexAnalysis\x12\x32\n\x0f\x63omplexAnalysis\x12\r.InputMessage\x1a\x0e.OutputMessage\"\x00\x32O\n\x14\x43ustomCorpusAnalysis\x12\x37\n\x14\x63ustomCorpusAnalysis\x12\r.InputMessage\x1a\x0e.OutputMessage\"\x00\x32L\n\x0fTwitterAnalysis\x12\x39\n\x0ftwitterAnalysis\x12\x14.TwitterInputMessage\x1a\x0e.OutputMessage\"\x00\x32Q\n\x15TwitterStreamAnalysis\x12\x38\n\x0estreamAnalysis\x12\x14.TwitterInputMessage\x1a\x0e.OutputMessage\"\x00\x32\x35\n\tTrainData\x12(\n\x05train\x12\r.InputMessage\x1a\x0e.OutputMessage\"\x00\x62\x06proto3')
 )
 
 
@@ -87,23 +87,37 @@ _OUTPUTMESSAGE = _descriptor.Descriptor(
 )
 
 
-_TWITTERINPUTMESSAGE = _descriptor.Descriptor(
-  name='TwitterInputMessage',
-  full_name='TwitterInputMessage',
+_TWITTERCREDENTIALS = _descriptor.Descriptor(
+  name='TwitterCredentials',
+  full_name='TwitterCredentials',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='languages', full_name='TwitterInputMessage.languages', index=0,
+      name='consumer_key', full_name='TwitterCredentials.consumer_key', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='sentences', full_name='TwitterInputMessage.sentences', index=1,
+      name='consumer_secret', full_name='TwitterCredentials.consumer_secret', index=1,
       number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='access_token', full_name='TwitterCredentials.access_token', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='token_secret', full_name='TwitterCredentials.token_secret', index=3,
+      number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -121,7 +135,66 @@ _TWITTERINPUTMESSAGE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=110,
-  serialized_end=169,
+  serialized_end=221,
+)
+
+
+_TWITTERINPUTMESSAGE = _descriptor.Descriptor(
+  name='TwitterInputMessage',
+  full_name='TwitterInputMessage',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='credentials', full_name='TwitterInputMessage.credentials', index=0,
+      number=1, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='languages', full_name='TwitterInputMessage.languages', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='sentences', full_name='TwitterInputMessage.sentences', index=2,
+      number=3, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='time_limit', full_name='TwitterInputMessage.time_limit', index=3,
+      number=4, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='msg_limit', full_name='TwitterInputMessage.msg_limit', index=4,
+      number=5, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=224,
+  serialized_end=364,
 )
 
 
@@ -151,12 +224,14 @@ _TWITTEROUTPUTMESSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=171,
-  serialized_end=208,
+  serialized_start=366,
+  serialized_end=403,
 )
 
+_TWITTERINPUTMESSAGE.fields_by_name['credentials'].message_type = _TWITTERCREDENTIALS
 DESCRIPTOR.message_types_by_name['InputMessage'] = _INPUTMESSAGE
 DESCRIPTOR.message_types_by_name['OutputMessage'] = _OUTPUTMESSAGE
+DESCRIPTOR.message_types_by_name['TwitterCredentials'] = _TWITTERCREDENTIALS
 DESCRIPTOR.message_types_by_name['TwitterInputMessage'] = _TWITTERINPUTMESSAGE
 DESCRIPTOR.message_types_by_name['TwitterOutputMessage'] = _TWITTEROUTPUTMESSAGE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
@@ -174,6 +249,13 @@ OutputMessage = _reflection.GeneratedProtocolMessageType('OutputMessage', (_mess
   # @@protoc_insertion_point(class_scope:OutputMessage)
   ))
 _sym_db.RegisterMessage(OutputMessage)
+
+TwitterCredentials = _reflection.GeneratedProtocolMessageType('TwitterCredentials', (_message.Message,), dict(
+  DESCRIPTOR = _TWITTERCREDENTIALS,
+  __module__ = 'services.model.sentiment_analysis_rpc_pb2'
+  # @@protoc_insertion_point(class_scope:TwitterCredentials)
+  ))
+_sym_db.RegisterMessage(TwitterCredentials)
 
 TwitterInputMessage = _reflection.GeneratedProtocolMessageType('TwitterInputMessage', (_message.Message,), dict(
   DESCRIPTOR = _TWITTERINPUTMESSAGE,
@@ -197,8 +279,8 @@ _SHOWMESSAGE = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=0,
   options=None,
-  serialized_start=210,
-  serialized_end=264,
+  serialized_start=405,
+  serialized_end=459,
   methods=[
   _descriptor.MethodDescriptor(
     name='show',
@@ -221,8 +303,8 @@ _SENTIMENTINTENSITYANALYSIS = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=1,
   options=None,
-  serialized_start=266,
-  serialized_end=350,
+  serialized_start=461,
+  serialized_end=545,
   methods=[
   _descriptor.MethodDescriptor(
     name='intensivityAnalysis',
@@ -245,8 +327,8 @@ _SENTIMENTCOMPLEXANALYSIS = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=2,
   options=None,
-  serialized_start=352,
-  serialized_end=430,
+  serialized_start=547,
+  serialized_end=625,
   methods=[
   _descriptor.MethodDescriptor(
     name='complexAnalysis',
@@ -269,8 +351,8 @@ _CUSTOMCORPUSANALYSIS = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=3,
   options=None,
-  serialized_start=432,
-  serialized_end=511,
+  serialized_start=627,
+  serialized_end=706,
   methods=[
   _descriptor.MethodDescriptor(
     name='customCorpusAnalysis',
@@ -293,8 +375,8 @@ _TWITTERANALYSIS = _descriptor.ServiceDescriptor(
   file=DESCRIPTOR,
   index=4,
   options=None,
-  serialized_start=513,
-  serialized_end=589,
+  serialized_start=708,
+  serialized_end=784,
   methods=[
   _descriptor.MethodDescriptor(
     name='twitterAnalysis',
@@ -311,14 +393,38 @@ _sym_db.RegisterServiceDescriptor(_TWITTERANALYSIS)
 DESCRIPTOR.services_by_name['TwitterAnalysis'] = _TWITTERANALYSIS
 
 
+_TWITTERSTREAMANALYSIS = _descriptor.ServiceDescriptor(
+  name='TwitterStreamAnalysis',
+  full_name='TwitterStreamAnalysis',
+  file=DESCRIPTOR,
+  index=5,
+  options=None,
+  serialized_start=786,
+  serialized_end=867,
+  methods=[
+  _descriptor.MethodDescriptor(
+    name='streamAnalysis',
+    full_name='TwitterStreamAnalysis.streamAnalysis',
+    index=0,
+    containing_service=None,
+    input_type=_TWITTERINPUTMESSAGE,
+    output_type=_OUTPUTMESSAGE,
+    options=None,
+  ),
+])
+_sym_db.RegisterServiceDescriptor(_TWITTERSTREAMANALYSIS)
+
+DESCRIPTOR.services_by_name['TwitterStreamAnalysis'] = _TWITTERSTREAMANALYSIS
+
+
 _TRAINDATA = _descriptor.ServiceDescriptor(
   name='TrainData',
   full_name='TrainData',
   file=DESCRIPTOR,
-  index=5,
+  index=6,
   options=None,
-  serialized_start=591,
-  serialized_end=644,
+  serialized_start=869,
+  serialized_end=922,
   methods=[
   _descriptor.MethodDescriptor(
     name='train',
