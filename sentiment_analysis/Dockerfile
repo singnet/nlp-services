@@ -47,6 +47,7 @@ RUN pip3.6 install --upgrade pip
 RUN pip3.6 install snet_cli
 RUN git clone https://github.com/singnet/nlp-services.git
 WORKDIR /go/src/nlp-services/sentiment_analysis
+RUN pwd
 RUN pip3.6 install -r requirements.txt
 RUN sh buildproto.sh
 EXPOSE 7010-7010
