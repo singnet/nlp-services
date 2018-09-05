@@ -1,3 +1,4 @@
+import datetime
 import sys
 import base64
 import logging
@@ -275,7 +276,7 @@ class TwitterStreamAnalysisServicer(grpc_bt_grpc.TwitterStreamAnalysisServicer):
 
         finally:
             if self.status_error_code:
-                self.stringResult += " status error code => " + self.status_error_code
+                self.stringResult += " status error code => " + self.status_error_code + " at: " + str(datetime.datetime.now())
                 print('Error description => ' + self.stringResult)
 
             # Encoding result
