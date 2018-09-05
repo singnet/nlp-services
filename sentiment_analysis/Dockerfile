@@ -2,7 +2,7 @@ FROM golang:latest
 WORKDIR /
 RUN apt-get update && apt-get install -y \
     nano \
-    netstat \
+    net-tools \
     wget \
     build-essential \
     checkinstall \
