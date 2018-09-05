@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bb487379-6de1-4a5d-85a5-a6101a0340b3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sentiment_analysis/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/Dockerfile" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -49,7 +48,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="Dockerfile" value="123" />
+          <entry key="Dockerfile" value="143" />
           <entry key="dummy" value="19" />
           <entry key="gitignore" value="3" />
           <entry key="proto" value="115" />
@@ -59,7 +58,7 @@
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Dockerfile" value="123" />
+          <entry key="Dockerfile" value="143" />
           <entry key="Git file" value="3" />
           <entry key="PLAIN_TEXT" value="27" />
           <entry key="PROTO" value="115" />
@@ -74,7 +73,7 @@
         <entry file="file://$PROJECT_DIR$/sentiment_analysis/Dockerfile">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="537">
-              <caret line="48" column="35" lean-forward="true" selection-start-line="48" selection-start-column="35" selection-end-line="48" selection-end-column="35" />
+              <caret line="48" column="19" selection-start-line="48" selection-start-column="19" selection-end-line="48" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -510,7 +509,7 @@
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/Dockerfile">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="537">
-          <caret line="48" column="35" lean-forward="true" selection-start-line="48" selection-start-column="35" selection-end-line="48" selection-end-column="35" />
+          <caret line="48" column="19" selection-start-line="48" selection-start-column="19" selection-end-line="48" selection-end-column="19" />
         </state>
       </provider>
     </entry>

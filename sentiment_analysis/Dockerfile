@@ -46,6 +46,7 @@ RUN rm -f Python-3.6.5.tar.xz
 RUN pip3.6 install --upgrade pip
 RUN pip3.6 install snet_cli
 RUN git clone https://github.com/singnet/nlp-services.git
+RUN cd nlp-services
 RUN git checkout sentiment_analysis
 WORKDIR /go/src/nlp-services/sentiment_analysis
 RUN pip3.6 install -r requirements.txt
