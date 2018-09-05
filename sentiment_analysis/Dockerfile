@@ -51,4 +51,4 @@ WORKDIR /go/src/nlp-services/sentiment_analysis
 RUN pip3.6 install -r requirements.txt
 RUN sh buildproto.sh
 EXPOSE 7010-7010
-CMD ["python3.6", "run_basic_service.py", "--daemon-conf", "config/"]
+CMD ["python3.6", "run_service.py", "--daemon-conf", "config/"]
