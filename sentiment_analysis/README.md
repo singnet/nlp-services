@@ -32,7 +32,7 @@ $curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/update_docker_image.sh | bash
 ```
 
-#### Start a running container service
+#### Run a container service
 ```
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/create_service_container.sh | bash
 ```
