@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-#docker build -t singularitynet/sentiment_analysis:latest https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/Dockerfile
+#Update docker image
+docker build -t singularitynet/sentiment_analysis:latest https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/Dockerfile
 #Removing current container running
 CONTAINER_ID="$(docker ps -a | grep SENTIMENT_ANALYSIS | awk '{print $1}')"
 docker rm $CONTAINER_ID -f
