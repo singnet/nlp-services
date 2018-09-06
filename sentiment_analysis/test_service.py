@@ -36,40 +36,40 @@ if __name__ == '__main__':
     except KeyError as e:
         print(e)
 
-    try:
-        logger.debug("call => SentimentIntensityAnalysis() Method Test Starting... ")
-        print()
-        # SentimentIntensityAnalysis() Method Test
-        # create a stub (client)
-        stub = grpc_bt_grpc.SentimentIntensityAnalysisStub(channel)
-        # create a valid request message
-        test_data = b64_sentences.senteces()
-        message = grpc_bt_pb2.InputMessage(value=test_data)
-        # make the call
-        response = stub.intensivityAnalysis(message)
-        logger.debug("call => SentimentIntensityAnalysis() Method Test Passed => " + response.value)
-        print()
-
-    except KeyError as e:
-        print(e)
-
-    try:
-
-        logger.debug("call => SentimentComplexAnalysis() Method Test Starting... ")
-        print()
-        # SentimentComplexAnalysis() Method Test
-        # create a stub (client)
-        stub = grpc_bt_grpc.SentimentComplexAnalysisStub(channel)
-        # create a valid request message
-        test_data = b64_sentences.senteces()
-        message = grpc_bt_pb2.InputMessage(value=test_data)
-        # make the call
-        response = stub.complexAnalysis(message)
-        logger.debug("call => SentimentComplexAnalysis() Method Test Passed => " + response.value)
-        print()
-
-    except KeyError as e:
-        print(e)
+    # try:
+    #     logger.debug("call => SentimentIntensityAnalysis() Method Test Starting... ")
+    #     print()
+    #     # SentimentIntensityAnalysis() Method Test
+    #     # create a stub (client)
+    #     stub = grpc_bt_grpc.SentimentIntensityAnalysisStub(channel)
+    #     # create a valid request message
+    #     test_data = b64_sentences.senteces()
+    #     message = grpc_bt_pb2.InputMessage(value=test_data)
+    #     # make the call
+    #     response = stub.intensivityAnalysis(message)
+    #     logger.debug("call => SentimentIntensityAnalysis() Method Test Passed => " + response.value)
+    #     print()
+    #
+    # except KeyError as e:
+    #     print(e)
+    #
+    # try:
+    #
+    #     logger.debug("call => SentimentComplexAnalysis() Method Test Starting... ")
+    #     print()
+    #     # SentimentComplexAnalysis() Method Test
+    #     # create a stub (client)
+    #     stub = grpc_bt_grpc.SentimentComplexAnalysisStub(channel)
+    #     # create a valid request message
+    #     test_data = b64_sentences.senteces()
+    #     message = grpc_bt_pb2.InputMessage(value=test_data)
+    #     # make the call
+    #     response = stub.complexAnalysis(message)
+    #     logger.debug("call => SentimentComplexAnalysis() Method Test Passed => " + response.value)
+    #     print()
+    #
+    # except KeyError as e:
+    #     print(e)
 
     try:
 
