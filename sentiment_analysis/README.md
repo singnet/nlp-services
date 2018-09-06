@@ -24,7 +24,7 @@ $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis
 
 #### Remove a running service
 ```
-$curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/remove_service.sh | bash
+$ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/remove_service.sh | bash
 ```
 
 #### Update a docker service image
