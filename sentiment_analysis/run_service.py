@@ -1,26 +1,22 @@
+import logging
 import pathlib
 import subprocess
 import time
 import os
 import sys
 import argparse
-import logging
 import threading
+
 from services import registry
+from log import log_config
 
-# sys.path = [os.path.abspath(os.path.dirname(__file__))] + sys.path
-
-logging.basicConfig(
-    level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
-log = logging.getLogger('run_basic_service')
+logger = log_config.getLogger('run_service.py')
 
 
 def main():
+    logger.debug('call => main()')
     parser = argparse.ArgumentParser(prog=__file__)
-    parser.add_argument("--daemon-config-path",
-                        help="File with daemon configuration.",
-                        required=False
-                        )
+    parser.add_argument("--daemon-config-path", help="File with daemon configuration.",required=False)
     args = parser.parse_args(sys.argv[1:])
 
     if args.daemon_config_path is None:
@@ -56,10 +52,11 @@ def start_all_services(cwd, service_modules, config_path=None):
     and will create a 'db_SERVICENAME.db' database file for each services.
     '''
     try:
+        logger.debug('call => start_all_services()')
+
         for i, service_module in enumerate(service_modules):
             service_name = service_module.split('.')[-1]
-            print("Launching", service_module,
-                  "on ports", str(registry[service_name]))
+            print("Launching", service_module,"on ports", str(registry[service_name]))
 
             snetd_config = None
             if config_path:
@@ -86,6 +83,7 @@ def start_service(cwd, service_module, daemon_config_file=None):
     Starts the python module of the services at the passed gRPC port and
     an instance of 'snetd' for the services.
     '''
+    logger.debug('call => start_service()')
     service_name = service_module.split('.')[-1]
     grpc_port = registry[service_name]['grpc']
     subprocess.Popen([
@@ -105,6 +103,7 @@ def start_snetd(cwd, daemon_config_file=None, db_file=None):
     - Configurations from: daemon_config_file
     - Database in db_file
     '''
+    logger.debug('call => start_snetd()')
     cmd = ['snetd']
     if db_file is not None:
         cmd.extend(['--db-path', str(db_file)])

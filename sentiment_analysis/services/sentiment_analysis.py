@@ -1,7 +1,6 @@
 import datetime
 import sys
 import base64
-import logging
 import grpc
 import concurrent.futures as futures
 from nltk.sentiment import SentimentIntensityAnalyzer
@@ -9,10 +8,9 @@ from services.modules import complex_mod, twitter_mod
 from services.model import sentiment_analysis_rpc_pb2_grpc as grpc_bt_grpc
 from services.model.sentiment_analysis_rpc_pb2 import OutputMessage
 from services import common
+from log import log_config
 
-logging.basicConfig(
-    level=10, format="%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s")
-log = logging.getLogger('sentiment_analysis')
+logger = log_config.getLogger('sentiment_analysis.py')
 
 '''
 Simple arithmetic services to test the Snet Daemon (gRPC), dApp and/or Snet-CLI.
@@ -48,7 +46,7 @@ class ShowMessageServicer(grpc_bt_grpc.ShowMessageServicer):
 
     def __init__(self):
         # Just for debugging purpose.
-        log.debug("ShowMessageServicer created")
+        logger.debug("call => ShowMessageServicer()")
 
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
@@ -61,7 +59,7 @@ class ShowMessageServicer(grpc_bt_grpc.ShowMessageServicer):
         self.result = OutputMessage()
 
         self.result.value = "Processed => " + self.value
-        # log.debug('add({},{})={}'.format(self.a, self.b, self.result.value))
+        logger.debug('call => show({})={}'.format(self.value, self.result.value))
         return self.result
 
 
@@ -71,7 +69,7 @@ class SentimentIntensityAnalysisServicer(grpc_bt_grpc.SentimentIntensityAnalysis
 
     def __init__(self):
         # Just for debugging purpose.
-        log.debug("SentimentIntensityAnalysisServicer created")
+        logger.debug("call => SentimentIntensityAnalysisServicer()")
 
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
@@ -106,7 +104,7 @@ class SentimentIntensityAnalysisServicer(grpc_bt_grpc.SentimentIntensityAnalysis
         # To respond we need to create a OutputMessage() object (from .proto file)
         self.result = OutputMessage()
         self.result.value = resultBase64
-        # log.debug('add({},{})={}'.format(self.a, self.b, self.result.value))
+        logger.debug('call => intensivityAnalysis({})={}'.format(self.value, self.result.value))
         return self.result
 
 
@@ -116,7 +114,7 @@ class SentimentComplexAnalysisServicer(grpc_bt_grpc.SentimentComplexAnalysisServ
 
     def __init__(self):
         # Just for debugging purpose.
-        log.debug("SentimentComplexAnalysisServicer created")
+        logger.debug("call => SentimentComplexAnalysisServicer()")
 
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
@@ -148,7 +146,7 @@ class SentimentComplexAnalysisServicer(grpc_bt_grpc.SentimentComplexAnalysisServ
         # To respond we need to create a OutputMessage() object (from .proto file)
         self.result = OutputMessage()
         self.result.value = resultBase64
-        # log.debug('add({},{})={}'.format(self.a, self.b, self.result.value))
+        logger.debug('call => complexAnalysis({})={}'.format(self.value, self.result.value))
         return self.result
 
 
@@ -158,7 +156,7 @@ class CustomCorpusAnalysisServicer(grpc_bt_grpc.ShowMessageServicer):
 
     def __init__(self):
         # Just for debugging purpose.
-        log.debug("CustomCorpusAnalysisServicer created")
+        logger.debug("call => CustomCorpusAnalysisServicer()")
 
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
@@ -209,7 +207,7 @@ class CustomCorpusAnalysisServicer(grpc_bt_grpc.ShowMessageServicer):
         # To respond we need to create a OutputMessage() object (from .proto file)
         self.result = OutputMessage()
         self.result.value = resultBase64
-        # log.debug('add({},{})={}'.format(self.a, self.b, self.result.value))
+        logger.debug('call => customCorpusAnalysis({})={}'.format(self.value, self.result.value))
         return self.result
 
 
@@ -219,7 +217,7 @@ class TwitterStreamAnalysisServicer(grpc_bt_grpc.TwitterStreamAnalysisServicer):
 
     def __init__(self):
         # Just for debugging purpose.
-        log.debug("TwitterStreamAnalysisServicer created")
+        logger.debug("call => TwitterStreamAnalysisServicer()")
         self.manager = None
         self.status_error_code = None
         self.stringResult = ''
@@ -277,13 +275,14 @@ class TwitterStreamAnalysisServicer(grpc_bt_grpc.TwitterStreamAnalysisServicer):
         finally:
             if self.status_error_code:
                 self.stringResult = " status error code => " + self.status_error_code + " at: " + str(datetime.datetime.now())
-                print('Error description => ' + self.stringResult)
+                logger.error('Error description => ' + self.stringResult)
 
             # Encoding result
             self.resultBase64 = base64.b64encode(str(self.stringResult).encode('utf-8'))
             # To respond we need to create a OutputMessage() object (from .proto file)
             self.result = OutputMessage()
             self.result.value = self.resultBase64
+            logger.debug('call => streamAnalysis()={}'.format(self.result.value))
             return self.result
 
 
@@ -296,6 +295,7 @@ class TwitterStreamAnalysisServicer(grpc_bt_grpc.TwitterStreamAnalysisServicer):
 # Add all your classes to the server here.
 # (from generated .py files by protobuf compiler)
 def serve(max_workers=10, port=7777):
+    logger.debug('call => serve(max_workers={}, port={})'.format(max_workers, port))
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
     grpc_bt_grpc.add_ShowMessageServicer_to_server(ShowMessageServicer(), server)
     grpc_bt_grpc.add_SentimentIntensityAnalysisServicer_to_server(SentimentIntensityAnalysisServicer(), server)
@@ -307,6 +307,7 @@ def serve(max_workers=10, port=7777):
 
 
 if __name__ == '__main__':
+    logger.debug('call => __name__ == __main__')
     '''
     Runs the gRPC server to communicate with the Snet Daemon.
     '''

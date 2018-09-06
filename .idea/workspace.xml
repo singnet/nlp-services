@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bb487379-6de1-4a5d-85a5-a6101a0340b3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentiment_analysis/run_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/run_service.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentiment_analysis/test_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/test_service.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,13 +17,14 @@
     <session id="-1068283285">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="9" />
+          <entry key="project.closed" value="10" />
           <entry key="project.open.time.0" value="5" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.13" value="1" />
+          <entry key="project.open.time.19" value="1" />
           <entry key="project.open.time.9" value="1" />
-          <entry key="project.opened" value="10" />
+          <entry key="project.opened" value="11" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -29,9 +33,11 @@
           <entry key="example" value="1" />
           <entry key="gitignore" value="2" />
           <entry key="gitmodules" value="1" />
-          <entry key="json" value="4" />
+          <entry key="json" value="6" />
+          <entry key="log" value="14" />
           <entry key="proto" value="3" />
-          <entry key="py" value="81" />
+          <entry key="py" value="98" />
+          <entry key="pyi" value="1" />
           <entry key="sh" value="1" />
           <entry key="txt" value="2" />
         </counts>
@@ -41,19 +47,21 @@
           <entry key="Bash" value="1" />
           <entry key="Dockerfile" value="9" />
           <entry key="Git file" value="2" />
-          <entry key="JSON" value="4" />
-          <entry key="PLAIN_TEXT" value="4" />
+          <entry key="JSON" value="6" />
+          <entry key="Log" value="12" />
+          <entry key="PLAIN_TEXT" value="6" />
           <entry key="PROTO" value="3" />
-          <entry key="Python" value="81" />
+          <entry key="Python" value="98" />
+          <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="Dockerfile" value="191" />
-          <entry key="dummy" value="19" />
+          <entry key="dummy" value="42" />
           <entry key="gitignore" value="3" />
           <entry key="proto" value="115" />
-          <entry key="py" value="3951" />
+          <entry key="py" value="4733" />
           <entry key="txt" value="8" />
         </counts>
       </usages-collector>
@@ -61,20 +69,20 @@
         <counts>
           <entry key="Dockerfile" value="191" />
           <entry key="Git file" value="3" />
-          <entry key="PLAIN_TEXT" value="27" />
+          <entry key="PLAIN_TEXT" value="50" />
           <entry key="PROTO" value="115" />
-          <entry key="Python" value="3951" />
+          <entry key="Python" value="4733" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="278" column="25" lean-forward="true" selection-start-line="278" selection-start-column="25" selection-end-line="278" selection-end-column="25" />
+            <state relative-caret-position="-246">
+              <caret line="246" lean-forward="true" selection-start-line="246" selection-end-line="246" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -82,11 +90,23 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/service.json">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/sentiment_analysis/test_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" column="6" lean-forward="true" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="6" />
+            <state relative-caret-position="223">
+              <caret line="93" column="4" lean-forward="true" selection-start-line="93" selection-start-column="4" selection-end-line="93" selection-end-column="4" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sentiment_analysis/log/service.log">
+          <provider selected="true" editor-type-id="LogFileEditorProvider">
+            <state relative-caret-position="345">
+              <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
             </state>
           </provider>
         </entry>
@@ -94,10 +114,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sentiment_analysis/run_service.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="20" column="6" selection-start-line="20" selection-start-column="6" selection-end-line="20" selection-end-column="6" />
+            <state relative-caret-position="238">
+              <caret line="19" column="18" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
               <folding>
                 <element signature="e#0#14#0" expanded="true" />
+                <marker date="1536241463538" expanded="true" signature="3392:3393" ph="..." />
               </folding>
             </state>
           </provider>
@@ -119,6 +140,8 @@
       <find>lookup</find>
       <find>status error code</find>
       <find>status error code =&gt;</find>
+      <find>logger</find>
+      <find>logging</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/sentiment_analysis</dir>
@@ -148,12 +171,17 @@
         <option value="$PROJECT_DIR$/sentiment_analysis/__main__.py" />
         <option value="$PROJECT_DIR$/sentiment_analysis/test_data/twitter_credentials.py" />
         <option value="$PROJECT_DIR$/sentiment_analysis/services/model/sentiment_analysis_rpc.proto" />
-        <option value="$PROJECT_DIR$/sentiment_analysis/test_service.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/sentiment_analysis/services/modules/twitter_mod.py" />
-        <option value="$PROJECT_DIR$/sentiment_analysis/run_service.py" />
         <option value="$PROJECT_DIR$/sentiment_analysis/Dockerfile" />
+        <option value="$PROJECT_DIR$/sentiment_analysis/log/2018-09-06.log" />
+        <option value="$PROJECT_DIR$/sentiment_analysis/test_log.py" />
+        <option value="$PROJECT_DIR$/sentiment_analysis/log/setup.py" />
+        <option value="$PROJECT_DIR$/sentiment_analysis/log/log_config.py" />
+        <option value="$PROJECT_DIR$/sentiment_analysis/run_service.py" />
         <option value="$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py" />
+        <option value="$PROJECT_DIR$/sentiment_analysis/log/service.log" />
+        <option value="$PROJECT_DIR$/sentiment_analysis/test_service.py" />
       </list>
     </option>
   </component>
@@ -164,9 +192,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="y" value="22" />
-    <option name="width" value="1280" />
-    <option name="height" value="730" />
+    <option name="x" value="37" />
+    <option name="y" value="28" />
+    <option name="width" value="1849" />
+    <option name="height" value="1035" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -176,6 +205,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -192,23 +222,17 @@
               <item name="nlp-services" type="b2602c69:ProjectViewProjectNode" />
               <item name="nlp-services" type="462c0819:PsiDirectoryNode" />
               <item name="sentiment_analysis" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nlp-services" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nlp-services" type="462c0819:PsiDirectoryNode" />
-              <item name="sentiment_analysis" type="462c0819:PsiDirectoryNode" />
-              <item name="services" type="462c0819:PsiDirectoryNode" />
+              <item name="log" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="add_unversioned_files" value="$PROJECT_DIR$/sentiment_analysis/log/service.log&#10;/Users/glauterlemos/Documents/DESENVOLVIMENTO/SINGULARITY_NET/PROJECT/services/nlp-services/sentiment_analysis/log.log&#10;/Users/glauterlemos/Documents/DESENVOLVIMENTO/SINGULARITY_NET/PROJECT/services/nlp-services/sentiment_analysis/log_dir_2018-09-06.log&#10;/Users/glauterlemos/Documents/DESENVOLVIMENTO/SINGULARITY_NET/PROJECT/services/nlp-services/sentiment_analysis/log/2018-09-06.log" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -268,14 +292,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1280" height="730" extended-state="6" />
+    <frame x="37" y="28" width="1849" height="1035" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22940226" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15882678" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32919255" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32873806" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.2" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -285,7 +309,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.20376176" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.41463414" />
       <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -311,12 +335,6 @@
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/modulefinder.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/text-summarization/run_service.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/text-summarization/services/snet.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/sentiment-analysis/run.py" />
@@ -348,13 +366,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/buildproto.sh">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/text-summarization/services/summary_server.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="8" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="8" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/modules/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
@@ -439,23 +450,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2014">
           <caret line="106" lean-forward="true" selection-start-line="106" selection-end-line="106" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-            <marker date="1536082984105" expanded="true" signature="554:558" ph="..." />
-            <marker date="1536082984105" expanded="true" signature="3169:3454" ph="..." />
-            <marker date="1536082984105" expanded="true" signature="3213:3217" ph="..." />
-            <marker date="1536082984105" expanded="true" signature="3369:3429" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sentiment_analysis/test_service.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="69" lean-forward="true" selection-start-line="69" selection-end-line="69" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -480,16 +474,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sentiment_analysis/run_service.py">
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/Dockerfile">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="20" column="6" selection-start-line="20" selection-start-column="6" selection-end-line="20" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#14#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="228">
+          <caret line="42" column="15" selection-start-line="42" selection-start-column="15" selection-end-line="42" selection-end-column="15" />
         </state>
       </provider>
     </entry>
@@ -500,26 +488,125 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sentiment_analysis/config/snetd_sentiment_analysis_config.json">
+    <entry file="file://$PROJECT_DIR$/text-summarization/services/snet.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/text-summarization/services/summary_server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="73" selection-start-line="5" selection-start-column="31" selection-end-line="5" selection-end-column="73" />
+        <state relative-caret-position="37">
+          <caret line="6" column="8" selection-start-line="6" selection-start-column="8" selection-end-line="6" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sentiment_analysis/Dockerfile">
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/config/snetd_sentiment_analysis_config.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="42" column="15" selection-start-line="42" selection-start-column="15" selection-end-line="42" selection-end-column="15" />
+        <state relative-caret-position="150">
+          <caret line="10" column="34" lean-forward="true" selection-start-line="10" selection-start-column="34" selection-end-line="10" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/text-summarization/run_service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="18" column="15" lean-forward="true" selection-start-line="18" selection-start-column="15" selection-end-line="18" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/typeshed/stdlib/2and3/datetime.pyi">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="543">
+          <caret line="241" column="34" selection-start-line="241" selection-start-column="34" selection-end-line="241" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/logging/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="1011" column="8" selection-start-line="1011" selection-start-column="8" selection-end-line="1011" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/log_dir_2018-09-06.log">
+      <provider selected="true" editor-type-id="LogFileEditorProvider" />
+      <provider editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/log.log">
+      <provider selected="true" editor-type-id="LogFileEditorProvider">
+        <state relative-caret-position="60">
+          <caret line="4" column="66" lean-forward="true" selection-start-line="4" selection-start-column="66" selection-end-line="4" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/log/2018-09-06.log">
+      <provider selected="true" editor-type-id="LogFileEditorProvider">
+        <state relative-caret-position="75">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/test_log.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" selection-start-line="21" selection-end-line="30" selection-end-column="35" />
+          <folding>
+            <element signature="e#20#34#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/log/log_config.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+          <folding>
+            <element signature="e#20#34#0" expanded="true" />
+            <marker date="1536240849616" expanded="true" signature="70:71" ph="..." />
+            <marker date="1536240849616" expanded="true" signature="70:946" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/run_service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="19" column="18" selection-start-line="19" selection-start-column="18" selection-end-line="19" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+            <marker date="1536241463538" expanded="true" signature="3392:3393" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="278" column="25" lean-forward="true" selection-start-line="278" selection-start-column="25" selection-end-line="278" selection-end-column="25" />
+        <state relative-caret-position="-246">
+          <caret line="246" lean-forward="true" selection-start-line="246" selection-end-line="246" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/log/service.log">
+      <provider selected="true" editor-type-id="LogFileEditorProvider">
+        <state relative-caret-position="345">
+          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/test_service.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="93" column="4" lean-forward="true" selection-start-line="93" selection-start-column="4" selection-end-line="93" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
