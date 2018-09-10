@@ -60,7 +60,7 @@
           <entry key="Dockerfile" value="191" />
           <entry key="dummy" value="42" />
           <entry key="gitignore" value="3" />
-          <entry key="md" value="2192" />
+          <entry key="md" value="2194" />
           <entry key="proto" value="115" />
           <entry key="py" value="4733" />
           <entry key="sh" value="399" />
@@ -72,7 +72,7 @@
           <entry key="Bash" value="399" />
           <entry key="Dockerfile" value="191" />
           <entry key="Git file" value="3" />
-          <entry key="Markdown" value="2192" />
+          <entry key="Markdown" value="2194" />
           <entry key="PLAIN_TEXT" value="50" />
           <entry key="PROTO" value="115" />
           <entry key="Python" value="4733" />
@@ -86,8 +86,8 @@
         <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="234">
-                <caret line="53" column="29" lean-forward="true" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="29" />
+              <first_editor relative-caret-position="194">
+                <caret line="29" column="54" lean-forward="true" selection-start-line="29" selection-start-column="54" selection-end-line="29" selection-end-column="54" />
               </first_editor>
               <second_editor />
             </state>
@@ -608,8 +608,8 @@
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="234">
-            <caret line="53" column="29" lean-forward="true" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="29" />
+          <first_editor relative-caret-position="194">
+            <caret line="29" column="54" lean-forward="true" selection-start-line="29" selection-start-column="54" selection-end-line="29" selection-end-column="54" />
           </first_editor>
           <second_editor />
         </state>

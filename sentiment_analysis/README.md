@@ -16,27 +16,27 @@ WIP = Work in Progress
 ## Deployment:
 
 #### Deploy a new service
-```
+```bash
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/deploy_service.sh | bash
 ```
 
 #### Update a running service
-```
+```bash
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/update_service.sh | bash
 ```
 
 #### Remove a running service
-```
+```bash
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/remove_service.sh | bash
 ```
 
 #### Start a running container service
-```
+```bash
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/start_running_service.sh | bash
 ```
 
 #### Stop a running container service
-```
+```bash
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/stop_running_service.sh | bash
 ```
 
