@@ -60,7 +60,7 @@
           <entry key="Dockerfile" value="191" />
           <entry key="dummy" value="42" />
           <entry key="gitignore" value="3" />
-          <entry key="md" value="1524" />
+          <entry key="md" value="1740" />
           <entry key="proto" value="115" />
           <entry key="py" value="4733" />
           <entry key="sh" value="399" />
@@ -72,7 +72,7 @@
           <entry key="Bash" value="399" />
           <entry key="Dockerfile" value="191" />
           <entry key="Git file" value="3" />
-          <entry key="Markdown" value="1524" />
+          <entry key="Markdown" value="1740" />
           <entry key="PLAIN_TEXT" value="50" />
           <entry key="PROTO" value="115" />
           <entry key="Python" value="4733" />
@@ -86,8 +86,8 @@
         <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="527">
-                <caret line="57" column="14" selection-start-line="57" selection-start-column="14" selection-end-line="57" selection-end-column="14" />
+              <first_editor relative-caret-position="423">
+                <caret line="47" column="52" lean-forward="true" selection-start-line="47" selection-start-column="52" selection-end-line="47" selection-end-column="52" />
               </first_editor>
               <second_editor />
             </state>
@@ -192,8 +192,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="92" />
-    <option name="y" value="60" />
+    <option name="x" value="67" />
+    <option name="y" value="22" />
     <option name="width" value="1808" />
     <option name="height" value="951" />
   </component>
@@ -294,7 +294,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="92" y="60" width="1808" height="951" extended-state="0" />
+    <frame x="67" y="22" width="1808" height="951" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16477916" />
@@ -621,8 +621,8 @@
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="527">
-            <caret line="57" column="14" selection-start-line="57" selection-start-column="14" selection-end-line="57" selection-end-column="14" />
+          <first_editor relative-caret-position="423">
+            <caret line="47" column="52" lean-forward="true" selection-start-line="47" selection-start-column="52" selection-end-line="47" selection-end-column="52" />
           </first_editor>
           <second_editor />
         </state>

@@ -43,6 +43,7 @@ To use this services, you must fill the input parameters below:
 
 #### Input Parameters:
 - languages - languages the service will consider in the analysis. For unique language: "en". For multiple languages: "en,pt,es"
+- keywords - This parameter can be used for one word or a sentence. E.g: For one word: => "happiness". For a sentence => "People are discussing about Donald Trump decisions."
 - msg_limit - number of messages to analyse
 - time_limit - duration of the analysis (in seconds)
 
