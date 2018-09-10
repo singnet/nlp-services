@@ -27,21 +27,6 @@ $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/remove_service.sh | bash
 ```
 
-#### Update a docker service image
-```
-$ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/update_docker_image.sh | bash
-```
-
-#### Run a service container
-```
-$ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/run_service_container.sh | bash
-```
-
-#### Remove a service container
-```
-$ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/remove_service_container.sh | bash
-```
-
 #### Start a running container service
 ```
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/start_running_service.sh | bash
