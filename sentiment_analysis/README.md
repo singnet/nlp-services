@@ -37,15 +37,15 @@ $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/stop_running_service.sh | bash
 ```
 
-## Using:
+## Usage:
 
 To use this services, you must fill the input parameters below:
 
 #### Input Parameters:
-- languages - languages the service will consider in the analysis. For unique language: "en". For multiple languages: "en,pt,es"
-- keywords - This parameter can be used for one word or a sentence. E.g: For one word: => "happiness". For a sentence => "People are discussing about Donald Trump decisions."
-- msg_limit - number of messages to analyse
-- time_limit - duration of the analysis (in seconds)
+- languages - languages the service will consider in the analysis. For unique language: "en". For multiple languages: "en,pt,es".
+- keywords - This parameter can be used for one word or a sentence. E.g: For one word: => "happiness". For a sentence => "People are discussing about Donald Trump decisions".
+- msg_limit - number of messages to analyse.
+- time_limit - duration of the analysis (in seconds).
 
 #### Output content:
 The result of analysis will be a base64 text including the result of analysis for each captured message.
