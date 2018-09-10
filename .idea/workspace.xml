@@ -60,7 +60,7 @@
           <entry key="Dockerfile" value="191" />
           <entry key="dummy" value="42" />
           <entry key="gitignore" value="3" />
-          <entry key="md" value="2187" />
+          <entry key="md" value="2192" />
           <entry key="proto" value="115" />
           <entry key="py" value="4733" />
           <entry key="sh" value="399" />
@@ -72,7 +72,7 @@
           <entry key="Bash" value="399" />
           <entry key="Dockerfile" value="191" />
           <entry key="Git file" value="3" />
-          <entry key="Markdown" value="2187" />
+          <entry key="Markdown" value="2192" />
           <entry key="PLAIN_TEXT" value="50" />
           <entry key="PROTO" value="115" />
           <entry key="Python" value="4733" />
@@ -86,8 +86,8 @@
         <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="160">
-                <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
+              <first_editor relative-caret-position="234">
+                <caret line="53" column="29" lean-forward="true" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="29" />
               </first_editor>
               <second_editor />
             </state>
@@ -180,10 +180,9 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="51" />
-    <option name="y" value="22" />
-    <option name="width" value="1808" />
-    <option name="height" value="951" />
+    <option name="y" value="122" />
+    <option name="width" value="1920" />
+    <option name="height" value="888" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -299,7 +298,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.19732441" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.25975475" />
       <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -609,8 +608,8 @@
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="160">
-            <caret line="47" lean-forward="true" selection-start-line="47" selection-end-line="47" />
+          <first_editor relative-caret-position="234">
+            <caret line="53" column="29" lean-forward="true" selection-start-line="53" selection-start-column="29" selection-end-line="53" selection-end-column="29" />
           </first_editor>
           <second_editor />
         </state>

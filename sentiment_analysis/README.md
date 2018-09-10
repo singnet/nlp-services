@@ -1,8 +1,8 @@
 # Sentiment Analysis Services
 
-####This repository contains a sentiment analysis service.
+#### This repository contains a sentiment analysis service.
 
-#####Avaliable methods of sentiment analysis:
+##### Avaliable methods of sentiment analysis:
 
 - Twitter Stream Search Service - Capture and analyse all streamed twitter messages.
 - Twitter Historical Search - Capture and analyse all twitter messages since 2006.
@@ -42,8 +42,8 @@ $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis
 
 ## Usage:
 
-####Twitter Stream Search:
-#####Method signature: 
+#### Twitter Stream Search:
+##### Method signature: 
 streamAnalysis()
 
 To use this services, you must fill the input parameters below:
@@ -55,7 +55,7 @@ To use this services, you must fill the input parameters below:
 - msg_limit - number of messages to analyse.
 - time_limit - duration of the analysis (in seconds).
 
-#####Service call example:
+##### Service call example:
 ```
 $ snet client call streamAnalysis '{"credentials":{"consumer_key":"TscHeuS3vQN7bY82vNhE419ka","consumer_secret":"5rCTzeRgwT0rTx56KCIQm0OUvgCmQ2WF9BLBC8NdkpmDpNYVoH","access_token":"91892303-CUT4ZuJTqAxX2Ra2Bj7g1Hw0WmRPRtaiCPW2qm8CD","token_secret":"SK7TVAL4QC9O93rhiyv1W4vLJUP0tUMWnjLbO7GkQ0IvE"},"languages":"en","sentences":"happy","time_limit":"3","msg_limit":"3"}' --no-confirm
 ```
