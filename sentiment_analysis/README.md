@@ -41,7 +41,8 @@ $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis
 ```
 
 ## Usage:
-Twitter Stream Search Service
+
+####Twitter Stream Search:
 #####Method signature: 
 streamAnalysis()
 
