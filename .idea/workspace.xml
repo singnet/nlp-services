@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bb487379-6de1-4a5d-85a5-a6101a0340b3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sentiment_analysis/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/deploy/remove_service.sh" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/deploy/remove_service.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/deploy/remove_service_container.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/deploy/run_service_container.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/deploy/update_docker_image.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/test_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/test_service.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -41,9 +33,9 @@
           <entry key="gitmodules" value="1" />
           <entry key="json" value="9" />
           <entry key="log" value="15" />
-          <entry key="md" value="7" />
+          <entry key="md" value="8" />
           <entry key="proto" value="4" />
-          <entry key="py" value="103" />
+          <entry key="py" value="104" />
           <entry key="pyi" value="1" />
           <entry key="sh" value="37" />
           <entry key="txt" value="2" />
@@ -56,10 +48,10 @@
           <entry key="Git file" value="3" />
           <entry key="JSON" value="9" />
           <entry key="Log" value="13" />
-          <entry key="Markdown" value="7" />
+          <entry key="Markdown" value="8" />
           <entry key="PLAIN_TEXT" value="6" />
           <entry key="PROTO" value="4" />
-          <entry key="Python" value="103" />
+          <entry key="Python" value="104" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
@@ -68,7 +60,7 @@
           <entry key="Dockerfile" value="191" />
           <entry key="dummy" value="42" />
           <entry key="gitignore" value="3" />
-          <entry key="md" value="829" />
+          <entry key="md" value="1524" />
           <entry key="proto" value="115" />
           <entry key="py" value="4733" />
           <entry key="sh" value="399" />
@@ -80,7 +72,7 @@
           <entry key="Bash" value="399" />
           <entry key="Dockerfile" value="191" />
           <entry key="Git file" value="3" />
-          <entry key="Markdown" value="829" />
+          <entry key="Markdown" value="1524" />
           <entry key="PLAIN_TEXT" value="50" />
           <entry key="PROTO" value="115" />
           <entry key="Python" value="4733" />
@@ -94,8 +86,8 @@
         <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="255">
-                <caret line="17" column="3" lean-forward="true" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+              <first_editor relative-caret-position="527">
+                <caret line="57" column="14" selection-start-line="57" selection-start-column="14" selection-end-line="57" selection-end-column="14" />
               </first_editor>
               <second_editor />
             </state>
@@ -103,19 +95,13 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sentiment_analysis/deploy/remove_service.sh">
+        <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" column="88" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="88" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sentiment_analysis/deploy/update_service.sh">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="156" selection-start-line="3" selection-start-column="156" selection-end-line="3" selection-end-column="156" />
+            <state relative-caret-position="-2395">
+              <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -208,8 +194,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="92" />
     <option name="y" value="60" />
-    <option name="width" value="1670" />
-    <option name="height" value="860" />
+    <option name="width" value="1808" />
+    <option name="height" value="951" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -235,7 +221,7 @@
               <item name="nlp-services" type="b2602c69:ProjectViewProjectNode" />
               <item name="nlp-services" type="462c0819:PsiDirectoryNode" />
               <item name="sentiment_analysis" type="462c0819:PsiDirectoryNode" />
-              <item name="deploy" type="462c0819:PsiDirectoryNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -308,10 +294,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="92" y="60" width="1670" height="860" extended-state="0" />
+    <frame x="92" y="60" width="1808" height="951" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17874692" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16477916" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -325,7 +311,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.44010416" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.20605356" />
       <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -531,13 +517,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/test_log.py" />
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/deploy/start_running_service.sh">
       <provider selected="true" editor-type-id="text-editor">
@@ -629,11 +608,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2395">
+          <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="255">
-            <caret line="17" column="3" lean-forward="true" selection-start-line="17" selection-start-column="3" selection-end-line="17" selection-end-column="3" />
+          <first_editor relative-caret-position="527">
+            <caret line="57" column="14" selection-start-line="57" selection-start-column="14" selection-end-line="57" selection-end-column="14" />
           </first_editor>
           <second_editor />
         </state>

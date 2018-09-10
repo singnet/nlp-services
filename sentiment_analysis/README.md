@@ -10,7 +10,7 @@ This repository contains a number of [SingularityNET](http://singularitynet.io) 
 - Language Generation - WIP
 #####WIP = Work in Progress
 
-## Deployment utils:
+## Deployment:
 
 #### Deploy a new service
 ```
@@ -35,4 +35,27 @@ $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis
 #### Stop a running container service
 ```
 $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis/sentiment_analysis/deploy/stop_running_service.sh | bash
+```
+
+## Using:
+
+To use this services, you must fill the input parameters below:
+
+#### Input Parameters:
+- languages - languages the service will consider in the analysis. For unique language: "en". For multiple languages: "en,pt,es"
+- msg_limit - number of messages to analyse
+- time_limit - duration of the analysis (in seconds)
+
+#### Output content:
+The result of analysis will be a base64 text including the result of analysis for each captured message.
+
+Output example:
+
+```
+This t-shirt is awesome.
+{'neg': 0.0, 'neu': 0.423, 'pos': 0.577, 'compound': 0.6249}
+
+Bad people are coming.
+{'neg': 0.538, 'neu': 0.462, 'pos': 0.0, 'compound': -0.5423}
+
 ```
