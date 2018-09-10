@@ -1,6 +1,8 @@
 # Sentiment Analysis Services
 
-This repository contains a number of [SingularityNET](http://singularitynet.io) services for understanding or manipulating natural language.
+####This repository contains a sentiment analysis service.
+
+#####Avaliable methods of sentiment analysis:
 
 - Twitter Stream Search Service - Capture and analyse all streamed twitter messages.
 - Twitter Historical Search - Capture and analyse all twitter messages since 2006.
@@ -8,7 +10,8 @@ This repository contains a number of [SingularityNET](http://singularitynet.io) 
 - Named Entity Recognition - WIP
 - Topic Classification - WIP
 - Language Generation - WIP
-#####WIP = Work in Progress
+
+WIP = Work in Progress
 
 ## Deployment:
 
@@ -38,16 +41,25 @@ $ curl https://raw.githubusercontent.com/singnet/nlp-services/sentiment_analysis
 ```
 
 ## Usage:
+Twitter Stream Search Service
+#####Method signature: 
+streamAnalysis()
 
 To use this services, you must fill the input parameters below:
 
-#### Input Parameters:
+##### Input parameters:
+- credentials - Twitter credentials (get on twitter for developers page)
 - languages - languages the service will consider in the analysis. For unique language: "en". For multiple languages: "en,pt,es".
 - keywords - This parameter can be used for one word or a sentence. E.g: For one word: => "happiness". For a sentence => "People are discussing about Donald Trump decisions".
 - msg_limit - number of messages to analyse.
 - time_limit - duration of the analysis (in seconds).
 
-#### Output content:
+#####Service call example:
+```
+$ snet client call streamAnalysis '{"credentials":{"consumer_key":"TscHeuS3vQN7bY82vNhE419ka","consumer_secret":"5rCTzeRgwT0rTx56KCIQm0OUvgCmQ2WF9BLBC8NdkpmDpNYVoH","access_token":"91892303-CUT4ZuJTqAxX2Ra2Bj7g1Hw0WmRPRtaiCPW2qm8CD","token_secret":"SK7TVAL4QC9O93rhiyv1W4vLJUP0tUMWnjLbO7GkQ0IvE"},"languages":"en","sentences":"happy","time_limit":"3","msg_limit":"3"}' --no-confirm
+```
+
+##### Output example:
 The result of analysis will be a base64 text including the result of analysis for each captured message.
 
 Output example:
