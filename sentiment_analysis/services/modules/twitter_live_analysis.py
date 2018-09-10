@@ -1,108 +1,75 @@
-import time
 import json
 
-from nltk.sentiment import SentimentIntensityAnalyzer
-from tweepy import Stream
-from tweepy import OAuthHandler
-from tweepy.streaming import StreamListener
+import requests
+
+from TwitterAPI import TwitterAPI
 
 # Twitter Credentials
 # consumer key, consumer secret, access token, access secret.
+from requests_oauthlib import OAuth1
+
 consumer_key = "TscHeuS3vQN7bY82vNhE419ka"
 consumer_secret = "5rCTzeRgwT0rTx56KCIQm0OUvgCmQ2WF9BLBC8NdkpmDpNYVoH"
 access_token = "91892303-CUT4ZuJTqAxX2Ra2Bj7g1Hw0WmRPRtaiCPW2qm8CD"
 token_secret = "SK7TVAL4QC9O93rhiyv1W4vLJUP0tUMWnjLbO7GkQ0IvE"
 
 
-class SnetListener(StreamListener):
+# SEARCH_TERM = 'Obama'
+# PRODUCT = 'fullarchive'
+# LABEL = 'SentimentAnalysis01'
 
-    def __init__(self, msg_limit=0, time_limit=0):
-        self.analizer = SentimentIntensityAnalyzer()
-        self.start_time = time.time()
-        self.time_limit = time_limit
-        self.msg_limit = msg_limit
-        self.msg_counter = 0
-        self.sentences = []
-        super(SnetListener, self).__init__()
+# api = TwitterAPI(consumer_key, consumer_secret, access_token, token_secret)
+# result = api.request('tweets/search/%s/:%s' % (PRODUCT, LABEL), {"query": "Obama", "maxResults": "10", "fromDate": "200801010910", "toDate": "200801150910"})
+# jsondata = result.json()
+# print(str(jsondata['next']))
 
-    def on_data(self, data):
+# for item in result:
+#     print(str(item['text']))
 
-        try:
-            # Counter Increment
-            self.msg_counter += 1
+class TwitterApiReader:
 
-            # Check limits
-            if self.check_limits() is not True:
-                return False
+    auth = None
 
-            # Converting json
-            all_data = json.loads(data)
-            tweet = all_data["text"]
+    received_msgs = []
+    error_message = None
+    finished = False
 
-            # Check if has text
-            if tweet is not None:
-                print(str(tweet))
-                print(str(self.analizer.polarity_scores(tweet)))
-                item = (tweet, self.analizer.polarity_scores(tweet))
-                self.sentences.append(item)
+    def __init__(self, consumer_key, consumer_secret, access_token, token_secret):
+        self.auth = OAuth1(consumer_key, consumer_secret, access_token, token_secret)
 
-            # sentiment_value, confidence = s.sentiment(tweet)
-            # print(tweet, sentiment_value, confidence)
-            # if confidence * 100 >= 80:
-            #     output = open("output/twitter-out.txt", "a")
-            #     output.write(sentiment_value)
-            #     output.write('\n')
-            #     output.close()
-            # return True
+    # url example:
+    # https://api.twitter.com/1.1/tweets/search/fullarchive/SentimentAnalysis01.json
+    #
+    # header example:
+    # headers = {'content-type': 'application/json'}
+    #
+    # request_data example:
+    # {
+    #   "query":"Obama",
+    #   "maxResults":"10",
+    #   "fromDate":"200801010910",
+    #   "toDate":"200801150910"
+    # }
+    def read(self, url, params):
+        response = requests.post(auth=self.auth, url=url, json=params)
+        json_data = response.json()
 
-            return True
-
-        except KeyError:
-            return True
-
-    def on_error(self, status_code):
-        if status_code == 420:
-            # returning False in on_data disconnects the stream
-            return False
-
-    # Check search limits
-    def check_limits(self):
-        if self.time_limit > 0 and ((time.time() - self.start_time) > self.time_limit):
-            print("SORRY, TIME LIMIT IS OVER !")
-            return False
-        if self.msg_limit > 0 and (self.msg_counter > self.msg_limit):
-            print("SORRY, MSGS LIMIT IS OVER !")
-            return False
-        return True
+        if response.status_code == requests.codes.ok:
+            if len(json_data['results']) > 0:
+                self.received_msgs.append(json_data['results'])
+            if json_data['next']:
+                self.read(url, params)
+            else:
+                self.finished = True
+        else:
+            self.error_message = json_data['error']['message']
+            print("Error found => " + self.error_message)
 
 
-class StreamManager:
+reader = TwitterApiReader(consumer_key, consumer_secret, access_token, token_secret)
+url = "https://api.twitter.com/1.1/tweets/search/fullarchive/SentimentAnalysis01.json"
+params = {"query":"Obama", "maxResults":"10", "fromDate":"200801010910", "toDate":"200801150910"}
 
-    auth = ''
-    stream = ''
+reader.read(url=url, params=params)
 
-    def __init__(self, consumer_key, consumer_secret, access_token, token_secret, msg_limit=0, time_limit=0):
-        self.auth = OAuthHandler(consumer_key, consumer_secret)
-        self.auth.set_access_token(access_token, token_secret)
-        self.stream = Stream(self.auth, SnetListener(msg_limit=msg_limit, time_limit=time_limit))
-
-    def filter(self, languages, keywords, async=False):
-        self.stream.filter(languages=languages, track=keywords, async=async)
-        self.stream.disconnect()
-
-    def disconnect(self):
-        self.stream.disconnect()
-
-    def sentences(self):
-        return self.stream.listener.sentences
-
-
-manager = StreamManager(consumer_key=consumer_key,
-                        consumer_secret=consumer_secret,
-                        access_token=access_token,
-                        token_secret=token_secret,
-                        msg_limit=1,
-                        time_limit=0)
-
-manager.filter(languages=["en"], keywords=["happy", "Trump", "USA"])
-print("TOTAL OF SENTENCES: " + str(len(manager.sentences())))
+print(str(reader.received_msgs))

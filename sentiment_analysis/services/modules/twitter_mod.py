@@ -1,7 +1,7 @@
+import requests
 import time
 import json
-from tweepy import Stream
-from tweepy import OAuthHandler
+from tweepy import Stream, OAuthHandler
 from tweepy.streaming import StreamListener
 
 
@@ -119,3 +119,42 @@ class SnetStreamManager:
         # if self.stream.listener.sentences is not None:
         #     print("sentences populated...")
         return self.stream.listener.sentences
+
+
+class TwitterApiReader:
+
+    auth = None
+    received_msgs = []
+    error_message = None
+    finished = False
+
+    def __init__(self, consumer_key, consumer_secret, access_token, token_secret):
+        self.auth = OAuth1(consumer_key, consumer_secret, access_token, token_secret)
+
+    # url example:
+    # https://api.twitter.com/1.1/tweets/search/fullarchive/SentimentAnalysis01.json
+    #
+    # header example:
+    # headers = {'content-type': 'application/json'}
+    #
+    # request_data example:
+    # {
+    #   "query":"Obama",
+    #   "maxResults":"10",
+    #   "fromDate":"200801010910",
+    #   "toDate":"200801150910"
+    # }
+    def read(self, url, params):
+        response = requests.post(auth=self.auth, url=url, json=params)
+        json_data = response.json()
+
+        if response.status_code == requests.codes.ok:
+            if len(json_data['results']) > 0:
+                self.received_msgs.append(json_data['results'])
+            if json_data['next']:
+                self.read(url, params)
+            else:
+                self.finished = True
+        else:
+            self.error_message = json_data['error']['message']
+            print("Error found => " + self.error_message)
