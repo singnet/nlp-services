@@ -4,40 +4,13 @@ import base64
 import grpc
 import concurrent.futures as futures
 from nltk.sentiment import SentimentIntensityAnalyzer
-from services.modules import complex_mod, twitter_mod
+from services.modules import consensus_mod, twitter_mod
 from services.model import sentiment_analysis_rpc_pb2_grpc as grpc_bt_grpc
 from services.model.sentiment_analysis_rpc_pb2 import OutputMessage
 from services import common
 from log import log_config
 
 logger = log_config.getLogger('sentiment_analysis.py')
-
-'''
-Simple arithmetic services to test the Snet Daemon (gRPC), dApp and/or Snet-CLI.
-The user must provide the method (arithmetic operation) and
-two numeric inputs: "a" and "b".
-
-e.g:
-With dApp:  'method': mul
-            'params': {"a": 12.0, "b": 77.0}
-Resulting:  response:
-                value: 924.0
-
-
-Full snet-cli cmd:
-$ snet client call mul '{"a":12.0, "b":77.0}'
-
-Result:
-(Transaction info)
-Signing job...
-
-Read call params from cmdline...
-
-Calling services...
-
-    response:
-        value: 924.0
-'''
 
 
 # Create a class to be added to the gRPC server
@@ -110,16 +83,16 @@ class SentimentIntensityAnalysisServicer(grpc_bt_grpc.SentimentIntensityAnalysis
 
 # Create a class to be added to the gRPC server
 # derived from the protobuf codes.
-class SentimentComplexAnalysisServicer(grpc_bt_grpc.SentimentComplexAnalysisServicer):
+class SentimentConsensusAnalysisServicer(grpc_bt_grpc.SentimentConsensusAnalysisServicer):
 
     def __init__(self):
         # Just for debugging purpose.
-        logger.debug("call => SentimentComplexAnalysisServicer()")
+        logger.debug("call => SentimentConsensusAnalysisServicer()")
 
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
     # context: object that provides RPC-specific information (timeout, etc).
-    def complexAnalysis(self, request, context):
+    def consensusAnalysis(self, request, context):
         # In our case, request is a InputMessage() object (from .proto file)
         self.value = request.value
 
@@ -137,7 +110,7 @@ class SentimentComplexAnalysisServicer(grpc_bt_grpc.SentimentComplexAnalysisServ
                 if len(line) > 1:
                     stringResult += line
                     stringResult += '\n'
-                    stringResult += str(complex_mod.sentiment(line))
+                    stringResult += str(consensus_mod.sentiment(line))
                     stringResult += '\n\n'
 
         # Encoding result
@@ -146,7 +119,7 @@ class SentimentComplexAnalysisServicer(grpc_bt_grpc.SentimentComplexAnalysisServ
         # To respond we need to create a OutputMessage() object (from .proto file)
         self.result = OutputMessage()
         self.result.value = resultBase64
-        logger.debug('call => complexAnalysis({})={}'.format(self.value, self.result.value))
+        logger.debug('call => consensusAnalysis({})={}'.format(self.value, self.result.value))
         return self.result
 
 
@@ -194,7 +167,7 @@ class CustomCorpusAnalysisServicer(grpc_bt_grpc.ShowMessageServicer):
                     file.write(line)
                     file.write("\n")
                     # print(str(sent_mod.sentiment(line)))
-                    file.write(str(complex_mod.sentiment(line)))
+                    file.write(str(consensus_mod.sentiment(line)))
                     file.write("\n\n")
 
         file.close()
@@ -209,6 +182,68 @@ class CustomCorpusAnalysisServicer(grpc_bt_grpc.ShowMessageServicer):
         self.result.value = resultBase64
         logger.debug('call => customCorpusAnalysis({})={}'.format(self.value, self.result.value))
         return self.result
+
+
+# Create a class to be added to the gRPC server
+# derived from the protobuf codes.
+class TwitterHistoricalAnalysisServicer(grpc_bt_grpc.TwitterHistoricalAnalysisServicer):
+
+    def __init__(self):
+        # Just for debugging purpose.
+        logger.debug("call => TwitterHistoricalAnalysisServicer()")
+        self.reader = None
+        self.stringResult = ''
+        self.resultBase64 = ''
+
+    # The method that will be exposed to the snet-cli call command.
+    # request: incoming data
+    # context: object that provides RPC-specific information (timeout, etc).
+    def historicalAnalysis(self, request, context):
+        try:
+            # Setting up the Stream Manager
+            self.reader = twitter_mod.TwitterApiReader(consumer_key=request.credentials.consumer_key,
+                                                       consumer_secret=request.credentials.consumer_secret,
+                                                       access_token=request.credentials.access_token,
+                                                       token_secret=request.credentials.token_secret)
+            # Twitter query parameters config
+            product = request.product
+            environment = request.environment
+            url = "https://api.twitter.com/1.1/tweets/search/" + product + "/" + environment + '.json'
+            params = {"query": request.keywords, "maxResults": request.max_results, "fromDate": request.from_date,
+                      "toDate": request.to_date}
+
+            # Start searching on twitter
+            self.reader.read(url=url, params=params)
+            logger.debug('call => historicalAnalysis() starting...')
+            messages = self.reader.messages()
+
+            print("Messages size => " + str(len(self.reader.messages())))
+            print("Error msg =>" + self.reader.error_message)
+
+            if len(messages) > 0:
+                # Generating result
+                for line in messages:
+                    if line is not None:
+                        if len(line) > 1:
+                            self.stringResult += line
+                            self.stringResult += '\n'
+                            self.stringResult += str(consensus_mod.sentiment(line))
+                            self.stringResult += '\n\n'
+
+        except Exception as e:
+            logger.debug('call => historicalAnalysis() error => ' + str(e))
+            if self.reader.error_message is not '':
+                self.stringResult = " status => " + self.reader.error_message + " at: " + str(datetime.datetime.now())
+                logger.error('Error description => ' + self.stringResult)
+
+        finally:
+            # Encoding result
+            self.resultBase64 = base64.b64encode(str(self.stringResult).encode('utf-8'))
+            # To respond we need to create a OutputMessage() object (from .proto file)
+            self.result = OutputMessage()
+            self.result.value = self.resultBase64
+            logger.debug('call => historicalAnalysis()={}'.format(self.result.value))
+            return self.result
 
 
 # Create a class to be added to the gRPC server
@@ -229,14 +264,6 @@ class TwitterStreamAnalysisServicer(grpc_bt_grpc.TwitterStreamAnalysisServicer):
     def streamAnalysis(self, request, context):
         try:
 
-            # if all([request.credentials.consumer_key,
-            #         request.credentials.consumer_secret,
-            #         request.credentials.access_token,
-            #         request.credentials.token_secret,
-            #         request.time_limit,
-            #         request.msg_limit]):
-            #     print("SOMETHING IS WRONG !!!")
-
             # Setting up the Stream Manager
             self.manager = twitter_mod.SnetStreamManager(consumer_key=request.credentials.consumer_key,
                                                          consumer_secret=request.credentials.consumer_secret,
@@ -246,16 +273,9 @@ class TwitterStreamAnalysisServicer(grpc_bt_grpc.TwitterStreamAnalysisServicer):
                                                          time_limit=request.msg_limit)
 
             # Start filtering on twitter
-            self.manager.filter(languages=request.languages, keywords=request.sentences)
+            self.manager.filter(languages=request.languages, keywords=request.keywords)
 
             sentences = self.manager.sentences()
-
-            # while manager.isrunning():
-            #     print("running...")
-            #
-            # print("STATUS:" + str(manager.isrunning()))
-
-            print("TOTAL OF SENTENCES: " + str(len(sentences)))
 
             if len(sentences) > 0:
                 # Generating result
@@ -264,18 +284,17 @@ class TwitterStreamAnalysisServicer(grpc_bt_grpc.TwitterStreamAnalysisServicer):
                         if len(line) > 1:
                             self.stringResult += line
                             self.stringResult += '\n'
-                            self.stringResult += str(complex_mod.sentiment(line))
+                            self.stringResult += str(consensus_mod.sentiment(line))
                             self.stringResult += '\n\n'
             else:
                 self.status_error_code = str(self.manager.status_error_code())
 
-        except KeyError as e:
-            self.stringResult = "Error => " + str(e)
-
-        finally:
+        except Exception as e:
             if self.status_error_code:
                 self.stringResult = " status error code => " + self.status_error_code + " at: " + str(datetime.datetime.now())
                 logger.error('Error description => ' + self.stringResult)
+
+        finally:
 
             # Encoding result
             self.resultBase64 = base64.b64encode(str(self.stringResult).encode('utf-8'))
@@ -299,8 +318,9 @@ def serve(max_workers=10, port=7777):
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
     grpc_bt_grpc.add_ShowMessageServicer_to_server(ShowMessageServicer(), server)
     grpc_bt_grpc.add_SentimentIntensityAnalysisServicer_to_server(SentimentIntensityAnalysisServicer(), server)
-    grpc_bt_grpc.add_SentimentComplexAnalysisServicer_to_server(SentimentComplexAnalysisServicer(), server)
+    grpc_bt_grpc.add_SentimentConsensusAnalysisServicer_to_server(SentimentConsensusAnalysisServicer(), server)
     grpc_bt_grpc.add_CustomCorpusAnalysisServicer_to_server(CustomCorpusAnalysisServicer(), server)
+    grpc_bt_grpc.add_TwitterHistoricalAnalysisServicer_to_server(TwitterHistoricalAnalysisServicer(), server)
     grpc_bt_grpc.add_TwitterStreamAnalysisServicer_to_server(TwitterStreamAnalysisServicer(), server)
     server.add_insecure_port('[::]:{}'.format(port))
     return server

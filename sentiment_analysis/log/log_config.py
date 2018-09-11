@@ -7,7 +7,6 @@ import sys
 def getLogger(logger):
     logger = logging.getLogger(str(logger))
     log_level = logging.DEBUG
-    # log_filename = datetime.now().strftime('%Y-%m-%d') + '.log'
     logger.setLevel(log_level)
     formatter = logging.Formatter('%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s')
 

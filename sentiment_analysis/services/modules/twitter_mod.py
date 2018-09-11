@@ -1,9 +1,13 @@
 import requests
 import time
 import json
+
+from requests_oauthlib import OAuth1
 from tweepy import Stream, OAuthHandler
 from tweepy.streaming import StreamListener
+from log import log_config
 
+logger = log_config.getLogger('twitter_mod.py')
 
 # Custom listener
 # Extend Tweetpy StreamListener
@@ -12,7 +16,7 @@ from tweepy.streaming import StreamListener
 class SnetListener(StreamListener):
 
     def __init__(self, msg_limit=0, time_limit=0):
-        print("SnetListener INIT")
+        logger.debug("SnetListener INIT")
         self.start_time = time.time()
         self.time_limit = time_limit
         self.msg_limit = msg_limit
@@ -24,7 +28,7 @@ class SnetListener(StreamListener):
     def on_data(self, data):
 
         try:
-            print("SnetListener on_data")
+            logger.debug("SnetListener on_data")
             # Counter Increment
             self.msg_counter += 1
 
@@ -38,13 +42,13 @@ class SnetListener(StreamListener):
 
             # Check if has text
             if tweet is not None:
-                print(str(tweet))
-                print(str(self.analizer.polarity_scores(tweet)))
+                logger.debug(str(tweet))
+                logger.debug(str(self.analizer.polarity_scores(tweet)))
                 # item = (tweet, self.analizer.polarity_scores(tweet))
                 self.sentences.append(tweet)
 
             # sentiment_value, confidence = s.sentiment(tweet)
-            # print(tweet, sentiment_value, confidence)
+            # logger.debug(tweet, sentiment_value, confidence)
             # if confidence * 100 >= 80:
             #     output = open("output/twitter-out.txt", "a")
             #     output.write(sentiment_value)
@@ -58,7 +62,7 @@ class SnetListener(StreamListener):
             return True
 
     def on_error(self, status_code):
-        print("SnetListener on_error")
+        logger.debug("SnetListener on_error")
         self.status_error_code = status_code
         # if status_code > 400:
         # returning False in on_data disconnects the stream
@@ -66,12 +70,12 @@ class SnetListener(StreamListener):
 
     # Check search limits
     def check_limits(self):
-        print("SnetListener check_limits")
+        logger.debug("SnetListener check_limits")
         if self.time_limit > 0 and ((time.time() - self.start_time) > self.time_limit):
-            print("SORRY, TIME LIMIT IS OVER !")
+            logger.debug("SORRY, TIME LIMIT IS OVER !")
             return False
         if self.msg_limit > 0 and (self.msg_counter > self.msg_limit):
-            print("SORRY, MSGS LIMIT IS OVER !")
+            logger.debug("SORRY, MSGS LIMIT IS OVER !")
             return False
         return True
 
@@ -85,14 +89,14 @@ class SnetStreamManager:
     stream = ''
 
     def __init__(self, consumer_key, consumer_secret, access_token, token_secret, msg_limit=0, time_limit=0):
-        print("SnetStreamManager INIT")
+        logger.debug("SnetStreamManager INIT")
         self.auth = OAuthHandler(consumer_key, consumer_secret)
         self.auth.set_access_token(access_token, token_secret)
         self.stream = Stream(self.auth, SnetListener(msg_limit=msg_limit, time_limit=time_limit))
 
     def filter(self, languages, keywords, async=False):
-        print("SnetStreamManager filter")
-        # print("")
+        logger.debug("SnetStreamManager filter")
+        # logger.debug("")
         # self.stream.filter(languages=['en'], track=['happy'])
         self.stream.filter(languages=languages, track=keywords, async=async)
         # self.stream.disconnect()
@@ -115,16 +119,15 @@ class SnetStreamManager:
 
     # Get sentences
     def sentences(self):
-        # print("MANAGER SENTENCES...")
+        # logger.debug("MANAGER SENTENCES...")
         # if self.stream.listener.sentences is not None:
-        #     print("sentences populated...")
+        #     logger.debug("sentences populated...")
         return self.stream.listener.sentences
 
 
 class TwitterApiReader:
-
     auth = None
-    received_msgs = []
+    messages = []
     error_message = None
     finished = False
 
@@ -145,16 +148,27 @@ class TwitterApiReader:
     #   "toDate":"200801150910"
     # }
     def read(self, url, params):
-        response = requests.post(auth=self.auth, url=url, json=params)
-        json_data = response.json()
 
-        if response.status_code == requests.codes.ok:
-            if len(json_data['results']) > 0:
-                self.received_msgs.append(json_data['results'])
-            if json_data['next']:
-                self.read(url, params)
+        try:
+            logger.debug("Start reading...")
+            logger.debug(str(url))
+            logger.debug(str(params))
+
+            response = requests.post(auth=self.auth, url=url, json=params)
+            json_data = response.json()
+
+            if response.status_code == requests.codes.ok:
+                if len(json_data['results']) > 0:
+                    self.messages.append(json_data['results'])
+                if json_data['next']:
+                    self.read(url, params)
+                else:
+                    self.finished = True
             else:
-                self.finished = True
-        else:
-            self.error_message = json_data['error']['message']
-            print("Error found => " + self.error_message)
+                self.error_message = json_data['error']['message']
+                logger.debug("Error found => " + self.error_message)
+        except Exception as e:
+            logger.debug("Reader error => " + str(e))
+
+    def messages(self):
+        return self.messages

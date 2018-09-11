@@ -22,9 +22,14 @@ message TwitterCredentials {
 message TwitterInputMessage {
     TwitterCredentials credentials = 1;
     string languages = 2;
-    string sentences = 3;
+    string keywords = 3;
     int64 time_limit = 4;
     int64 msg_limit = 5;
+    string product = 6;
+    string environment = 7;
+    string from_date = 8;
+    string to_date = 9;
+    int64 max_results = 10;
 }
 
 message TwitterOutputMessage {
@@ -35,16 +40,16 @@ service SentimentIntensityAnalysis {
     rpc intensivityAnalysis(InputMessage) returns (OutputMessage) {}
 }
 
-service SentimentComplexAnalysis {
-    rpc complexAnalysis(InputMessage) returns (OutputMessage) {}
+service SentimentConsensusAnalysis {
+    rpc consensusAnalysis(InputMessage) returns (OutputMessage) {}
 }
 
 service CustomCorpusAnalysis {
     rpc customCorpusAnalysis(InputMessage) returns (OutputMessage) {}
 }
 
-service TwitterAnalysis {
-    rpc twitterAnalysis(TwitterInputMessage) returns (OutputMessage) {}
+service TwitterHistoricalAnalysis {
+    rpc historicalAnalysis(TwitterInputMessage) returns (OutputMessage) {}
 }
 
 service TwitterStreamAnalysis {

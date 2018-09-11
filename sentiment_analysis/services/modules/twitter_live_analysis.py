@@ -30,8 +30,8 @@ class TwitterApiReader:
 
     auth = None
 
-    received_msgs = []
-    error_message = None
+    messages = []
+    status = None
     finished = False
 
     def __init__(self, consumer_key, consumer_secret, access_token, token_secret):
@@ -56,14 +56,17 @@ class TwitterApiReader:
 
         if response.status_code == requests.codes.ok:
             if len(json_data['results']) > 0:
-                self.received_msgs.append(json_data['results'])
+                self.messages.append(json_data['results'])
             if json_data['next']:
                 self.read(url, params)
             else:
                 self.finished = True
         else:
-            self.error_message = json_data['error']['message']
-            print("Error found => " + self.error_message)
+            self.status = json_data['error']['message']
+            print("Error found => " + self.status)
+
+    def getMessages(self):
+        return self.messages
 
 
 reader = TwitterApiReader(consumer_key, consumer_secret, access_token, token_secret)
@@ -72,4 +75,7 @@ params = {"query":"Obama", "maxResults":"10", "fromDate":"200801010910", "toDate
 
 reader.read(url=url, params=params)
 
-print(str(reader.received_msgs))
+print(str(reader.messages))
+if reader.status is not None:
+    print(reader.status)
+
