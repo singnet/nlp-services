@@ -3,14 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="bb487379-6de1-4a5d-85a5-a6101a0340b3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/log/log_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/log/log_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/services/model/sentiment_analysis_rpc.proto" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/services/model/sentiment_analysis_rpc.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/services/modules/complex_mod.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/services/modules/consensus_mod.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/services/modules/twitter_live_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/services/modules/twitter_live_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/services/modules/twitter_mod.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/services/modules/twitter_mod.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sentiment_analysis/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/test_data/twitter_credentials.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/test_data/twitter_test_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sentiment_analysis/test_service.py" beforeDir="false" afterPath="$PROJECT_DIR$/sentiment_analysis/test_service.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -42,9 +36,9 @@
           <entry key="gitmodules" value="1" />
           <entry key="json" value="11" />
           <entry key="log" value="15" />
-          <entry key="md" value="8" />
+          <entry key="md" value="9" />
           <entry key="proto" value="8" />
-          <entry key="py" value="130" />
+          <entry key="py" value="132" />
           <entry key="pyi" value="1" />
           <entry key="sh" value="37" />
           <entry key="txt" value="2" />
@@ -57,10 +51,10 @@
           <entry key="Git file" value="3" />
           <entry key="JSON" value="11" />
           <entry key="Log" value="13" />
-          <entry key="Markdown" value="8" />
+          <entry key="Markdown" value="9" />
           <entry key="PLAIN_TEXT" value="6" />
           <entry key="PROTO" value="8" />
-          <entry key="Python" value="130" />
+          <entry key="Python" value="132" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
@@ -69,9 +63,9 @@
           <entry key="Dockerfile" value="191" />
           <entry key="dummy" value="66" />
           <entry key="gitignore" value="3" />
-          <entry key="md" value="2194" />
+          <entry key="md" value="2633" />
           <entry key="proto" value="314" />
-          <entry key="py" value="7593" />
+          <entry key="py" value="7625" />
           <entry key="sh" value="399" />
           <entry key="txt" value="8" />
         </counts>
@@ -81,10 +75,10 @@
           <entry key="Bash" value="399" />
           <entry key="Dockerfile" value="191" />
           <entry key="Git file" value="3" />
-          <entry key="Markdown" value="2194" />
+          <entry key="Markdown" value="2633" />
           <entry key="PLAIN_TEXT" value="74" />
           <entry key="PROTO" value="314" />
-          <entry key="Python" value="7593" />
+          <entry key="Python" value="7625" />
         </counts>
       </usages-collector>
     </session>
@@ -94,45 +88,23 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="264">
-              <caret line="12" selection-start-line="12" selection-end-line="12" selection-end-column="54" />
+            <state relative-caret-position="303">
+              <caret line="218" column="17" selection-start-line="218" selection-start-column="17" selection-end-line="218" selection-end-column="17" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/model/sentiment_analysis_rpc.proto">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="28" column="22" selection-start-line="28" selection-start-column="22" selection-end-line="28" selection-end-column="22" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/sentiment_analysis/test_service.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="231">
-              <caret line="28" column="35" lean-forward="true" selection-start-line="28" selection-start-column="35" selection-end-line="28" selection-end-column="35" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/modules/twitter_mod.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1484">
-              <caret line="30" column="10" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-                <marker date="1536669765620" expanded="true" signature="5419:5420" ph="..." />
-              </folding>
+        <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="313">
+                <caret line="90" column="11" selection-start-line="90" selection-start-column="11" selection-end-line="90" selection-end-column="11" />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -213,15 +185,15 @@
         <option value="$PROJECT_DIR$/sentiment_analysis/config/snetd_sentiment_analysis_config.json" />
         <option value="$PROJECT_DIR$/sentiment_analysis/services/service.json" />
         <option value="$PROJECT_DIR$/sentiment_analysis/deploy/remove_service.sh" />
-        <option value="$PROJECT_DIR$/sentiment_analysis/README.md" />
         <option value="$PROJECT_DIR$/sentiment_analysis/services/modules/teste.json" />
         <option value="$PROJECT_DIR$/sentiment_analysis/services/modules/twitter_live_analysis.py" />
         <option value="$PROJECT_DIR$/sentiment_analysis/log/log_config.py" />
         <option value="$PROJECT_DIR$/sentiment_analysis/services/model/sentiment_analysis_rpc.proto" />
         <option value="$PROJECT_DIR$/sentiment_analysis/test_data/twitter_test_data.py" />
-        <option value="$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py" />
         <option value="$PROJECT_DIR$/sentiment_analysis/services/modules/twitter_mod.py" />
         <option value="$PROJECT_DIR$/sentiment_analysis/test_service.py" />
+        <option value="$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py" />
+        <option value="$PROJECT_DIR$/sentiment_analysis/README.md" />
       </list>
     </option>
   </component>
@@ -261,13 +233,6 @@
               <item name="nlp-services" type="462c0819:PsiDirectoryNode" />
               <item name="sentiment_analysis" type="462c0819:PsiDirectoryNode" />
               <item name="services" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="nlp-services" type="b2602c69:ProjectViewProjectNode" />
-              <item name="nlp-services" type="462c0819:PsiDirectoryNode" />
-              <item name="sentiment_analysis" type="462c0819:PsiDirectoryNode" />
-              <item name="services" type="462c0819:PsiDirectoryNode" />
-              <item name="modules" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -343,7 +308,7 @@
     <frame x="0" y="22" width="1920" height="1058" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15654951" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15654951" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -357,7 +322,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.32919255" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="11" visible="true" weight="0.55693585" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.5165631" />
       <window_info anchor="bottom" id="Python Console" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -523,16 +488,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="194">
-            <caret line="29" column="54" lean-forward="true" selection-start-line="29" selection-start-column="54" selection-end-line="29" selection-end-column="54" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/modules/train_mod.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -653,7 +608,6 @@
           <caret line="33" column="10" selection-start-line="33" selection-start-column="4" selection-end-line="33" selection-end-column="10" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
-            <marker date="1536663662248" expanded="true" signature="1137:1142" ph="..." />
           </folding>
         </state>
       </provider>
@@ -679,19 +633,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py">
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/test_service.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="12" selection-start-line="12" selection-end-line="12" selection-end-column="54" />
+        <state relative-caret-position="111">
+          <caret line="20" column="22" lean-forward="true" selection-start-line="20" selection-start-column="22" selection-end-line="20" selection-end-column="22" />
           <folding>
-            <element signature="e#0#15#0" expanded="true" />
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/modules/twitter_mod.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1484">
+        <state relative-caret-position="15">
           <caret line="30" column="10" selection-start-line="30" selection-start-column="10" selection-end-line="30" selection-end-column="10" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
@@ -700,13 +654,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/sentiment_analysis/test_service.py">
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/services/sentiment_analysis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="28" column="35" lean-forward="true" selection-start-line="28" selection-start-column="35" selection-end-line="28" selection-end-column="35" />
+        <state relative-caret-position="303">
+          <caret line="218" column="17" selection-start-line="218" selection-start-column="17" selection-end-line="218" selection-end-column="17" />
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sentiment_analysis/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="313">
+            <caret line="90" column="11" selection-start-line="90" selection-start-column="11" selection-end-line="90" selection-end-column="11" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>

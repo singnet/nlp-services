@@ -214,11 +214,7 @@ class TwitterHistoricalAnalysisServicer(grpc_bt_grpc.TwitterHistoricalAnalysisSe
 
             # Start searching on twitter
             self.reader.read(url=url, params=params)
-            logger.debug('call => historicalAnalysis() starting...')
             messages = self.reader.messages()
-
-            print("Messages size => " + str(len(self.reader.messages())))
-            print("Error msg =>" + self.reader.error_message)
 
             if len(messages) > 0:
                 # Generating result
