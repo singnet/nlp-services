@@ -1,9 +1,9 @@
 # Twitter Credentials
 # consumer key, consumer secret, access token, access secret.
-consumer_key = "xxxxxxxxxxxxxx"
-consumer_secret = "xxxxxxxxxxx"
-access_token = "xxxxxxxxxxxxx"
-token_secret = "xxxxxxxxxxxx"
+consumer_key = None
+consumer_secret = None
+access_token = None
+token_secret = None
 
 languages = 'en'
 keywords = 'happy'
