@@ -49,6 +49,7 @@ RUN git clone -b sentiment_analysis https://github.com/singnet/nlp-services.git
 RUN cd nlp-services
 WORKDIR /go/src/nlp-services/sentiment_analysis
 RUN pip3.6 install -r requirements.txt
+RUN python3.6 -c "import nltk; nltk.download('all')"
 RUN sh buildproto.sh
 EXPOSE 7010-7010
 CMD ["python3.6", "run_service.py", "--daemon-conf", "config/"]
