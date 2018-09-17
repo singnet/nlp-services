@@ -105,3 +105,5 @@ venv.bak/
 /.idea/
 /named_entity_recognition/log/service.log
 /sentiment_analysis/log/service.log
+/sentiment-analysis/services/service-spec/*.py
+/named-entity-recognition/services/service-spec/*.py
