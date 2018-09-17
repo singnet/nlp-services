@@ -1,0 +1,19 @@
+{
+    "name": "named_entity_recognition",
+    "model": "model/",
+    "organization": "SNET_BR",
+    "path": "",
+    "price": 10,
+    "endpoint": "http://54.203.198.53:7012",
+    "tags": [
+        "Nltk"
+    ],
+    "metadata": {
+        "description": "Nltk"
+    },
+    "networks": {
+        "42": {
+            "agentAddress": "0xA271010494Af0D3fA3f4DB3a127e59728910059A"
+        }
+    }
+}
