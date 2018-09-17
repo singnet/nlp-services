@@ -31,7 +31,13 @@ defaults: &default_steps
         command: |
           cd $SERVICE_NAME
           python3 ../fetch_models.py /caches/models
-          ls -la models
+          ls -la services/service_spec/
+    - run:
+        name: Compile probubuf
+        command: |
+          cd $SERVICE_NAME
+          sh buildproto.sh
+          ls -la services/service_spec/
     - run:
         name: Build application Docker image
         command: |
@@ -177,6 +183,9 @@ workflows:
   build-and-maybe-deploy:
     jobs:
       - build-translation-container
+          filters:
+            branches:
+              only: master
       - deploy-translation:
           requires:
             - build-translation-container
@@ -184,10 +193,12 @@ workflows:
             branches:
               only: master
       - build-summarization-container
+          filters:
+            branches:
+              only: master
       - deploy-summarization:
           requires:
             - build-summarization-container
           filters:
             branches:
               only: master
-  
