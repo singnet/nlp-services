@@ -1,0 +1,19 @@
+{
+    "name": "sentiment_analysis",
+    "model": "model/",
+    "organization": "SNET_BR",
+    "path": "",
+    "price": 0,
+    "endpoint": "http://54.203.198.53:7010",
+    "tags": [
+        "nltk"
+    ],
+    "metadata": {
+        "description": "nltk"
+    },
+    "networks": {
+        "42": {
+            "agentAddress": "0x910EB736d2b0c18c9653FC157dbec37E64A63dC3"
+        }
+    }
+}
