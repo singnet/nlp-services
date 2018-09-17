@@ -183,9 +183,6 @@ workflows:
   build-and-maybe-deploy:
     jobs:
       - build-translation-container
-          filters:
-            branches:
-              only: master
       - deploy-translation:
           requires:
             - build-translation-container
@@ -193,12 +190,23 @@ workflows:
             branches:
               only: master
       - build-summarization-container
-          filters:
-            branches:
-              only: master
       - deploy-summarization:
           requires:
             - build-summarization-container
+          filters:
+            branches:
+              only: master
+      - build-sentiment-analysis-container
+      - deploy-sentiment-analysis:
+          requires:
+            - build-sentiment-analysis-container
+          filters:
+            branches:
+              only: master
+      - build-named-entity-recognition-container
+      - deploy-named-entity-recognition:
+          requires:
+            - build-named-entity-recognition-container
           filters:
             branches:
               only: master
