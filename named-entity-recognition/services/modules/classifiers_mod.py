@@ -80,13 +80,13 @@ class SnetClassifier:
         return ne
 
     # Nltk Named Entity Recognizer
-    def nltk_classifier(self, input_text):
+    def nltk_recognizer(self, input_text):
         result = self.structure_ne(self.nltk_tagger(self.process_text(input_text)))
         # logger.debug("nltk input text => ", str(result))
         return result
 
     # Stanford Named Entity Recognizer
-    def stanford_classifier(self, input_text):
+    def stanford_recognizer(self, input_text):
         result = self.structure_ne(self.stanford_tree(self.bio_tagger(self.stanford_tagger(self.process_text(input_text)))))
         # logger.debug("stanford input text => ", str(result))
         return result

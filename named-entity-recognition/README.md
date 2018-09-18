@@ -4,11 +4,7 @@
 
 ##### Avaliable methods of sentiment analysis:
 
-- Tagger - Taggning sentences.
-- Tokenizer - Tokenize sentences.
-- Chunker - Chunk sentences.
-
-WIP = Work in Progress
+- classify - Tokenize and Classify words or sentences.
 
 ## Deployment:
 
@@ -39,9 +35,9 @@ $ curl https://raw.githubusercontent.com/singnet/nlp-services/named_entity_recog
 
 ## Usage:
 
-### Tagger:
+### Named Entity Recognition:
 #### Method signature: 
-tag()
+recognize()
 
 To use this method, you must build the input message as shown below:
 
@@ -50,55 +46,7 @@ To use this method, you must build the input message as shown below:
 
 #### Service call example:
 ```
-$ snet client call tag '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
-```
-
-#### Output example:
-The result will be a base64 text including the tagged sentence.
-
-Output example:
-
-```
-$ ...
-
-```
-
-### Tokenizer:
-#### Method signature: 
-tag()
-
-To use this method, you must build the input message as shown below:
-
-#### Input Message Attributes:
-- value - Base64 text
-
-#### Service call example:
-```
-$ snet client call tokenize '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
-```
-
-#### Output example:
-The result will be a base64 text including the tokenized sentence.
-
-Output example:
-
-```
-$ ...
-
-```
-
-### Chuncker:
-#### Method signature: 
-tag()
-
-To use this method, you must build the input message as shown below:
-
-#### Input Message Attributes:
-- value - Base64 text
-
-#### Service call example:
-```
-$ snet client call chunk '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
+$ snet client call classify '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
 ```
 
 #### Output example:

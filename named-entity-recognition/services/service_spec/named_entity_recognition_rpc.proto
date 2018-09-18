@@ -12,10 +12,6 @@ message OutputMessage {
     string value = 1;
 }
 
-service NltkClassifierMessage {
-    rpc nltk_classify(InputMessage) returns (OutputMessage) {}
-}
-
-service StanfordClassifierMessage {
-    rpc stanford_classify(InputMessage) returns (OutputMessage) {}
+service RecognizeMessage {
+    rpc recognize(InputMessage) returns (OutputMessage) {}
 }

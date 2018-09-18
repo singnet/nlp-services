@@ -36,18 +36,17 @@ class ShowMessageServicer(grpc_bt_grpc.ShowMessageServicer):
 
 # Create a class to be added to the gRPC server
 # derived from the protobuf codes.
-class NltkClassifierMessageServicer(grpc_bt_grpc.NltkClassifierMessageServicer):
+class RecognizeMessageServicer(grpc_bt_grpc.RecognizeMessageServicer):
 
     def __init__(self):
         # Just for debugging purpose.
         self.classifier = classifiers.SnetClassifier()
-        logger.debug("NltkClassifierMessageServicer created")
+        logger.debug("RecognizeMessageServicer created")
 
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
     # context: object that provides RPC-specific information (timeout, etc).
-    def nltk_classify(self, request, context):
-
+    def recognize(self, request, context):
         # In our case, request is a InputMessage() object (from .proto file)
         # self.value = request.value
         self.value = request.value
@@ -58,50 +57,7 @@ class NltkClassifierMessageServicer(grpc_bt_grpc.NltkClassifierMessageServicer):
         sentence = base64.b64decode(self.value).decode('utf-8')
 
         # Classifying sentences
-        entities = self.classifier.nltk_classifier(sentence)
-
-        # Building result list
-        result_list = []
-
-        for item in entities:
-            start_index = sentence.find(item[0])
-            end_index = start_index + len(item[0])
-            result_list.append((item[0], item[1], 'Start index:', start_index, 'End index:', end_index))
-
-        # Encoding result
-        resultBase64 = base64.b64encode(str(result_list).encode('utf-8'))
-
-        # To respond we need to create a OutputMessage() object (from .proto file)
-        self.result = OutputMessage()
-        self.result.value = resultBase64
-        # logger.debug('add({},{})={}'.format(self.a, self.b, self.result.value))
-        return self.result
-
-
-# Create a class to be added to the gRPC server
-# derived from the protobuf codes.
-class StanfordClassifierMessageServicer(grpc_bt_grpc.StanfordClassifierMessageServicer):
-
-    def __init__(self):
-        # Just for debugging purpose.
-        self.classifier = classifiers.SnetClassifier()
-        logger.debug("StanfordClassifierMessageServicer created")
-
-    # The method that will be exposed to the snet-cli call command.
-    # request: incoming data
-    # context: object that provides RPC-specific information (timeout, etc).
-    def stanford_classify(self, request, context):
-        # In our case, request is a InputMessage() object (from .proto file)
-        # self.value = request.value
-        self.value = request.value
-        # To respond we need to create a OutputMessage() object (from .proto file)
-        self.result = OutputMessage()
-
-        # Base64 decoding
-        sentence = base64.b64decode(self.value).decode('utf-8')
-
-        # Classifying sentences
-        entities = self.classifier.stanford_classifier(sentence)
+        entities = self.classifier.stanford_recognizer(sentence)
 
         # Building result list
         result_list = []
@@ -133,8 +89,7 @@ def serve(max_workers=10, port=7777):
     logger.debug('call => serve(max_workers={}, port={})'.format(max_workers, port))
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
     grpc_bt_grpc.add_ShowMessageServicer_to_server(ShowMessageServicer(), server)
-    grpc_bt_grpc.add_NltkClassifierMessageServicer_to_server(NltkClassifierMessageServicer(), server)
-    grpc_bt_grpc.add_StanfordClassifierMessageServicer_to_server(StanfordClassifierMessageServicer(), server)
+    grpc_bt_grpc.add_RecognizeMessageServicer_to_server(RecognizeMessageServicer(), server)
     server.add_insecure_port('[::]:{}'.format(port))
     return server
 
