@@ -8,5 +8,5 @@
     "PASSTHROUGH_ENABLED": true,
     "PASSTHROUGH_ENDPOINT": "http://localhost:7013",
     "LOG_LEVEL": 10,
-    "PRIVATE_KEY": "efd523f4f9fa7c00a0e30da13fba9ad17dfb8fbfb7d14c43d44bbc8a0473ee37"
+    "PRIVATE_KEY": ""
 }

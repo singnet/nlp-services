@@ -20,8 +20,8 @@ class SnetClassifier:
     def __init__(self):
         # Snet Classifier.
         logger.debug("SnetClassifier INIT")
-        self.english_model = service_root_path + '/models/english.all.3class.distsim.crf.ser.gz'
-        self.stanford_jar = service_root_path + '/models/stanford-ner.jar'
+        self.english_model = service_root_path + '/models/stanford-ner-2018-02-27/classifiers/english.all.3class.distsim.crf.ser.gz'
+        self.stanford_jar = service_root_path + '/models/stanford-ner-2018-02-27/stanford-ner-3.9.1.jar'
 
     # Process text
     def process_text(self, input_text):
