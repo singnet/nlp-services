@@ -166,7 +166,7 @@ jobs:
       SERVICE_NAME: named-entity-recognition
       ORG: singnet
       DOCKER_ORG: singularitynet
-      SNETD_PORT: 7010
+      SNETD_PORT: 7012
       SNETD_CONFIG: config/snetd_named_entity_recognition_server_config.json
     steps:
       - run:
