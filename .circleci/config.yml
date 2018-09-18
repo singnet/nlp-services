@@ -31,7 +31,7 @@ defaults: &default_steps
         command: |
           cd $SERVICE_NAME
           python3 ../fetch_models.py /caches/models
-          ls -la services/service_spec/
+          ls -la models
     - run:
         name: Compile probubuf
         command: |
