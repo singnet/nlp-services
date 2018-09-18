@@ -36,10 +36,6 @@ message TwitterOutputMessage {
     string value = 1;
 }
 
-service SentimentIntensityAnalysis {
-    rpc intensivityAnalysis(InputMessage) returns (OutputMessage) {}
-}
-
 service SentimentConsensusAnalysis {
     rpc consensusAnalysis(InputMessage) returns (OutputMessage) {}
 }
@@ -54,8 +50,4 @@ service TwitterHistoricalAnalysis {
 
 service TwitterStreamAnalysis {
     rpc streamAnalysis(TwitterInputMessage) returns (OutputMessage) {}
-}
-
-service TrainData {
-    rpc train(InputMessage) returns (OutputMessage) {}
 }

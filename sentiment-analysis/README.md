@@ -6,10 +6,7 @@
 
 - Twitter Stream Search Service - Capture and analyse all streamed twitter messages.
 - Twitter Historical Search - Capture and analyse all twitter messages since 2006.
-- Intensivity Analysis - Simple Sentiment Analysis.
 - Consensus Analysis - The sentences are analyzed by seven trained classifiers.
-
-WIP = Work in Progress
 
 ## Deployment:
 
@@ -91,34 +88,6 @@ To use this services, you must fill the input parameters below:
 #### Service call example:
 ```
 $ snet client call historicalAnalysis '{"credentials":{"consumer_key":"TscHeuS3vQN7bY82vNhE419ka","consumer_secret":"5rCTzeRgwT0rTx56KCIQm0OUvgCmQ2WF9BLBC8NdkpmDpNYVoH","access_token":"91892303-CUT4ZuJTqAxX2Ra2Bj7g1Hw0WmRPRtaiCPW2qm8CD","token_secret":"SK7TVAL4QC9O93rhiyv1W4vLJUP0tUMWnjLbO7GkQ0IvE"},"languages":"en","keywords":"happy","max_results":"10", "from_date":"200801010910", "to_date":"200801150910", "product": "fullarchive", "environment":"SentimentAnalysis01"}' --no-confirm
-```
-
-#### Output example:
-The result of analysis will be a base64 text including the result of analysis for each captured message.
-
-Output example:
-
-```
-This t-shirt is awesome.
-{'neg': 0.0, 'neu': 0.423, 'pos': 0.577, 'compound': 0.6249}
-
-Bad people are coming.
-{'neg': 0.538, 'neu': 0.462, 'pos': 0.0, 'compound': -0.5423}
-
-```
-
-### Intensivity Analysis:
-#### Method signature: 
-intensivityAnalysis()
-
-To use this method, you must build the input message as shown below:
-
-#### Input Message Attributes:
-- value - Base64 text
-
-#### Service call example:
-```
-$ snet client call intensivityAnalysis '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
 ```
 
 #### Output example:

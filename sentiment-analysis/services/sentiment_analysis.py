@@ -38,51 +38,6 @@ class ShowMessageServicer(grpc_bt_grpc.ShowMessageServicer):
 
 # Create a class to be added to the gRPC server
 # derived from the protobuf codes.
-class SentimentIntensityAnalysisServicer(grpc_bt_grpc.SentimentIntensityAnalysisServicer):
-
-    def __init__(self):
-        # Just for debugging purpose.
-        logger.debug("call => SentimentIntensityAnalysisServicer()")
-
-    # The method that will be exposed to the snet-cli call command.
-    # request: incoming data
-    # context: object that provides RPC-specific information (timeout, etc).
-    def intensivityAnalysis(self, request, context):
-
-        # In our case, request is a InputMessage() object (from .proto file)
-        self.value = request.value
-
-        analizer = SentimentIntensityAnalyzer()
-
-        text = base64.b64decode(self.value)
-        # Decode do string
-        temp = text.decode('utf-8')
-        # Convert in array
-        tempArray = temp.split("\n")
-        # Result of sentences
-        stringResult = ''
-
-        # Generating result
-        for line in tempArray:
-            if line is not None:
-                if len(line) > 1:
-                    stringResult += line
-                    stringResult += '\n'
-                    stringResult += str(analizer.polarity_scores(line))
-                    stringResult += '\n\n'
-
-        # Encoding result
-        resultBase64 = base64.b64encode(str(stringResult).encode('utf-8'))
-
-        # To respond we need to create a OutputMessage() object (from .proto file)
-        self.result = OutputMessage()
-        self.result.value = resultBase64
-        logger.debug('call => intensivityAnalysis({})={}'.format(self.value, self.result.value))
-        return self.result
-
-
-# Create a class to be added to the gRPC server
-# derived from the protobuf codes.
 class SentimentConsensusAnalysisServicer(grpc_bt_grpc.SentimentConsensusAnalysisServicer):
 
     def __init__(self):
@@ -120,66 +75,6 @@ class SentimentConsensusAnalysisServicer(grpc_bt_grpc.SentimentConsensusAnalysis
         self.result = OutputMessage()
         self.result.value = resultBase64
         logger.debug('call => consensusAnalysis({})={}'.format(self.value, self.result.value))
-        return self.result
-
-
-# Create a class to be added to the gRPC server
-# derived from the protobuf codes.
-class CustomCorpusAnalysisServicer(grpc_bt_grpc.ShowMessageServicer):
-
-    def __init__(self):
-        # Just for debugging purpose.
-        logger.debug("call => CustomCorpusAnalysisServicer()")
-
-    # The method that will be exposed to the snet-cli call command.
-    # request: incoming data
-    # context: object that provides RPC-specific information (timeout, etc).
-    def customCorpusAnalysis(self, request, context):
-        # In our case, request is a InputMessage() object (from .proto file)
-        self.value = request.value
-
-        # Read parameter "data"
-        inputData = request.value
-
-        text = base64.b64decode(inputData)
-
-        # Decode do string
-        temp = text.decode('utf-8')
-
-        # Convert in array
-        tempArray = temp.split("\n")
-
-        # Declare new array of sentences
-        tempDatabase = []
-
-        # Generating temp database
-        for line in tempArray:
-            if line is not None:
-                if len(line) > 1:
-                    tempDatabase.append(line)
-
-        # Generate output file
-        file = open("./output/output.txt", "w")
-
-        for line in tempDatabase:
-            if line is not None:
-                if len(line) > 1:
-                    file.write(line)
-                    file.write("\n")
-                    file.write(str(consensus_mod.sentiment(line)))
-                    file.write("\n\n")
-
-        file.close()
-
-        # Reading file
-        fo = open("./output/output.txt", "r")
-        resultBase64 = base64.b64encode(str(fo.read()).encode('utf-8'))
-        fo.close()
-
-        # To respond we need to create a OutputMessage() object (from .proto file)
-        self.result = OutputMessage()
-        self.result.value = resultBase64
-        logger.debug('call => customCorpusAnalysis({})={}'.format(self.value, self.result.value))
         return self.result
 
 
@@ -312,9 +207,7 @@ def serve(max_workers=10, port=7777):
     logger.debug('call => serve(max_workers={}, port={})'.format(max_workers, port))
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
     grpc_bt_grpc.add_ShowMessageServicer_to_server(ShowMessageServicer(), server)
-    grpc_bt_grpc.add_SentimentIntensityAnalysisServicer_to_server(SentimentIntensityAnalysisServicer(), server)
     grpc_bt_grpc.add_SentimentConsensusAnalysisServicer_to_server(SentimentConsensusAnalysisServicer(), server)
-    grpc_bt_grpc.add_CustomCorpusAnalysisServicer_to_server(CustomCorpusAnalysisServicer(), server)
     grpc_bt_grpc.add_TwitterHistoricalAnalysisServicer_to_server(TwitterHistoricalAnalysisServicer(), server)
     grpc_bt_grpc.add_TwitterStreamAnalysisServicer_to_server(TwitterStreamAnalysisServicer(), server)
     server.add_insecure_port('[::]:{}'.format(port))

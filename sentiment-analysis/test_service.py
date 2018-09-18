@@ -36,23 +36,6 @@ if __name__ == '__main__':
         print(e)
 
     try:
-        logger.debug("call => SentimentIntensityAnalysis() Method Test Starting... ")
-        print()
-        # SentimentIntensityAnalysis() Method Test
-        # create a stub (client)
-        stub = grpc_bt_grpc.SentimentIntensityAnalysisStub(channel)
-        # create a valid request message
-        test_data = b64_sentences.senteces()
-        message = grpc_bt_pb2.InputMessage(value=test_data)
-        # make the call
-        response = stub.intensivityAnalysis(message)
-        logger.debug("call => SentimentIntensityAnalysis() Method Test Passed => " + response.value)
-        print()
-
-    except KeyError as e:
-        print(e)
-
-    try:
 
         logger.debug("call => SentimentConsensusAnalysis() Method Test Starting... ")
         print()
@@ -70,81 +53,63 @@ if __name__ == '__main__':
     except KeyError as e:
         print(e)
 
-    # try:
-    #
-    #     logger.debug("CustomCorpusAnalysis() Method Test Starting... ")
-    #     print()
-    #     # CustomCorpusAnalysis() Method Test
-    #     # create a stub (client)
-    #     stub = grpc_bt_grpc.CustomCorpusAnalysisStub(channel)
-    #     # create a valid request message
-    #     test_text = "RODANDO TESTES..."
-    #     message = grpc_bt_pb2.InputMessage(value=test_text)
-    #     # make the call
-    #     response = stub.show(message)
-    #     logger.debug("CustomCorpusAnalysis() Method Test Passed => " + response.value)
-    #     print()
-    #
-    # except KeyError as e:
-    #     print(e)
+    try:
 
-    # try:
-    #
-    #     logger.debug("call => TwitterHistoricalAnalysis() Method Test Starting... ")
-    #     print()
-    #     # TwitterHistoricalAnalysis() Method Test
-    #     # create a stub (client)
-    #     stub = grpc_bt_grpc.TwitterHistoricalAnalysisStub(channel)
-    #
-    #     # Setting the credentials up
-    #     credentials = grpc_bt_pb2.TwitterCredentials(consumer_key=twitter_test_data.consumer_key,
-    #                                                  consumer_secret=twitter_test_data.consumer_secret,
-    #                                                  access_token=twitter_test_data.access_token,
-    #                                                  token_secret=twitter_test_data.token_secret)
-    #     # Setting the input message up
-    #     message = grpc_bt_pb2.TwitterInputMessage(
-    #         credentials=credentials,
-    #         languages=twitter_test_data.languages,
-    #         keywords=twitter_test_data.keywords,
-    #         product=twitter_test_data.product,
-    #         environment=twitter_test_data.environment,
-    #         from_date=twitter_test_data.fromDate,
-    #         to_date=twitter_test_data.toDate,
-    #         max_results=twitter_test_data.maxResults)
-    #
-    #     # make the call
-    #     response = stub.historicalAnalysis(message)
-    #     logger.debug("call => TwitterHisoricalAnalysis() Method Test Passed => " + response.value)
-    #     print()
-    #
-    # except KeyError as e:
-    #     logger.debug("call => TwitterHisoricalAnalysis() Method Test Error => " + str(e))
+        logger.debug("call => TwitterHistoricalAnalysis() Method Test Starting... ")
+        print()
+        # TwitterHistoricalAnalysis() Method Test
+        # create a stub (client)
+        stub = grpc_bt_grpc.TwitterHistoricalAnalysisStub(channel)
 
-    # try:
-    #
-    #     logger.debug("call => TwitterStreamAnalysis() Method Test Starting... ")
-    #     print()
-    #     # TwitterStreamAnalysis() Method Test
-    #     # create a stub (client)
-    #     stub = grpc_bt_grpc.TwitterStreamAnalysisStub(channel)
-    #
-    #     # Setting the credentials up
-    #     credentials = grpc_bt_pb2.TwitterCredentials(consumer_key=twitter_test_data.consumer_key,
-    #                                                  consumer_secret=twitter_test_data.consumer_secret,
-    #                                                  access_token=twitter_test_data.access_token,
-    #                                                  token_secret=twitter_test_data.token_secret)
-    #     # Setting the input message up
-    #     message = grpc_bt_pb2.TwitterInputMessage(
-    #         credentials=credentials,
-    #         languages=twitter_test_data.languages,
-    #         keywords=twitter_test_data.keywords,
-    #         time_limit=twitter_test_data.time_limit,
-    #         msg_limit=twitter_test_data.msg_limit)
-    #
-    #     # make the call
-    #     response = stub.streamAnalysis(message)
-    #     logger.debug("call => TwitterStreamAnalysis() Method Test Passed => " + response.value)
-    #     print()
-    #
-    # except KeyError as e:
-    #     logger.debug("call => TwitterStreamAnalysis() Method Test Error => " + str(e))
+        # Setting the credentials up
+        credentials = grpc_bt_pb2.TwitterCredentials(consumer_key=twitter_test_data.consumer_key,
+                                                     consumer_secret=twitter_test_data.consumer_secret,
+                                                     access_token=twitter_test_data.access_token,
+                                                     token_secret=twitter_test_data.token_secret)
+        # Setting the input message up
+        message = grpc_bt_pb2.TwitterInputMessage(
+            credentials=credentials,
+            languages=twitter_test_data.languages,
+            keywords=twitter_test_data.keywords,
+            product=twitter_test_data.product,
+            environment=twitter_test_data.environment,
+            from_date=twitter_test_data.fromDate,
+            to_date=twitter_test_data.toDate,
+            max_results=twitter_test_data.maxResults)
+
+        # make the call
+        response = stub.historicalAnalysis(message)
+        logger.debug("call => TwitterHisoricalAnalysis() Method Test Passed => " + response.value)
+        print()
+
+    except KeyError as e:
+        logger.debug("call => TwitterHisoricalAnalysis() Method Test Error => " + str(e))
+
+    try:
+
+        logger.debug("call => TwitterStreamAnalysis() Method Test Starting... ")
+        print()
+        # TwitterStreamAnalysis() Method Test
+        # create a stub (client)
+        stub = grpc_bt_grpc.TwitterStreamAnalysisStub(channel)
+
+        # Setting the credentials up
+        credentials = grpc_bt_pb2.TwitterCredentials(consumer_key=twitter_test_data.consumer_key,
+                                                     consumer_secret=twitter_test_data.consumer_secret,
+                                                     access_token=twitter_test_data.access_token,
+                                                     token_secret=twitter_test_data.token_secret)
+        # Setting the input message up
+        message = grpc_bt_pb2.TwitterInputMessage(
+            credentials=credentials,
+            languages=twitter_test_data.languages,
+            keywords=twitter_test_data.keywords,
+            time_limit=twitter_test_data.time_limit,
+            msg_limit=twitter_test_data.msg_limit)
+
+        # make the call
+        response = stub.streamAnalysis(message)
+        logger.debug("call => TwitterStreamAnalysis() Method Test Passed => " + response.value)
+        print()
+
+    except KeyError as e:
+        logger.debug("call => TwitterStreamAnalysis() Method Test Error => " + str(e))

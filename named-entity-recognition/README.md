@@ -46,13 +46,13 @@ To use this method, you must build the input message as shown below:
 
 #### Service call example:
 ```
-$ snet client call classify '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
+$ snet client call recognize '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
 ```
 
 #### Output example:
 The result will be a base64 text including the chuncked sentence.
 
-Output example:
+After decode base64 the output will be like this:
 
 ```
 $ ...
