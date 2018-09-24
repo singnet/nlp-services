@@ -103,12 +103,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 /.idea/
-/sentiment-analysis/services/service_spec/*.py
-/sentiment-analysis/log/service.log
-/sentiment-analysis/downloads/
-#/sentiment-analysis/models/
-
-/named-entity-recognition/services/service_spec/*.py
-/named-entity-recognition/log/service.log
-/named-entity-recognition/downloads/
-/named-entity-recognition/models/
+**/service_spec/*.py
+#**/service.log
+*.log.*
+#**/downloads
+**/models

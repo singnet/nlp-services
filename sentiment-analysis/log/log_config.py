@@ -1,6 +1,7 @@
 
 # importing module
 import logging
+import logging.handlers
 import sys
 
 
@@ -10,7 +11,7 @@ def getLogger(logger):
     logger.setLevel(log_level)
     formatter = logging.Formatter('%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s')
 
-    fh = logging.FileHandler(filename="log/service.log")
+    fh = logging.handlers.RotatingFileHandler('log/service.log', maxBytes=15000000, backupCount=5)
     fh.setLevel(log_level)
     fh.setFormatter(formatter)
     logger.addHandler(fh)
@@ -21,14 +22,3 @@ def getLogger(logger):
     logger.addHandler(sh)
     return logger
 
-# Examples
-# Debug messages
-# logger.debug("Here is debug Message")
-# Debug messages
-# logger.info("This is just an information")
-# Warning messages
-# logger.warning("Oops ! Its a Warning")
-# Error message
-# logger.error("Did you try to reach out of bound index ")
-# critical message
-# logger.critical("Server went down")
