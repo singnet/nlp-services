@@ -34,7 +34,7 @@ class ShowMessageServicer(grpc_bt_grpc.ShowMessageServicer):
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
     # context: object that provides RPC-specific information (timeout, etc).
-    def show(self, request, context):
+    def Show(self, request, context):
         # In our case, request is a InputMessage() object (from .proto file)
         self.value = request.value
 
