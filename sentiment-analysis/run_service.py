@@ -29,9 +29,8 @@ def main():
         'services.sentiment_analysis'
     ]
 
-    # TODO uncomment removing db db actions below
     # Removing all previous snetd .db file
-    # os.system('rm *.db')
+    os.system('rm snetd.db')
 
     # Call for all the services listed in service_modules
     start_all_services(root_path, service_modules, args.daemon_config_path)

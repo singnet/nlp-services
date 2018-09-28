@@ -31,7 +31,7 @@ if __name__ == '__main__':
         test_text = "message received from God"
         message = grpc_bt_pb2.InputMessage(value=test_text)
         # make the call
-        response = stub.show(message)
+        response = stub.Show(message)
         # logger.debug("call => ShowMessage() Method Test Passed => " + response.value)
         print()
 
