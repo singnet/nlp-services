@@ -50,7 +50,7 @@ $ snet client call recognize '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
 ```
 
 #### Output example:
-The result will be a base64 text including the chuncked sentence.
+The result will be a base64 text including the chunked sentence.
 
 After decode base64 the output will be like this:
 

@@ -29,8 +29,9 @@ def main():
         'services.sentiment_analysis'
     ]
 
+    # TODO uncomment removing db db actions below
     # Removing all previous snetd .db file
-    os.system('rm *.db')
+    # os.system('rm *.db')
 
     # Call for all the services listed in service_modules
     start_all_services(root_path, service_modules, args.daemon_config_path)
@@ -105,8 +106,6 @@ def start_snetd(cwd, daemon_config_file=None, db_file=None):
     '''
     logger.debug('call => start_snetd()')
     cmd = ['snetd']
-    if db_file is not None:
-        cmd.extend(['--db-path', str(db_file)])
     if daemon_config_file is not None:
         cmd.extend(['--config', str(daemon_config_file)])
         subprocess.Popen(cmd, cwd=str(cwd))

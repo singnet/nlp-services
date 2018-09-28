@@ -9,7 +9,7 @@ def getLogger(logger):
     logger = logging.getLogger(str(logger))
     log_level = logging.DEBUG
     logger.setLevel(log_level)
-    formatter = logging.Formatter('%(asctime)s - [%(levelname)8s] - %(name)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s')
 
     fh = logging.handlers.RotatingFileHandler('log/service.log', maxBytes=15000000, backupCount=5)
     fh.setLevel(log_level)

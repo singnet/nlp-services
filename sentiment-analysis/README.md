@@ -115,7 +115,7 @@ To use this method, you must build the input message as shown below:
 
 #### Service call example:
 ```
-$ snet client call intensivityAnalysis '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
+$ snet client call GetConsensusAnalysis '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
 ```
 
 #### Output example:

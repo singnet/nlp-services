@@ -1,18 +1,16 @@
 # Twitter Credentials
-# consumer key, consumer secret, access token, access secret.
-consumer_key = None
-consumer_secret = None
-access_token = None
-token_secret = None
+# consumer_key = None
+# consumer_secret = None
+# access_token = None
+# token_secret = None
 
 languages = 'en'
-keywords = 'happy'
+query = None
 
-time_limit = 3
-msg_limit = 3
-
-fromDate = '200801010910'
-toDate = '200801150910'
-maxResults = 10
-product = 'fullarchive'
-environment = 'SentimentAnalysis01'
+fromDate = None
+toDate = None
+messages_per_request = 500
+db_name = "twitter_messages.temp.db"
+time_limit = 0
+msg_limit = 0
+max_requests_limit = 0

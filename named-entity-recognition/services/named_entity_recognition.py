@@ -2,7 +2,7 @@ import sys
 import grpc
 import base64
 import concurrent.futures as futures
-from services.modules import classifiers_mod as classifiers
+from services.modules import recognizer_mod
 from services.service_spec import named_entity_recognition_rpc_pb2_grpc as grpc_bt_grpc
 from services.service_spec.named_entity_recognition_rpc_pb2 import OutputMessage
 from services import common
@@ -40,8 +40,8 @@ class RecognizeMessageServicer(grpc_bt_grpc.RecognizeMessageServicer):
 
     def __init__(self):
         # Just for debugging purpose.
-        self.classifier = classifiers.SnetClassifier()
         logger.debug("RecognizeMessageServicer created")
+        self.recognizer = recognizer_mod.SnetRecognizer()
 
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
@@ -57,7 +57,7 @@ class RecognizeMessageServicer(grpc_bt_grpc.RecognizeMessageServicer):
         sentence = base64.b64decode(self.value).decode('utf-8')
 
         # Classifying sentences
-        entities = self.classifier.stanford_recognizer(sentence)
+        entities = self.recognizer.stanford_recognizer(sentence)
 
         # Building result list
         result_list = []

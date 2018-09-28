@@ -1,3 +1,5 @@
+import sqlite3
+
 import requests
 import time
 import json
@@ -126,49 +128,97 @@ class SnetStreamManager:
 
 
 class TwitterApiReader:
-    auth = None
-    messages = []
-    error_message = None
-    finished = False
 
-    def __init__(self, consumer_key, consumer_secret, access_token, token_secret):
+    def __init__(self,
+                 consumer_key,
+                 consumer_secret,
+                 access_token,
+                 token_secret,
+                 msg_limit=0,
+                 time_limit=0,
+                 max_requests_limit=0,
+                 db_name=None):
+
         self.auth = OAuth1(consumer_key, consumer_secret, access_token, token_secret)
+        self.start_time = time.time()
+        self.time_limit = time_limit
+        self.msg_limit = msg_limit
+        self.db_name = db_name
+        self.messages = []
+        self.max_requests_limit = max_requests_limit
+        self.request_counter = 0
+        self.start_time = time.time()
+        self.reading = False
 
-    # url example:
-    # https://api.twitter.com/1.1/tweets/search/fullarchive/SentimentAnalysis01.json
-    #
-    # header example:
-    # headers = {'content-type': 'application/json'}
-    #
-    # request_data example:
-    # {
-    #   "query":"Obama",
-    #   "maxResults":"10",
-    #   "fromDate":"200801010910",
-    #   "toDate":"200801150910"
-    # }
     def read(self, url, params):
 
         try:
             logger.debug("Start reading...")
-            logger.debug(str(url))
-            logger.debug(str(params))
+            self.reading = True
 
-            response = requests.post(auth=self.auth, url=url, json=params)
-            json_data = response.json()
+            if self.check_limits():
+                self.request_counter += 1
+                print("Requesting page number : " + str(self.request_counter))
+                response = requests.post(auth=self.auth, url=url, json=params)
+                json_data = response.json()
 
-            if response.status_code == requests.codes.ok:
-                if len(json_data['results']) > 0:
-                    self.messages.append(json_data['results'])
-                if json_data['next']:
-                    self.read(url, params)
+                if response.status_code == requests.codes.ok:
+                    if len(json_data['results']) > 0:
+                        self.messages.append(json_data['results'])
+
+                        if self.db_name is not None:
+                            # Writing on database
+                            with sqlite3.connect(self.db_name) as conn:
+                                cur = conn.cursor()
+                                cur.execute('''create table if not exists messages(original_data json)''')
+                                temp_msg_counter = 0
+                                for item in json_data['results']:
+                                    temp_msg_counter += 1
+                                    cur.execute("insert into messages values (?)", [json.dumps(item)])
+                                    print("Inserting into database message number: " + str(temp_msg_counter))
+
+                    if json_data['next']:
+                        # Set next page hash to call
+                        params['next'] = str(json_data['next'])
+                        # Twitter sandbox rate limits: 30 RPM, 10RPS
+                        time.sleep(2.2)
+                        # Call next page of data
+                        self.read(url, params)
+
+                    self.reading = False
                 else:
-                    self.finished = True
-            else:
-                self.error_message = json_data['error']['message']
-                logger.debug("Error found => " + self.error_message)
+                    logger.debug("Error found => " + json_data['error']['message'])
+                    raise Exception(str(json_data['error']['message']))
+
         except Exception as e:
+            self.reading = False
             logger.debug("Reader error => " + str(e))
 
     def messages(self):
         return self.messages
+
+    def reading(self):
+        return self.reading
+
+    # Check search limits
+    def check_limits(self):
+        logger.debug("SnetListener check_limits")
+        if self.time_limit > 0 and ((time.time() - self.start_time) > self.time_limit):
+            logger.debug("SORRY, TIME LIMIT IS OVER !")
+            raise Exception("SORRY, TIME LIMIT IS OVER !")
+        if self.msg_limit > 0 and (len(self.messages) > self.msg_limit):
+            logger.debug("SORRY, MSGS LIMIT IS OVER !")
+            raise Exception("SORRY, MSGS LIMIT IS OVER !")
+        if self.request_counter > 0 and self.request_counter >= self.max_requests_limit:
+            logger.debug("SORRY, REQUESTS LIMIT IS OVER !")
+            raise Exception("SORRY, REQUESTS LIMIT IS OVER !")
+        return True
+
+# Especificação:
+#
+# 25000 mensagens relacionadas a politicos
+# 25000 mensagens relacionadas a organizações não governamentais
+# 25000 mensagens relacionadas as marcas mais influentes
+#
+# Output
+# user_id named_entity named_entity_type sentiment analysis

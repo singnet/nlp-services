@@ -104,8 +104,6 @@ def start_snetd(cwd, daemon_config_file=None, db_file=None):
     '''
     logger.debug('call => start_snetd()')
     cmd = ['snetd']
-    if db_file is not None:
-        cmd.extend(['--db-path', str(db_file)])
     if daemon_config_file is not None:
         cmd.extend(['--config', str(daemon_config_file)])
         subprocess.Popen(cmd, cwd=str(cwd))
