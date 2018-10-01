@@ -1,12 +1,21 @@
 {
-    "DAEMON_TYPE": "grpc",
-    "DAEMON_LISTENING_PORT": "7012",
+    "AGENT_CONTRACT_ADDRESS": "",
+    "AUTO_SSL_DOMAIN": "",
+    "AUTO_SSL_CACHE_DIR": "",
     "BLOCKCHAIN_ENABLED": true,
+    "CONFIG_PATH": "",
+    "DAEMON_LISTENING_PORT": 7012,
+    "DAEMON_TYPE": "grpc",
+    "DB_PATH": "./db",
     "ETHEREUM_JSON_RPC_ENDPOINT": "https://kovan.infura.io",
-    "AGENT_CONTRACT_ADDRESS": "0xA271010494Af0D3fA3f4DB3a127e59728910059A",
-    "SERVICE_TYPE": "grpc",
+    "EXECUTABLE_PATH": "",
+    "LOG_LEVEL": 5,
     "PASSTHROUGH_ENABLED": true,
     "PASSTHROUGH_ENDPOINT": "http://localhost:7013",
-    "LOG_LEVEL": 10,
-    "PRIVATE_KEY": "#YOUR PRIVATE KEY GOES HERE"
+    "POLL_SLEEP": "",
+    "PRIVATE_KEY": "efd523f4f9fa7c00a0e30da13fba9ad17dfb8fbfb7d14c43d44bbc8a0473ee37",
+    "SERVICE_TYPE": "grpc",
+    "SSL_CERT": "",
+    "SSL_KEY": "",
+    "WIRE_ENCODING": "json"
 }

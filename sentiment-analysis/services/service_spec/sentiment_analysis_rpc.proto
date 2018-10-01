@@ -39,14 +39,14 @@ message TwitterOutputMessage {
 }
 
 service SentimentConsensusAnalysis {
-    rpc GetConsensusAnalysis(InputMessage) returns (OutputMessage) {}
+    rpc ConsensusAnalysis(InputMessage) returns (OutputMessage) {}
 }
 
 service TwitterHistoricalAnalysis {
-    rpc GetHistoricalAnalysis(TwitterInputMessage) returns (OutputMessage) {}
-    rpc GetHistoricalAnalysisToDatabase(TwitterInputMessage) returns (OutputMessage) {}
+    rpc HistoricalAnalysis(TwitterInputMessage) returns (OutputMessage) {}
+    rpc HistoricalAnalysisToDatabase(TwitterInputMessage) returns (OutputMessage) {}
 }
 
 service TwitterStreamAnalysis {
-    rpc GetStreamAnalysis(TwitterInputMessage) returns (OutputMessage) {}
+    rpc StreamAnalysis(TwitterInputMessage) returns (OutputMessage) {}
 }

@@ -1,4 +1,3 @@
-import sqlite3
 import os
 import datetime
 import sys
@@ -7,7 +6,7 @@ import base64
 import grpc
 import concurrent.futures as futures
 from services.modules import consensus_mod, twitter_mod
-from services.service_spec import sentiment_analysis_rpc_pb2_grpc as grpc_bt_grpc
+from services.service_spec import sentiment_analysis_rpc_pb2_grpc as grpc_services
 from services.service_spec.sentiment_analysis_rpc_pb2 import OutputMessage
 from services import common
 from log import log_config
@@ -23,18 +22,22 @@ service_root_path = os.path.abspath(os.path.join(parent_path, os.pardir))
 logger = log_config.getLogger('sentiment_analysis.py')
 
 
-# Create a class to be added to the gRPC server
-# derived from the protobuf codes.
-class ShowMessageServicer(grpc_bt_grpc.ShowMessageServicer):
+class ShowMessageServicer(grpc_services.ShowMessageServicer):
+    """ Create a class to be added to the gRPC server
+    derived from the protobuf codes.
+    """
 
     def __init__(self):
-        # Just for debugging purpose.
         logger.debug("call => ShowMessageServicer()")
 
-    # The method that will be exposed to the snet-cli call command.
-    # request: incoming data
-    # context: object that provides RPC-specific information (timeout, etc).
     def Show(self, request, context):
+        """ The method that will be exposed to the snet-cli call command.
+
+        :param request: incoming data
+        :param context: object that provides RPC-specific information (timeout, etc).
+        :return:
+        """
+
         # In our case, request is a InputMessage() object (from .proto file)
         self.value = request.value
 
@@ -46,18 +49,22 @@ class ShowMessageServicer(grpc_bt_grpc.ShowMessageServicer):
         return self.result
 
 
-# Create a class to be added to the gRPC server
-# derived from the protobuf codes.
-class SentimentConsensusAnalysisServicer(grpc_bt_grpc.SentimentConsensusAnalysisServicer):
+class SentimentConsensusAnalysisServicer(grpc_services.SentimentConsensusAnalysisServicer):
+    """ Create a class to be added to the gRPC server
+    derived from the protobuf codes.
+    """
 
     def __init__(self):
-        # Just for debugging purpose.
         logger.debug("call => SentimentConsensusAnalysisServicer()")
 
-    # The method that will be exposed to the snet-cli call command.
-    # request: incoming data
-    # context: object that provides RPC-specific information (timeout, etc).
-    def GetConsensusAnalysis(self, request, context):
+    def ConsensusAnalysis(self, request, context):
+        """ The method that will be exposed to the snet-cli call command.
+
+        :param request: incoming data
+        :param context: object that provides RPC-specific information (timeout, etc).
+        :return:
+        """
+
         # In our case, request is a InputMessage() object (from .proto file)
         self.value = request.value
 
@@ -84,14 +91,14 @@ class SentimentConsensusAnalysisServicer(grpc_bt_grpc.SentimentConsensusAnalysis
         # To respond we need to create a OutputMessage() object (from .proto file)
         self.result = OutputMessage()
         self.result.value = resultBase64
-        logger.debug('call => GetConsensusAnalysis({})={}'.format(self.value, self.result.value))
+        logger.debug('call => ConsensusAnalysis({})={}'.format(self.value, self.result.value))
         return self.result
 
 
-# Create a class to be added to the gRPC server
-# derived from the protobuf codes.
-class TwitterHistoricalAnalysisServicer(grpc_bt_grpc.TwitterHistoricalAnalysisServicer):
-
+class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisServicer):
+    """ Create a class to be added to the gRPC server
+    derived from the protobuf codes.
+    """
     def __init__(self):
         # Just for debugging purpose.
         logger.debug("call => TwitterHistoricalAnalysisServicer()")
@@ -103,7 +110,14 @@ class TwitterHistoricalAnalysisServicer(grpc_bt_grpc.TwitterHistoricalAnalysisSe
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
     # context: object that provides RPC-specific information (timeout, etc).
-    def GetHistoricalAnalysis(self, request, context):
+    def HistoricalAnalysis(self, request, context):
+        """ The method that will be exposed to the snet-cli call command.
+
+        :param request: incoming data
+        :param context: object that provides RPC-specific information (timeout, etc).
+        :return:
+        """
+
         try:
             # Setting up the Stream Manager
             self.reader = twitter_mod.TwitterApiReader(consumer_key=request.credentials.consumer_key,
@@ -135,7 +149,7 @@ class TwitterHistoricalAnalysisServicer(grpc_bt_grpc.TwitterHistoricalAnalysisSe
 
         except Exception as e:
             self.stringResult = " status => " + str(e) + " at: " + str(datetime.datetime.now())
-            logger.debug('call => GetHistoricalAnalysisToDatabase() Error description => ' + self.stringResult)
+            logger.debug('call => HistoricalAnalysisToDatabase() Error description => ' + self.stringResult)
 
         finally:
             # Encoding result
@@ -149,7 +163,14 @@ class TwitterHistoricalAnalysisServicer(grpc_bt_grpc.TwitterHistoricalAnalysisSe
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
     # context: object that provides RPC-specific information (timeout, etc).
-    def GetHistoricalAnalysisToDatabase(self, request, context):
+    def HistoricalAnalysisToDatabase(self, request, context):
+        """ The method that will be exposed to the snet-cli call command.
+
+        :param request: incoming data
+        :param context: object that provides RPC-specific information (timeout, etc).
+        :return:
+        """
+
         try:
 
             self.recognizer = recognizer_mod.SnetRecognizer()
@@ -227,7 +248,7 @@ class TwitterHistoricalAnalysisServicer(grpc_bt_grpc.TwitterHistoricalAnalysisSe
 
         except Exception as e:
             self.stringResult = " status => " + str(e) + " at: " + str(datetime.datetime.now())
-            logger.debug('call => GetHistoricalAnalysisToDatabase() Error description => ' + self.stringResult)
+            logger.debug('call => HistoricalAnalysisToDatabase() Error description => ' + self.stringResult)
 
         finally:
             # Encoding result
@@ -235,14 +256,14 @@ class TwitterHistoricalAnalysisServicer(grpc_bt_grpc.TwitterHistoricalAnalysisSe
             # To respond we need to create a OutputMessage() object (from .proto file)
             self.result = OutputMessage()
             self.result.value = self.resultBase64
-            logger.debug('call => GetHistoricalAnalysisToDatabase()={}'.format(self.result.value))
+            logger.debug('call => HistoricalAnalysisToDatabase()={}'.format(self.result.value))
             return self.result
 
 
-# Create a class to be added to the gRPC server
-# derived from the protobuf codes.
-class TwitterStreamAnalysisServicer(grpc_bt_grpc.TwitterStreamAnalysisServicer):
-
+class TwitterStreamAnalysisServicer(grpc_services.TwitterStreamAnalysisServicer):
+    """ Create a class to be added to the gRPC server
+    derived from the protobuf codes.
+    """
     def __init__(self):
         # Just for debugging purpose.
         logger.debug("call => TwitterStreamAnalysisServicer()")
@@ -251,10 +272,14 @@ class TwitterStreamAnalysisServicer(grpc_bt_grpc.TwitterStreamAnalysisServicer):
         self.stringResult = ''
         self.resultBase64 = ''
 
-    # The method that will be exposed to the snet-cli call command.
-    # request: incoming data
-    # context: object that provides RPC-specific information (timeout, etc).
-    def GetStreamAnalysis(self, request, context):
+    def StreamAnalysis(self, request, context):
+        """ The method that will be exposed to the snet-cli call command.
+
+        :param request: incoming data
+        :param context: object that provides RPC-specific information (timeout, etc).
+        :return:
+        """
+
         try:
 
             # Setting up the Stream Manager
@@ -295,34 +320,35 @@ class TwitterStreamAnalysisServicer(grpc_bt_grpc.TwitterStreamAnalysisServicer):
             # To respond we need to create a OutputMessage() object (from .proto file)
             self.result = OutputMessage()
             self.result.value = self.resultBase64
-            logger.debug('call => GetStreamAnalysis()={}'.format(self.result.value))
+            logger.debug('call => StreamAnalysis()={}'.format(self.result.value))
             return self.result
 
 
-# The gRPC serve function.
-#
-# Params:
-# max_workers: pool of threads to execute calls asynchronously
-# port: gRPC server port
-#
-# Add all your classes to the server here.
-# (from generated .py files by protobuf compiler)
 def serve(max_workers=10, port=7777):
+    """ The gRPC serve function.
+
+    Add all your classes to the server here.
+    (from generated .py files by protobuf compiler)
+
+    :param max_workers: pool of threads to execute calls asynchronously
+    :param port: gRPC server port
+    :return:
+    """
+
     logger.debug('call => serve(max_workers={}, port={})'.format(max_workers, port))
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
-    grpc_bt_grpc.add_ShowMessageServicer_to_server(ShowMessageServicer(), server)
-    grpc_bt_grpc.add_SentimentConsensusAnalysisServicer_to_server(SentimentConsensusAnalysisServicer(), server)
-    grpc_bt_grpc.add_TwitterHistoricalAnalysisServicer_to_server(TwitterHistoricalAnalysisServicer(), server)
-    grpc_bt_grpc.add_TwitterStreamAnalysisServicer_to_server(TwitterStreamAnalysisServicer(), server)
+    grpc_services.add_ShowMessageServicer_to_server(ShowMessageServicer(), server)
+    grpc_services.add_SentimentConsensusAnalysisServicer_to_server(SentimentConsensusAnalysisServicer(), server)
+    grpc_services.add_TwitterHistoricalAnalysisServicer_to_server(TwitterHistoricalAnalysisServicer(), server)
+    grpc_services.add_TwitterStreamAnalysisServicer_to_server(TwitterStreamAnalysisServicer(), server)
     server.add_insecure_port('[::]:{}'.format(port))
     return server
 
 
 if __name__ == '__main__':
+    """ Runs the gRPC server to communicate with the Snet Daemon.
+    """
     logger.debug('call => __name__ == __main__')
-    '''
-    Runs the gRPC server to communicate with the Snet Daemon.
-    '''
     parser = common.common_parser(__file__)
     args = parser.parse_args(sys.argv[1:])
     common.main_loop(serve, args)

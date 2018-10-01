@@ -11,11 +11,10 @@ from log import log_config
 
 logger = log_config.getLogger('twitter_mod.py')
 
-# Custom listener
-# Extend Tweetpy StreamListener
-
 
 class SnetListener(StreamListener):
+    """ Extended Tweet Listener
+    """
 
     def __init__(self, msg_limit=0, time_limit=0):
         logger.debug("SnetListener INIT")
@@ -28,6 +27,11 @@ class SnetListener(StreamListener):
         super(SnetListener, self).__init__()
 
     def on_data(self, data):
+        """Called when raw data is received from connection.
+        
+            Override this method if you wish to manually handle
+            the stream data. Return False to stop stream and close connection.
+        """
 
         try:
             logger.debug("SnetListener on_data")
@@ -64,29 +68,41 @@ class SnetListener(StreamListener):
             return True
 
     def on_error(self, status_code):
+        """ Called when a non-200 status code is returned
+
+        if status_code > 400:
+        returning False in on_data disconnects the stream
+
+        :param status_code:
+        :return:
+        """
         logger.debug("SnetListener on_error")
         self.status_error_code = status_code
-        # if status_code > 400:
-        # returning False in on_data disconnects the stream
+
         return False
 
-    # Check search limits
     def check_limits(self):
+        """ Check search limits
+        :return:
+        """
         logger.debug("SnetListener check_limits")
         if self.time_limit > 0 and ((time.time() - self.start_time) > self.time_limit):
             logger.debug("SORRY, TIME LIMIT IS OVER !")
             return False
+
         if self.msg_limit > 0 and (self.msg_counter > self.msg_limit):
             logger.debug("SORRY, MSGS LIMIT IS OVER !")
             return False
+
         return True
 
 
-# Stream Manager class
-# Used for manage twitter connections based on it's limits
-
-
 class SnetStreamManager:
+    """Stream manager class
+
+    Used to manage streamming messages from twitter
+    according to service parameters
+    """
     auth = ''
     stream = ''
 
@@ -97,37 +113,58 @@ class SnetStreamManager:
         self.stream = Stream(self.auth, SnetListener(msg_limit=msg_limit, time_limit=time_limit))
 
     def filter(self, languages, keywords, async=False):
+        """ Start filtering messages on twitter
+        :param languages:
+        :param keywords:
+        :param async:
+        :return:
+        """
         logger.debug("SnetStreamManager filter")
         # logger.debug("")
         # self.stream.filter(languages=['en'], track=['happy'])
         self.stream.filter(languages=languages, track=keywords, async=async)
         # self.stream.disconnect()
 
-    # Check search limits
     def check_limits(self):
+        """ Check search limits
+        :return:
+        """
+
         return self.stream.check_limits()
 
-    # Check connection is finished
     def isrunning(self):
+        """ Check connection is finished
+        :return:
+        """
+
         return self.stream.running
 
-    # Get status error code
     def status_error_code(self):
+        """ Get status error code
+        :return:
+        """
+
         return self.stream.listener.status_error_code
 
-    # Disconnect session
     def disconnect(self):
+        """ Disconnect session
+        :return:
+        """
+
         self.stream.disconnect()
 
-    # Get sentences
     def sentences(self):
-        # logger.debug("MANAGER SENTENCES...")
-        # if self.stream.listener.sentences is not None:
-        #     logger.debug("sentences populated...")
+        """ Get sentences
+        :return:
+        """
+
         return self.stream.listener.sentences
 
 
 class TwitterApiReader:
+    """
+    Twitter api reader
+    """
 
     def __init__(self,
                  consumer_key,
@@ -151,6 +188,11 @@ class TwitterApiReader:
         self.reading = False
 
     def read(self, url, params):
+        """ Start reading messages on twitter
+        :param url:
+        :param params:
+        :return:
+        """
 
         try:
             logger.debug("Start reading...")
@@ -162,22 +204,27 @@ class TwitterApiReader:
                 response = requests.post(auth=self.auth, url=url, json=params)
                 json_data = response.json()
 
+                print("RESPONSE CODE => " + str(response))
+
                 if response.status_code == requests.codes.ok:
                     if len(json_data['results']) > 0:
                         self.messages.append(json_data['results'])
 
                         if self.db_name is not None:
+
                             # Writing on database
                             with sqlite3.connect(self.db_name) as conn:
                                 cur = conn.cursor()
                                 cur.execute('''create table if not exists messages(original_data json)''')
                                 temp_msg_counter = 0
+
                                 for item in json_data['results']:
                                     temp_msg_counter += 1
                                     cur.execute("insert into messages values (?)", [json.dumps(item)])
                                     print("Inserting into database message number: " + str(temp_msg_counter))
 
                     if json_data['next']:
+
                         # Set next page hash to call
                         params['next'] = str(json_data['next'])
                         # Twitter sandbox rate limits: 30 RPM, 10RPS
@@ -186,39 +233,50 @@ class TwitterApiReader:
                         self.read(url, params)
 
                     self.reading = False
+
                 else:
-                    logger.debug("Error found => " + json_data['error']['message'])
-                    raise Exception(str(json_data['error']['message']))
+                    self.reading = False
+                    if len(str(json_data['error']['message'])) > 10:
+                        raise Exception("Twitter error => " + str(json_data['error']['message']))
+
+                    else:
+                        logger.debug("Connection error => " + response.status_code)
+                        raise Exception("Connection error => " + str(response.status_code))
 
         except Exception as e:
             self.reading = False
             logger.debug("Reader error => " + str(e))
+            raise Exception(str(e))
 
     def messages(self):
+        """ Return captured messages from twitter
+        :return:
+        """
+
         return self.messages
 
     def reading(self):
+        """ Return reading status of the reader
+        :return:
+        """
+
         return self.reading
 
-    # Check search limits
     def check_limits(self):
-        logger.debug("SnetListener check_limits")
-        if self.time_limit > 0 and ((time.time() - self.start_time) > self.time_limit):
-            logger.debug("SORRY, TIME LIMIT IS OVER !")
-            raise Exception("SORRY, TIME LIMIT IS OVER !")
-        if self.msg_limit > 0 and (len(self.messages) > self.msg_limit):
-            logger.debug("SORRY, MSGS LIMIT IS OVER !")
-            raise Exception("SORRY, MSGS LIMIT IS OVER !")
-        if self.request_counter > 0 and self.request_counter >= self.max_requests_limit:
-            logger.debug("SORRY, REQUESTS LIMIT IS OVER !")
-            raise Exception("SORRY, REQUESTS LIMIT IS OVER !")
-        return True
+        """ Check limits parameters
+        :return:
+        """
 
-# Especificação:
-#
-# 25000 mensagens relacionadas a politicos
-# 25000 mensagens relacionadas a organizações não governamentais
-# 25000 mensagens relacionadas as marcas mais influentes
-#
-# Output
-# user_id named_entity named_entity_type sentiment analysis
+        logger.debug("TwitterApiReader check_limits")
+        if self.time_limit > 0 and ((time.time() - self.start_time) > self.time_limit):
+            logger.debug("Sorry, your time limit is over!")
+            raise Exception("Sorry, your time limit is over!")
+
+        if self.msg_limit > 0 and (len(self.messages) > self.msg_limit):
+            logger.debug("Sorry, your message limit is over!")
+            raise Exception("Sorry, your message limit is over!")
+
+        if self.request_counter > 0 and self.request_counter >= self.max_requests_limit:
+            logger.debug("Sorry, your request limit is over!")
+            raise Exception("Sorry, your request limit is over!")
+        return True

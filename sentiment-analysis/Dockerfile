@@ -50,9 +50,10 @@ RUN mkdir -p /go/src/github.com/singnet && \
     pip3.6 install snet_cli && \
     cd /go/src && \
     git clone https://github.com/singnet/nlp-services.git && \
-    cd /go/src/nlp-services/sentiment_analysis && \
+    cd /go/src/nlp-services/sentiment-analysis && \
     pip3.6 install -r requirements.txt && \
+    RUN python3.6 -c "import nltk; nltk.download('punkt')" && \
     bash buildproto.sh
-WORKDIR /go/src/nlp-services/sentiment_analysis
-EXPOSE 7010-7010
+WORKDIR /go/src/nlp-services/sentiment-analysis
+EXPOSE 7010-7011
 CMD ["python3.6", "run_service.py", "--daemon-conf", "config/"]

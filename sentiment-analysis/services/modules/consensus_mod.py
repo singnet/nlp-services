@@ -7,42 +7,40 @@ from log import log_config
 
 logger = log_config.getLogger('consensus_mod.py')
 
-#Services Path
+#Service paths
 current_path = os.path.dirname(os.path.realpath(__file__))
 parent_path = os.path.abspath(os.path.join(current_path, os.pardir))
 service_root_path = os.path.abspath(os.path.join(parent_path, os.pardir))
 
 
-# Vote by classifiers results
 class VoteClassifier(ClassifierI):
+    """ Vote by classifiers results
+    """
     def __init__(self, *classifiers):
         self._classifiers = classifiers
 
-    # Iterate all classifiers
     def classify(self, features):
+        """ Vote on all classifiers results
+        :param features: incomming feature to be classified
+        :return: vote winner
+        """
+
         votes = []
         for c in self._classifiers:
             v = c.classify(features)
             votes.append(v)
         return mode(votes)
 
-    # Calculate the confidence of the result
     def confidence(self, features):
-        # print(str(features))
+        """ Calculate the confidence of the result
+        :param features:
+        :return: confidence
+        """
+
         votes = []
         for c in self._classifiers:
             v = c.classify(features)
             votes.append(v)
-
-        # print("")
-        # print("=========================================================================")
-        # print("")
-        # print("TOTAL OF VOTES => " + str(len(votes)) + ", OPENED VOTES => " + str(votes))
-        # print("")
-        # print("WINNER VOTE => " + str(mode(votes)) + ", TOTAL OF VOTES => " + str(votes.count(mode(votes))))
-        # print("")
-        # print("=========================================================================")
-        # print("")
 
         total_of_winner_votes = votes.count(mode(votes))
         conf = total_of_winner_votes / len(votes)
@@ -55,8 +53,11 @@ word_features = pickle.load(word_features5k_f)
 word_features5k_f.close()
 
 
-# Tokenizing document
 def find_features(document):
+    """ Tokenize document
+    :param document:
+    :return:
+    """
     words = word_tokenize(document)
     features = {}
     for w in word_features:
@@ -86,7 +87,6 @@ open_file = open(service_root_path + "/models/LinearSVC_classifier5k.pickle", "r
 LinearSVC_classifier = pickle.load(open_file)
 open_file.close()
 
-# ATTENTION ###
 open_file = open(service_root_path + "/models/NuSVC_classifier5k.pickle", "rb")
 NuSVC_classifier = pickle.load(open_file)
 open_file.close()
@@ -106,7 +106,11 @@ voted_classifier = VoteClassifier(
                                   )
 
 
-# Classify sentiment
 def sentiment(text):
+    """ Analyzing the semtniment
+
+    :param text:
+    :return: sentimento analysis
+    """
     feats = find_features(text)
     return voted_classifier.classify(feats), voted_classifier.confidence(feats)

@@ -1,9 +1,8 @@
-grpcio
-grpcio-tools
+grpcio==1.14.1
+grpcio-tools==1.14.1
+scikit-learn==0.19.2
 nltk
 tweepy
-twython
-scikit-learn==0.19.2
 numpy
 scipy
-pymongo
+pytest

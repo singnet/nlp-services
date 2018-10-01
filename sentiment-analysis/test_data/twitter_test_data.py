@@ -1,8 +1,10 @@
 # Twitter Credentials
-# consumer_key = None
-# consumer_secret = None
-# access_token = None
-# token_secret = None
+consumer_key = None
+consumer_secret = None
+access_token = None
+token_secret = None
+product = None
+environment = None
 
 languages = 'en'
 query = None

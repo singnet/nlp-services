@@ -22,7 +22,7 @@ class ShowMessageServicer(grpc_bt_grpc.ShowMessageServicer):
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
     # context: object that provides RPC-specific information (timeout, etc).
-    def show(self, request, context):
+    def Show(self, request, context):
         # In our case, request is a InputMessage() object (from .proto file)
         self.value = request.value
 
@@ -41,12 +41,12 @@ class RecognizeMessageServicer(grpc_bt_grpc.RecognizeMessageServicer):
     def __init__(self):
         # Just for debugging purpose.
         logger.debug("RecognizeMessageServicer created")
-        self.recognizer = recognizer_mod.SnetRecognizer()
+        self.recognizer = recognizer_mod.SnetEntityRecognizer()
 
     # The method that will be exposed to the snet-cli call command.
     # request: incoming data
     # context: object that provides RPC-specific information (timeout, etc).
-    def recognize(self, request, context):
+    def Recognize(self, request, context):
         # In our case, request is a InputMessage() object (from .proto file)
         # self.value = request.value
         self.value = request.value
