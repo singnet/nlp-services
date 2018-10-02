@@ -120,9 +120,7 @@ class SnetStreamManager:
         :return:
         """
         logger.debug("SnetStreamManager filter")
-        # logger.debug("")
-        self.stream.filter(languages=['en'], track=['happy'])
-        # self.stream.filter(languages=languages, track=query, async=async)
+        self.stream.filter(languages=languages, track=query, async=async)
         self.stream.disconnect()
 
     def check_limits(self):

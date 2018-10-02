@@ -66,9 +66,8 @@ class SentimentConsensusAnalysisServicer(grpc_services.SentimentConsensusAnalysi
         # In our case, request is a InputMessage() object (from .proto file)
         self.value = request.value
 
-        text = base64.b64decode(self.value)
         # Decode do string
-        temp = text.decode('utf-8')
+        temp = base64.b64decode(self.value).decode('utf-8')
         # Convert in array
         tempArray = temp.split("\n")
         # Result of sentences
@@ -283,6 +282,25 @@ class TwitterStreamAnalysisServicer(grpc_services.TwitterStreamAnalysisServicer)
         self.stringResult = ''
         self.resultBase64 = ''
 
+    def twitter_manager_analysis(self, manager):
+
+        sentences = manager.sentences()
+
+        if len(sentences) > 0:
+            analizer = SentimentIntensityAnalyzer()
+            # Generating result
+            for line in sentences:
+                if line is not None:
+                    if len(line) > 1:
+                        self.stringResult += line
+                        self.stringResult += '\n'
+                        self.stringResult += str(analizer.polarity_scores(line))
+                        self.stringResult += '\n\n'
+        else:
+            self.status_error_code = str(self.manager.status_error_code())
+
+        return self.stringResult
+
     def StreamAnalysis(self, request, context):
         """ The method that will be exposed to the snet-cli call command.
 
@@ -303,26 +321,15 @@ class TwitterStreamAnalysisServicer(grpc_services.TwitterStreamAnalysisServicer)
 
             # Start filtering on twitter
             self.manager.filter(languages=request.languages, query=request.query)
-            sentences = self.manager.sentences()
 
-            if len(sentences) > 0:
-                analizer = SentimentIntensityAnalyzer()
-                # Generating result
-                for line in sentences:
-                    if line is not None:
-                        if len(line) > 1:
-                            self.stringResult += line
-                            self.stringResult += '\n'
-                            self.stringResult += str(analizer.polarity_scores(line))
-                            self.stringResult += '\n\n'
-            else:
-                self.status_error_code = str(self.manager.status_error_code())
+            # Generating analysis result
+            self.twitter_manager_analysis(self.manager)
 
         except Exception as e:
 
             if self.status_error_code:
-                self.stringResult = " status error code => " + self.status_error_code + " at: " + str(
-                    datetime.datetime.now())
+                self.stringResult = "Error => status code => " + self.status_error_code \
+                                    + " at: " + str(datetime.datetime.now())
                 logger.error('Error description => ' + self.stringResult)
 
         finally:
