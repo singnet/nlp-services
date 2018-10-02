@@ -108,7 +108,9 @@ venv.bak/
 *.log.*
 **/models
 **/output.txt
+**/twitter_messages
 **/*temp.db
 **/snetd.db
 **/db
-**.*.icloud
+**/*.icloud
+twitter_messages.txt

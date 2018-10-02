@@ -1,6 +1,5 @@
+import path_setup
 import grpc
-
-# import the generated classes
 from services.service_spec import named_entity_recognition_rpc_pb2_grpc as grpc_bt_grpc
 from services.service_spec import named_entity_recognition_rpc_pb2 as grpc_bt_pb2
 from services import registry
@@ -52,3 +51,5 @@ if __name__ == '__main__':
 
     except Exception as e:
         logger.debug(e)
+
+path_setup.clean_paths()
