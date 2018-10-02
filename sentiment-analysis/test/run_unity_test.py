@@ -102,7 +102,6 @@ def test_stream_analysis():
 
         servicer.manager.stream.listener.sentences = [item['text'] for item in json_data['results']]
         servicer.twitter_manager_analysis(servicer.manager)
-
     assert "pos" in str(servicer.stringResult) or "neg" in str(servicer.stringResult), "Generated result is not valid!"
 
 
