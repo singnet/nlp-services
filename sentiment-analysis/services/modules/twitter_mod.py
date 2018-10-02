@@ -51,6 +51,7 @@ class SnetListener(StreamListener):
             if tweet is not None:
                 self.sentences.append(tweet)
 
+            # work in progress
             # sentiment_value, confidence = s.sentiment(tweet)
             # logger.debug(tweet, sentiment_value, confidence)
             # if confidence * 100 >= 80:
@@ -86,11 +87,11 @@ class SnetListener(StreamListener):
         """
         logger.debug("SnetListener check_limits")
         if self.time_limit > 0 and ((time.time() - self.start_time) > self.time_limit):
-            logger.debug("SORRY, TIME LIMIT IS OVER !")
+            logger.debug("Sorry, time limit is over !")
             return False
 
         if self.msg_limit > 0 and (self.msg_counter > self.msg_limit):
-            logger.debug("SORRY, MSGS LIMIT IS OVER !")
+            logger.debug("Sorry, message limit is over !")
             return False
 
         return True
@@ -106,7 +107,7 @@ class SnetStreamManager:
     stream = ''
 
     def __init__(self, consumer_key, consumer_secret, access_token, token_secret, msg_limit=0, time_limit=0):
-        logger.debug("SnetStreamManager INIT")
+        logger.debug("SnetStreamManager Init")
         self.auth = OAuthHandler(consumer_key, consumer_secret)
         self.auth.set_access_token(access_token, token_secret)
         self.stream = Stream(self.auth, SnetListener(msg_limit=msg_limit, time_limit=time_limit))
@@ -217,7 +218,6 @@ class TwitterApiReader:
             if self.check_limits():
 
                 self.request_counter += 1
-                # logger.debug("Requesting page number : " + str(self.request_counter))
 
                 response = requests.post(auth=self.auth, url=self.url, json=self.params)
                 json_data = response.json()

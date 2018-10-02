@@ -302,9 +302,7 @@ class TwitterStreamAnalysisServicer(grpc_services.TwitterStreamAnalysisServicer)
                                                          time_limit=request.msg_limit)
 
             # Start filtering on twitter
-            logger.debug("SERVICE BEFORE FILTER")
             self.manager.filter(languages=request.languages, query=request.query)
-            logger.debug("SERVICE AFTER FILTER")
             sentences = self.manager.sentences()
 
             if len(sentences) > 0:
@@ -322,18 +320,12 @@ class TwitterStreamAnalysisServicer(grpc_services.TwitterStreamAnalysisServicer)
 
         except Exception as e:
 
-            logger.debug("EXCEPTION => " + str(e))
-
             if self.status_error_code:
                 self.stringResult = " status error code => " + self.status_error_code + " at: " + str(
                     datetime.datetime.now())
                 logger.error('Error description => ' + self.stringResult)
 
         finally:
-            teste = self.manager.sentences()
-            logger.debug("FINALLY - NUMBER OF SENTENCES =>" + str(len(teste)))
-            logger.debug("FINALLY - STATUS ERROR CODE =>" + str(self.manager.status_error_code()))
-
             # Encoding result
             self.resultBase64 = base64.b64encode(str(self.stringResult).encode('utf-8'))
             # To respond we need to create a OutputMessage() object (from .proto file)
