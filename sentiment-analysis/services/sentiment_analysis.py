@@ -2,7 +2,6 @@ import os
 import datetime
 import sys
 import base64
-
 import grpc
 import concurrent.futures as futures
 from services.modules import consensus_mod, twitter_mod
@@ -10,8 +9,7 @@ from services.service_spec import sentiment_analysis_rpc_pb2_grpc as grpc_servic
 from services.service_spec.sentiment_analysis_rpc_pb2 import OutputMessage
 from services import common
 from log import log_config
-from services.modules import recognizer_mod
-# TODO remove the line below
+from services.modules import entity_recognizer_mod
 from nltk.sentiment import SentimentIntensityAnalyzer
 
 # Services Path
@@ -107,9 +105,25 @@ class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisS
         self.stringResult = ''
         self.resultBase64 = ''
 
-    # The method that will be exposed to the snet-cli call command.
-    # request: incoming data
-    # context: object that provides RPC-specific information (timeout, etc).
+    def twitter_reader_analysis(self, reader):
+        """ Analyze twitter messages from reader
+        :param reader:
+        :return:
+        """
+
+        string_result = ''
+
+        if len(reader.messages) > 0:
+            # Generating result
+            for page in reader.messages:
+                for item in page:
+                    string_result += item['text']
+                    string_result += '\n'
+                    string_result += str(consensus_mod.sentiment(item['text']))
+                    string_result += '\n\n'
+
+        return string_result
+
     def HistoricalAnalysis(self, request, context):
         """ The method that will be exposed to the snet-cli call command.
 
@@ -124,32 +138,30 @@ class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisS
                                                        consumer_secret=request.credentials.consumer_secret,
                                                        access_token=request.credentials.access_token,
                                                        token_secret=request.credentials.token_secret,
-                                                       msg_limit=0,
-                                                       time_limit=0,
-                                                       max_requests_limit=0,
-                                                       db_name=None)
-            # Twitter query parameters config
-            product = request.product
-            environment = request.environment
-            url = "https://api.twitter.com/1.1/tweets/search/" + product + "/" + environment + '.json'
-            params = {"query": request.query, "maxResults": request.messages_per_request, "fromDate": request.from_date,
-                      "toDate": request.to_date}
+                                                       product=request.product,
+                                                       environment=request.environment,
+                                                       query=request.query,
+                                                       messages_per_request=request.messages_per_request,
+                                                       max_requests_limit=request.max_requests_limit,
+                                                       msg_limit=request.msg_limit,
+                                                       time_limit=request.time_limit,
+                                                       from_date=request.from_date,
+                                                       to_date=request.to_date,
+                                                       db_name=request.db_name)
 
-            # Start searching on twitter
-            self.reader.read(url=url, params=params)
+            # Start reading messages
+            self.reader.read()
 
+            # If the reader has captured messages then analyze them
             if len(self.reader.messages) > 0:
-                # Generating result
-                for page in self.reader.messages:
-                    for item in page:
-                        self.stringResult += item['text']
-                        self.stringResult += '\n'
-                        self.stringResult += str(consensus_mod.sentiment(item['text']))
-                        self.stringResult += '\n\n'
+                # Analyze twitter messages from reader
+                self.stringResult = self.twitter_reader_analysis(self.reader)
+            else:
+                self.stringResult = "Messages not found"
 
         except Exception as e:
-            self.stringResult = " status => " + str(e) + " at: " + str(datetime.datetime.now())
-            logger.debug('call => HistoricalAnalysisToDatabase() Error description => ' + self.stringResult)
+            self.stringResult = "Error => " + str(e) + " at: " + str(datetime.datetime.now())
+            logger.debug("call => HistoricalAnalysis() " + self.stringResult)
 
         finally:
             # Encoding result
@@ -160,11 +172,10 @@ class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisS
             logger.debug('call => historicalAnalysis()={}'.format(self.result.value))
             return self.result
 
-    # The method that will be exposed to the snet-cli call command.
-    # request: incoming data
-    # context: object that provides RPC-specific information (timeout, etc).
-    def HistoricalAnalysisToDatabase(self, request, context):
+    def MarketAnalysis(self, request, context):
         """ The method that will be exposed to the snet-cli call command.
+
+        WORK IN PROGRESS
 
         :param request: incoming data
         :param context: object that provides RPC-specific information (timeout, etc).
@@ -173,28 +184,27 @@ class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisS
 
         try:
 
-            self.recognizer = recognizer_mod.SnetRecognizer()
-
-            self.db_name = 'twitter_messages'
+            # New instance of entity recognizer
+            self.recognizer = entity_recognizer_mod.SnetEntityRecognizer()
 
             # Setting up the Stream Manager
             self.reader = twitter_mod.TwitterApiReader(consumer_key=request.credentials.consumer_key,
                                                        consumer_secret=request.credentials.consumer_secret,
                                                        access_token=request.credentials.access_token,
                                                        token_secret=request.credentials.token_secret,
+                                                       product=request.product,
+                                                       environment=request.environment,
+                                                       query=request.query,
+                                                       messages_per_request=request.messages_per_request,
+                                                       max_requests_limit=request.max_requests_limit,
                                                        msg_limit=request.msg_limit,
                                                        time_limit=request.time_limit,
-                                                       max_requests_limit=request.max_requests_limit,
+                                                       from_date=request.from_date,
+                                                       to_date=request.to_date,
                                                        db_name=request.db_name)
-            # Twitter query parameters config
-            product = request.product
-            environment = request.environment
-            url = "https://api.twitter.com/1.1/tweets/search/" + product + "/" + environment + '.json'
-            params = {"query": request.query, "maxResults": request.messages_per_request, "fromDate": request.from_date,
-                      "toDate": request.to_date}
 
-            # Start searching on twitter
-            self.reader.read(url, params)
+            # Start reading on twitter
+            self.reader.read()
             # t1 = threading.Thread(target=self.reader.read, args=(url, params), daemon=True)
             # t1.start()
 
@@ -247,8 +257,8 @@ class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisS
                 self.stringResult = "Messages not found"
 
         except Exception as e:
-            self.stringResult = " status => " + str(e) + " at: " + str(datetime.datetime.now())
-            logger.debug('call => HistoricalAnalysisToDatabase() Error description => ' + self.stringResult)
+            self.stringResult = "Error => " + str(e) + " at: " + str(datetime.datetime.now())
+            logger.debug("call => HistoricalAnalysis() " + self.stringResult)
 
         finally:
             # Encoding result
@@ -264,6 +274,7 @@ class TwitterStreamAnalysisServicer(grpc_services.TwitterStreamAnalysisServicer)
     """ Create a class to be added to the gRPC server
     derived from the protobuf codes.
     """
+
     def __init__(self):
         # Just for debugging purpose.
         logger.debug("call => TwitterStreamAnalysisServicer()")
@@ -291,29 +302,37 @@ class TwitterStreamAnalysisServicer(grpc_services.TwitterStreamAnalysisServicer)
                                                          time_limit=request.msg_limit)
 
             # Start filtering on twitter
+            logger.debug("SERVICE BEFORE FILTER")
             self.manager.filter(languages=request.languages, query=request.query)
-
+            logger.debug("SERVICE AFTER FILTER")
             sentences = self.manager.sentences()
 
             if len(sentences) > 0:
+                analizer = SentimentIntensityAnalyzer()
                 # Generating result
                 for line in sentences:
                     if line is not None:
                         if len(line) > 1:
                             self.stringResult += line
                             self.stringResult += '\n'
-                            self.stringResult += str(consensus_mod.sentiment(line))
+                            self.stringResult += str(analizer.polarity_scores(line))
                             self.stringResult += '\n\n'
             else:
                 self.status_error_code = str(self.manager.status_error_code())
 
         except Exception as e:
+
+            logger.debug("EXCEPTION => " + str(e))
+
             if self.status_error_code:
                 self.stringResult = " status error code => " + self.status_error_code + " at: " + str(
                     datetime.datetime.now())
                 logger.error('Error description => ' + self.stringResult)
 
         finally:
+            teste = self.manager.sentences()
+            logger.debug("FINALLY - NUMBER OF SENTENCES =>" + str(len(teste)))
+            logger.debug("FINALLY - STATUS ERROR CODE =>" + str(self.manager.status_error_code()))
 
             # Encoding result
             self.resultBase64 = base64.b64encode(str(self.stringResult).encode('utf-8'))

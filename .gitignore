@@ -111,3 +111,4 @@ venv.bak/
 **/*temp.db
 **/snetd.db
 **/db
+**.*.icloud

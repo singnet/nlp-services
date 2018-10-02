@@ -7,7 +7,7 @@ from nltk.tokenize import word_tokenize
 from nltk.chunk import conlltags2tree
 from nltk.tree import Tree
 
-logger = log_config.getLogger('recognizer_mod.py')
+logger = log_config.getLogger('entity_recognizer_mod.py')
 
 #Service paths
 current_path = os.path.dirname(os.path.realpath(__file__))
