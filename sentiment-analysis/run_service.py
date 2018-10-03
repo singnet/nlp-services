@@ -61,7 +61,7 @@ def start_all_services(cwd, service_modules, config_path=None):
             snetd_config = None
             if config_path:
                 snetd_config = pathlib.Path(
-                    config_path) / ('snetd_' + service_name + '_config.json')
+                    config_path) / ('snetd_' + service_name + '_server_config.json')
 
             processThread = threading.Thread(
                 target=start_service,
