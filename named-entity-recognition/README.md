@@ -6,33 +6,6 @@
 
 - classify - Tokenize and Classify words or sentences.
 
-## Deployment:
-
-#### Deploy a new service
-```bash
-$ curl https://raw.githubusercontent.com/singnet/nlp-services/named_entity_recognition/named_entity_recognition/deploy/deploy_service.sh | bash
-```
-
-#### Update a running service
-```bash
-$ curl https://raw.githubusercontent.com/singnet/nlp-services/named_entity_recognition/named_entity_recognition/deploy/update_service.sh | bash
-```
-
-#### Remove a running service
-```bash
-$ curl https://raw.githubusercontent.com/singnet/nlp-services/named_entity_recognition/named_entity_recognition/deploy/remove_service.sh | bash
-```
-
-#### Start a running container service
-```bash
-$ curl https://raw.githubusercontent.com/singnet/nlp-services/named_entity_recognition/named_entity_recognition/deploy/start_running_service.sh | bash
-```
-
-#### Stop a running container service
-```bash
-$ curl https://raw.githubusercontent.com/singnet/nlp-services/named_entity_recognition/named_entity_recognition/deploy/stop_running_service.sh | bash
-```
-
 ## Usage:
 
 ### Named Entity Recognition:
@@ -41,20 +14,38 @@ recognize()
 
 To use this method, you must build the input message as shown below:
 
-#### Input Message Attributes:
-- value - Base64 text
+
+
+#### Input data example:
+
+For this example sentence as input data:
+'Donald Trump is the president of United States and owner of Trump Tower company.'
+
+Encode in base64 utf-8 text and the result will be like this:
+```
+RG9uYWxkIFRydW1wIGlzIHRoZSBwcmVzaWRlbnQgb2YgVW5pdGVkIFN0YXRlcyBhbmQgb3duZXIgb2YgVHJ1bXAgVG93ZXIgY29tcGFueS4=
+```
 
 #### Service call example:
 ```
-$ snet client call recognize '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
+$ snet client call recognize '{"value": "RG9uYWxkIFRydW1wIGlzIHRoZSBwcmVzaWRlbnQgb2YgVW5pdGVkIFN0YXRlcyBhbmQgb3duZXIgb2YgVHJ1bXAgVG93ZXIgY29tcGFueS4"}' --no-confirm
 ```
 
 #### Output example:
-The result will be a base64 text including the chunked sentence.
 
-After decode base64 the output will be like this:
+The result will be a base64 text like this:
 
 ```
-$ ...
+WygnRG9uYWxkIFRydW1wJywgJ1BFUlNPTicsICdTdGFydCBpbmRleDonLCAwLCAn
+RW5kIGluZGV4OicsIDEyKSwgKCdVbml0ZWQgU3RhdGVzJywgJ0xPQ0FUSU9OJywg
+J1N0YXJ0IGluZGV4OicsIDI5LCAnRW5kIGluZGV4OicsIDQyKSwgKCdUcnVtcCBU
+b3dlcicsICdPUkdBTklaQVRJT04nLCAnU3RhcnQgaW5kZXg6JywgNTYsICdFbmQg
+aW5kZXg6JywgNjcpXQo=
+```
+
+After you decode the base64 result the output will be like this:
+
+```
+$ [('Donald Trump', 'PERSON', 'Start index:', 0, 'End index:', 12), ('United States', 'LOCATION', 'Start index:', 29, 'End index:', 42), ('Trump Tower', 'ORGANIZATION', 'Start index:', 56, 'End index:', 67)]
 
 ```
