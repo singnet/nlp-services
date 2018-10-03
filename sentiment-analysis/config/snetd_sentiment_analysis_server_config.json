@@ -9,6 +9,8 @@
     "DB_PATH": "./db",
     "ETHEREUM_JSON_RPC_ENDPOINT": "https://kovan.infura.io",
     "EXECUTABLE_PATH": "",
+    "HDWALLET_INDEX": 0,
+    "HDWALLET_MNEMONIC": "",
     "LOG_LEVEL": 5,
     "PASSTHROUGH_ENABLED": true,
     "PASSTHROUGH_ENDPOINT": "http://localhost:7011",
