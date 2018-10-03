@@ -7,19 +7,20 @@ from nltk.tokenize import word_tokenize
 from nltk.chunk import conlltags2tree
 from nltk.tree import Tree
 
-logger = log_config.getLogger('classifiers_mod.py')
+logger = log_config.getLogger('entity_recognizer_mod.py')
 
-#Services Path
+#Service paths
 current_path = os.path.dirname(os.path.realpath(__file__))
 parent_path = os.path.abspath(os.path.join(current_path, os.pardir))
 service_root_path = os.path.abspath(os.path.join(parent_path, os.pardir))
 
+
 # Snet Classifier
-class SnetClassifier:
+class SnetEntityRecognizer:
 
     def __init__(self):
         # Snet Classifier.
-        logger.debug("SnetClassifier INIT")
+        logger.debug("SnetEntityRecognizer INIT")
         self.english_model = service_root_path + '/models/stanford-ner-2018-02-27/classifiers/english.all.3class.distsim.crf.ser.gz'
         self.stanford_jar = service_root_path + '/models/stanford-ner-2018-02-27/stanford-ner-3.9.1.jar'
 

@@ -29,7 +29,7 @@ def main():
     ]
 
     # Removing all previous snetd .db file
-    os.system('rm *.db')
+    os.system('rm snetd.db')
 
     # Call for all the services listed in service_modules
     start_all_services(root_path, service_modules, args.daemon_config_path)
@@ -60,7 +60,7 @@ def start_all_services(cwd, service_modules, config_path=None):
             snetd_config = None
             if config_path:
                 snetd_config = pathlib.Path(
-                    config_path) / ('snetd_' + service_name + '_config.json')
+                    config_path) / ('snetd_' + service_name + '_server_config.json')
 
             processThread = threading.Thread(
                 target=start_service,
@@ -104,8 +104,6 @@ def start_snetd(cwd, daemon_config_file=None, db_file=None):
     '''
     logger.debug('call => start_snetd()')
     cmd = ['snetd']
-    if db_file is not None:
-        cmd.extend(['--db-path', str(db_file)])
     if daemon_config_file is not None:
         cmd.extend(['--config', str(daemon_config_file)])
         subprocess.Popen(cmd, cwd=str(cwd))

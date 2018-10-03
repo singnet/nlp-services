@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 service ShowMessage {
-    rpc show(InputMessage) returns (OutputMessage) {}
+    rpc Show(InputMessage) returns (OutputMessage) {}
 }
 
 message InputMessage {
@@ -13,5 +13,5 @@ message OutputMessage {
 }
 
 service RecognizeMessage {
-    rpc recognize(InputMessage) returns (OutputMessage) {}
+    rpc Recognize(InputMessage) returns (OutputMessage) {}
 }

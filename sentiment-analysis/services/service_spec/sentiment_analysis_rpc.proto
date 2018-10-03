@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 service ShowMessage {
-    rpc show(InputMessage) returns (OutputMessage) {}
+    rpc Show(InputMessage) returns (OutputMessage) {}
 }
 
 message InputMessage {
@@ -21,15 +21,17 @@ message TwitterCredentials {
 
 message TwitterInputMessage {
     TwitterCredentials credentials = 1;
-    string languages = 2;
-    string keywords = 3;
-    int64 time_limit = 4;
-    int64 msg_limit = 5;
-    string product = 6;
-    string environment = 7;
-    string from_date = 8;
-    string to_date = 9;
-    int64 max_results = 10;
+    string product = 2;
+    string environment = 3;
+    string languages = 4;
+    string query = 5;
+    int32 messages_per_request = 6;
+    int32 max_requests_limit = 7;
+    int32 msg_limit = 8;
+    int32 time_limit = 9;
+    string from_date = 10;
+    string to_date = 11;
+    string db_name = 12;
 }
 
 message TwitterOutputMessage {
@@ -37,17 +39,13 @@ message TwitterOutputMessage {
 }
 
 service SentimentConsensusAnalysis {
-    rpc consensusAnalysis(InputMessage) returns (OutputMessage) {}
-}
-
-service CustomCorpusAnalysis {
-    rpc customCorpusAnalysis(InputMessage) returns (OutputMessage) {}
+    rpc ConsensusAnalysis(InputMessage) returns (OutputMessage) {}
 }
 
 service TwitterHistoricalAnalysis {
-    rpc historicalAnalysis(TwitterInputMessage) returns (OutputMessage) {}
+    rpc HistoricalAnalysis(TwitterInputMessage) returns (OutputMessage) {}
 }
 
 service TwitterStreamAnalysis {
-    rpc streamAnalysis(TwitterInputMessage) returns (OutputMessage) {}
+    rpc StreamAnalysis(TwitterInputMessage) returns (OutputMessage) {}
 }

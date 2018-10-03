@@ -120,7 +120,6 @@ defaults: &default_steps
             docker push $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
             docker push $DOCKER_ORG/$SERVICE_NAME:latest
           fi
-
 version: 2
 jobs:
   build-translation-container:
