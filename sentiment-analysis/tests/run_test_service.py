@@ -3,7 +3,7 @@ import grpc
 from services.service_spec import sentiment_analysis_rpc_pb2_grpc as grpc_services
 from services.service_spec import sentiment_analysis_rpc_pb2 as rpc
 from test_data import b64_sentences
-from test_data import twitter_test_data
+from test_data import data
 from services import registry
 from log import log_config
 
@@ -65,24 +65,24 @@ if __name__ == '__main__':
         stub = grpc_services.TwitterHistoricalAnalysisStub(channel)
 
         # Setting the credentials up
-        credentials = rpc.TwitterCredentials(consumer_key=twitter_test_data.consumer_key,
-                                                     consumer_secret=twitter_test_data.consumer_secret,
-                                                     access_token=twitter_test_data.access_token,
-                                                     token_secret=twitter_test_data.token_secret)
+        credentials = rpc.TwitterCredentials(consumer_key=data.consumer_key,
+                                                     consumer_secret=data.consumer_secret,
+                                                     access_token=data.access_token,
+                                                     token_secret=data.token_secret)
         # Setting the input message up
         message = rpc.TwitterInputMessage(
             credentials=credentials,
-            product=twitter_test_data.product,
-            environment=twitter_test_data.environment,
-            languages=twitter_test_data.languages,
-            query=twitter_test_data.query,
-            messages_per_request=twitter_test_data.messages_per_request,
-            max_requests_limit=twitter_test_data.max_requests_limit,
-            msg_limit=twitter_test_data.msg_limit,
-            time_limit=twitter_test_data.time_limit,
-            from_date=twitter_test_data.from_date,
-            to_date=twitter_test_data.to_date,
-            db_name=twitter_test_data.db_name)
+            product=data.product,
+            environment=data.environment,
+            languages=data.languages,
+            query=data.query,
+            messages_per_request=data.messages_per_request,
+            max_requests_limit=data.max_requests_limit,
+            msg_limit=data.msg_limit,
+            time_limit=data.time_limit,
+            from_date=data.from_date,
+            to_date=data.to_date,
+            db_name=data.db_name)
 
         # make the call
         response = stub.HistoricalAnalysis(message)
@@ -101,17 +101,17 @@ if __name__ == '__main__':
         stub = grpc_services.TwitterStreamAnalysisStub(channel)
 
         # Setting the credentials up
-        credentials = rpc.TwitterCredentials(consumer_key=twitter_test_data.consumer_key,
-                                             consumer_secret=twitter_test_data.consumer_secret,
-                                             access_token=twitter_test_data.access_token,
-                                             token_secret=twitter_test_data.token_secret)
+        credentials = rpc.TwitterCredentials(consumer_key=data.consumer_key,
+                                             consumer_secret=data.consumer_secret,
+                                             access_token=data.access_token,
+                                             token_secret=data.token_secret)
         # Setting the input message up
         message = rpc.TwitterInputMessage(
             credentials=credentials,
-            languages=twitter_test_data.languages,
-            query=twitter_test_data.query,
-            time_limit=twitter_test_data.time_limit,
-            msg_limit=twitter_test_data.msg_limit)
+            languages=data.languages,
+            query=data.query,
+            time_limit=data.time_limit,
+            msg_limit=data.msg_limit)
 
         # make the call
         response = stub.StreamAnalysis(message)

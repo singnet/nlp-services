@@ -37,7 +37,7 @@ RUN cd $SINGNET_REPOS && \
     ./scripts/install && \
     ./scripts/build linux amd64
 RUN cd $SINGNET_REPOS && \
-    git clone -b service_splited https://github.com/glautervl/nlp-services.git && \
+    git clone https://github.com/singnet/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/sentiment-analysis && \
     ln -s $SINGNET_REPOS/snet-daemon/build/snetd-linux-amd64 ./snetd && \
     pip3 install -r requirements.txt && \
