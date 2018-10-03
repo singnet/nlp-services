@@ -10,10 +10,9 @@
 
 ### Named Entity Recognition:
 #### Method signature: 
-recognize()
+Recognize()
 
 To use this method, you must build the input message as shown below:
-
 
 
 #### Input data example:
@@ -28,7 +27,7 @@ RG9uYWxkIFRydW1wIGlzIHRoZSBwcmVzaWRlbnQgb2YgVW5pdGVkIFN0YXRlcyBhbmQgb3duZXIgb2Yg
 
 #### Service call example:
 ```
-$ snet client call recognize '{"value": "RG9uYWxkIFRydW1wIGlzIHRoZSBwcmVzaWRlbnQgb2YgVW5pdGVkIFN0YXRlcyBhbmQgb3duZXIgb2YgVHJ1bXAgVG93ZXIgY29tcGFueS4"}' --no-confirm
+$ snet client call Recognize '{"value": "RG9uYWxkIFRydW1wIGlzIHRoZSBwcmVzaWRlbnQgb2YgVW5pdGVkIFN0YXRlcyBhbmQgb3duZXIgb2YgVHJ1bXAgVG93ZXIgY29tcGFueS4"}' --no-confirm
 ```
 
 #### Output example:

@@ -1,5 +1,7 @@
+import json
 import os
 import datetime
+import sqlite3
 import sys
 import base64
 import grpc
@@ -210,36 +212,33 @@ class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisS
             # TODO working in progress
             # logger.debug("Start listening database")
             # while self.reader.reading:
-            # with sqlite3.connect(self.db_name) as conn:
-            #     cur = conn.cursor()
-            #     cur.execute("select * from messages")
-            #     rows = cur.fetchall()
-            #     self.reader.messages = cur.fetchall()
+            with sqlite3.connect(request.db_name) as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT * FROM messages WHERE ROWID >= 0 AND ROWID <= 60")
+                self.reader.messages = []
+                self.reader.messages.append(cur.fetchall())
 
             if len(self.reader.messages) > 0:
                 analizer = SentimentIntensityAnalyzer()
-                # if request.db_name:
+
                 # Writing on txt file
                 with open(request.db_name+'.txt', 'w') as filehandle:
-
                     # Reading all page of messages
                     for page in self.reader.messages:
-                        # Reading page items
                         for item in page:
-                            print("Processing entities...")
-                            # Extracting entities
-                            sentence_entities = self.recognizer.stanford_recognizer(item['text'])
+                            dict = json.loads(item[0])
 
-                            print("Processing sentiment analysis...")
+                            # Extracting entities
+                            sentence_entities = self.recognizer.stanford_recognizer(dict['text'])
+
                             # Sentiment Analysis
-                            # temp_sentiment_analysis = consensus_mod.sentiment(item['text'])
-                            temp_sentiment_analysis = analizer.polarity_scores(item['text'])
+                            temp_sentiment_analysis = analizer.polarity_scores(dict['text'])
 
                             # Writing output file
                             for entity in sentence_entities:
-                                print("writting into txt file...")
+
                                 # Twitter id
-                                filehandle.write(str(item['id']) + ';')
+                                filehandle.write(str(dict['id']) + ';')
 
                                 # Entity
                                 filehandle.write(str(entity[0]) + ';')
@@ -249,7 +248,11 @@ class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisS
 
                                 # Set Sentiment Analysis
                                 filehandle.write(str(temp_sentiment_analysis))
+
                                 filehandle.write('\n')
+
+                            filehandle.write('\n')
+
                 self.stringResult = "Data generated successfully"
 
             else:
@@ -257,7 +260,7 @@ class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisS
 
         except Exception as e:
             self.stringResult = "Error => " + str(e) + " at: " + str(datetime.datetime.now())
-            logger.debug("call => HistoricalAnalysis() " + self.stringResult)
+            logger.debug("call => HistoricalAnalysis() " + str(self.stringResult))
 
         finally:
             # Encoding result

@@ -29,8 +29,7 @@ def test_show():
     request.value = 'Some input message'
     context = object()
     response = servicer.Show(request, context)
-    if len(response.value) > 10:
-        logger.debug("test_show() - OK")
+    logger.debug(response)
     assert len(response.value) > 10, "Call service error"
 
 
@@ -46,6 +45,7 @@ def test_consensus_analysis():
     context = object()
     response = servicer.ConsensusAnalysis(request, context)
     decoded_result = base64.b64decode(response.value).decode('utf-8')
+    logger.debug(decoded_result)
     assert "pos" in str(decoded_result) or "neg" in str(decoded_result), "Generated result is not valid!"
 
 
@@ -78,7 +78,7 @@ def test_hisorical_analysis():
         servicer.reader.messages = []
         servicer.reader.messages.append(json_data['results'])
         result = servicer.twitter_reader_analysis(servicer.reader)
-
+    logger.debug(result)
     assert "pos" in str(result) or "neg" in str(result), "Generated result is not valid!"
 
 
@@ -102,6 +102,7 @@ def test_stream_analysis():
 
         servicer.manager.stream.listener.sentences = [item['text'] for item in json_data['results']]
         servicer.twitter_manager_analysis(servicer.manager)
+    logger.debug(servicer.stringResult)
     assert "pos" in str(servicer.stringResult) or "neg" in str(servicer.stringResult), "Generated result is not valid!"
 
 

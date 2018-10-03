@@ -217,6 +217,7 @@ class TwitterApiReader:
 
                 self.request_counter += 1
 
+                logger.debug("Request page number: " + str(self.request_counter))
                 response = requests.post(auth=self.auth, url=self.url, json=self.params)
                 json_data = response.json()
 
@@ -227,6 +228,7 @@ class TwitterApiReader:
                         if self.db_name is not None:
 
                             # Writing on database
+                            # On the nexts releases we will manage the database lifetime
                             with sqlite3.connect(self.db_name) as conn:
                                 cur = conn.cursor()
                                 cur.execute('''create table if not exists messages(original_data json)''')
