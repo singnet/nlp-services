@@ -21,37 +21,168 @@ To use this method, you must build the input message as shown below:
 
 For this example sentence as input data:
 ```
-Bromwell High is a cartoon comedy. It ran at the same time as some other programs about school life, such as "Teachers". My 35 years in the teaching profession lead me to believe that Bromwell High's satire is much closer to reality than is "Teachers". The scramble to survive financially, the insightful students who can see right through their pathetic teachers' pomp, the pettiness of the whole situation, all remind me of the schools I knew and their students. When I saw the episode in which a student repeatedly tried to burn down the school, I immediately recalled at High. A classic line: INSPECTOR: I'm here to sack one of your teachers. STUDENT: Welcome to Bromwell High. I expect that many adults of my age think that Bromwell High is far fetched. What a pity that it isn't!
+Fair drama/love story movie that focuses on the lives of blue collar people finding new life thru new love.
 
-Story of a man who has unnatural feelings for a pig. Starts out with a opening scene that is a terrific example of absurd comedy. A formal orchestra audience is turned into an insane, violent mob by the crazy chantings of it's singers. Unfortunately it stays absurd the WHOLE time with no general narrative eventually making it just too off putting. Even those from the era should be turned off. The cryptic dialogue would make Shakespeare seem easy to a third grader. On a technical level it's better than you might think with some good cinematography by future great Vilmos Zsigmond. Future stars Sally Kirkland and Frederic Forrest can be seen briefly.
+I guess he was trying to make a stylish movie. Any way I think this movie is a total waste of time and effort. 
 ```
 
-Ps: You must break line between the sentences
+Ps: You must break line between the sentences before encoding
 
 
 Encode in base64 utf-8 text and the result will be like this:
 ```
-QnJvbXdlbGwgSGlnaCBpcyBhIGNhcnRvb24gY29tZWR5LiBJdCByYW4gYXQgdGhlIHNhbWUgdGltZSBhcyBzb21lIG90aGVyIHByb2dyYW1zIGFib3V0IHNjaG9vbCBsaWZlLCBzdWNoIGFzICJUZWFjaGVycyIuIE15IDM1IHllYXJzIGluIHRoZSB0ZWFjaGluZyBwcm9mZXNzaW9uIGxlYWQgbWUgdG8gYmVsaWV2ZSB0aGF0IEJyb213ZWxsIEhpZ2gncyBzYXRpcmUgaXMgbXVjaCBjbG9zZXIgdG8gcmVhbGl0eSB0aGFuIGlzICJUZWFjaGVycyIuIFRoZSBzY3JhbWJsZSB0byBzdXJ2aXZlIGZpbmFuY2lhbGx5LCB0aGUgaW5zaWdodGZ1bCBzdHVkZW50cyB3aG8gY2FuIHNlZSByaWdodCB0aHJvdWdoIHRoZWlyIHBhdGhldGljIHRlYWNoZXJzJyBwb21wLCB0aGUgcGV0dGluZXNzIG9mIHRoZSB3aG9sZSBzaXR1YXRpb24sIGFsbCByZW1pbmQgbWUgb2YgdGhlIHNjaG9vbHMgSSBrbmV3IGFuZCB0aGVpciBzdHVkZW50cy4gV2hlbiBJIHNhdyB0aGUgZXBpc29kZSBpbiB3aGljaCBhIHN0dWRlbnQgcmVwZWF0ZWRseSB0cmllZCB0byBidXJuIGRvd24gdGhlIHNjaG9vbCwgSSBpbW1lZGlhdGVseSByZWNhbGxlZCBhdCBIaWdoLiBBIGNsYXNzaWMgbGluZTogSU5TUEVDVE9SOiBJJ20gaGVyZSB0byBzYWNrIG9uZSBvZiB5b3VyIHRlYWNoZXJzLiBTVFVERU5UOiBXZWxjb21lIHRvIEJyb213ZWxsIEhpZ2guIEkgZXhwZWN0IHRoYXQgbWFueSBhZHVsdHMgb2YgbXkgYWdlIHRoaW5rIHRoYXQgQnJvbXdlbGwgSGlnaCBpcyBmYXIgZmV0Y2hlZC4gV2hhdCBhIHBpdHkgdGhhdCBpdCBpc24ndCEKClN0b3J5IG9mIGEgbWFuIHdobyBoYXMgdW5uYXR1cmFsIGZlZWxpbmdzIGZvciBhIHBpZy4gU3RhcnRzIG91dCB3aXRoIGEgb3BlbmluZyBzY2VuZSB0aGF0IGlzIGEgdGVycmlmaWMgZXhhbXBsZSBvZiBhYnN1cmQgY29tZWR5LiBBIGZvcm1hbCBvcmNoZXN0cmEgYXVkaWVuY2UgaXMgdHVybmVkIGludG8gYW4gaW5zYW5lLCB2aW9sZW50IG1vYiBieSB0aGUgY3JhenkgY2hhbnRpbmdzIG9mIGl0J3Mgc2luZ2Vycy4gVW5mb3J0dW5hdGVseSBpdCBzdGF5cyBhYnN1cmQgdGhlIFdIT0xFIHRpbWUgd2l0aCBubyBnZW5lcmFsIG5hcnJhdGl2ZSBldmVudHVhbGx5IG1ha2luZyBpdCBqdXN0IHRvbyBvZmYgcHV0dGluZy4gRXZlbiB0aG9zZSBmcm9tIHRoZSBlcmEgc2hvdWxkIGJlIHR1cm5lZCBvZmYuIFRoZSBjcnlwdGljIGRpYWxvZ3VlIHdvdWxkIG1ha2UgU2hha2VzcGVhcmUgc2VlbSBlYXN5IHRvIGEgdGhpcmQgZ3JhZGVyLiBPbiBhIHRlY2huaWNhbCBsZXZlbCBpdCdzIGJldHRlciB0aGFuIHlvdSBtaWdodCB0aGluayB3aXRoIHNvbWUgZ29vZCBjaW5lbWF0b2dyYXBoeSBieSBmdXR1cmUgZ3JlYXQgVmlsbW9zIFpzaWdtb25kLiBGdXR1cmUgc3RhcnMgU2FsbHkgS2lya2xhbmQgYW5kIEZyZWRlcmljIEZvcnJlc3QgY2FuIGJlIHNlZW4gYnJpZWZseS4=
+RmFpciBkcmFtYS9sb3ZlIHN0b3J5IG1vdmllIHRoYXQgZm9jdXNlcyBvbiB0aGUgbGl2ZXMgb2YgYmx1ZSBjb2xsYXIgcGVvcGxlIGZpbmRpbmcgbmV3IGxpZmUgdGhydSBuZXcgbG92ZS4KCkkgZ3Vlc3MgaGUgd2FzIHRyeWluZyB0byBtYWtlIGEgc3R5bGlzaCBtb3ZpZS4gQW55IHdheSBJIHRoaW5rIHRoaXMgbW92aWUgaXMgYSB0b3RhbCB3YXN0ZSBvZiB0aW1lIGFuZCBlZmZvcnQuIAo
 ```
 
 #### Service call example:
 ```
 $ snet client call ConsensusAnalysis '{"value": "put your encoded input data here"}'
 ```
-*******************************************************
-*******************************************************
-*******************************************************
-*******************************************************
+
 #### Output example:
 
 The result will be a base64 text like this:
 
 ```
-WygnRG9uYWxkIFRydW1wJywgJ1BFUlNPTicsICdTdGFydCBpbmRleDonLCAwLCAn
-RW5kIGluZGV4OicsIDEyKSwgKCdVbml0ZWQgU3RhdGVzJywgJ0xPQ0FUSU9OJywg
-J1N0YXJ0IGluZGV4OicsIDI5LCAnRW5kIGluZGV4OicsIDQyKSwgKCdUcnVtcCBU
-b3dlcicsICdPUkdBTklaQVRJT04nLCAnU3RhcnQgaW5kZXg6JywgNTYsICdFbmQg
-aW5kZXg6JywgNjcpXQo=
+RmFpciBkcmFtYS9sb3ZlIHN0b3J5IG1vdmllIHRoYXQgZm9jdXNlcyBvbiB0aGUgbGl2ZXMgb2YgYmx1ZSBjb2xsYXIgcGVvcGxlIGZpbmRpbmcgbmV3IGxpZmUgdGhydSBuZXcgbG92ZS4KKCdwb3MnLCAxLjApCgpJIGd1ZXNzIGhlIHdhcyB0cnlpbmcgdG8gbWFrZSBhIHN0eWxpc2ggbW92aWUuIEFueSB3YXkgSSB0aGluayB0aGlzIG1vdmllIGlzIGEgdG90YWwgd2FzdGUgb2YgdGltZSBhbmQgZWZmb3J0LiAKKCduZWcnLCAxLjApCg==
+```
+
+After you decode the base64 result the output will be like this:
+
+```
+Fair drama/love story movie that focuses on the lives of blue collar people finding new life thru new love.
+('pos', 1.0)
+
+I guess he was trying to make a stylish movie. Any way I think this movie is a total waste of time and effort. 
+('neg', 1.0)
+```
+
+#### Twitter input message attributes:
+##### Used on the next two method:
+
+- consumer_key:
+    - Description: Consumer key of your twitter developer account
+    - Type: Required string.
+    - Example: '5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj'.
+    
+- consumer_secret:
+    - Description: Consumer secret of your twitter developer account
+    - Type: Required string.
+    - Example: '5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj'.
+
+- access_token:
+    - Description: Token secret of your twitter developer account
+    - Type: Required string.
+    - Example: '5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj'.
+
+- token_secret:
+    - Description: Token secret of your twitter developer account
+    - Type: Required string.
+    - Example: '5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj'.
+  
+- product:
+    - Description: Twitter product label.
+    - Type: Required string.
+    - Example: '30day' or 'fullarchive'.
+    
+- environment:
+    - Description: Environment label of the created on twitter developer account. 
+    - Type: Required string field.
+    - Example: 'development'.
+    
+- query: 
+    - Description: Query used to capture messages. 
+    - Type: Required string field. 
+    - Example: 'Donaldo Trump OR Hilary Cliont OR North Korea'
+    
+- messages_per_request -> 
+    - Description: Number of messages per request.
+    - Type: optional int, max of 100 for sandbox accounts and 500 for paid accounts. This Twitter information, please search for "Twitter Api Prices"
+    - Example: 100
+    - Note: If you don't send a value, twitter will assume default value for your type of account.
+    
+- max_requests_limit:
+    - Description: number of http requests on api
+    - Type: Optional int 10
+    - Example: 10, 
+    - Note: If you don't send a value, you will continue to request data until your account limit expires.  
+    
+- msg_limit:
+    - Description: You can limit your request by message number
+    - Type: Optional int
+    - Example: 1250
+    - Note: If you don't send a value, you will continue to request data until your account limit expires.
+    
+- time_limit:
+    - Description: You can limit your request by time in seconds
+    - Type: optional int
+    - Example: 600 seconds or 10 minutes. 
+    - Note: If you don't send a value, you will continue to request data until your account limit expires.
+    
+- from_date:
+    - Description: Initial date range
+    - Type: required date string
+    - Example: '20181201235959'
+    - Note: Pattern yyyymmddhhmmss
+    
+- to_date:
+    - Description: Final date range
+    - Type: required date string
+    - Example: '20181231235959'
+    - Note: -> Pattern yyyymmddhhmmss 
+
+- languages:
+    - Description: Selected language to be use on querying data
+    - Type: optional string
+    - Example: 'en' or 'en,pt,es'
+    - Note:
+
+JSON example:
+```
+{
+    "credentials":{
+        "consumer_key":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj",
+        "consumer_secret":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj",
+        "access_token":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj",
+        "token_secret":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj"
+    },
+    "product":"30day",
+    "environment":"development",
+    "query":"Nike OR Adidas",
+    "messages_per_request":"250",
+    "max_requests_limit":"130",
+    "msg_limit":"5000",
+    "time_limit":"1200",
+    "from_date":"20181201235959",
+    "to_date":"20181231235959",
+    "languages":"en"
+}
+```
+
+### Twitter Historical Search:
+#### Method signature: 
+HistoricalAnalysis()
+
+Note: This method request data on Twitter Search API, it captures twitter messages depending of the selected Twitter product.
+
+Search Api has two products:
+- 30 days: Capture last 30 days periodo
+- fullarchive: Capture messages since 2006
+
+To use this services, you must fill the method with the Twitter input message parameters according to message details above:
+ 
+
+#### Service call example:
+```
+$ snet client call HistoricalAnalysis '{"credentials":{"consumer_key":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj","consumer_secret":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj","access_token":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj","token_secret":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj"},"product":"30day","environment":"development","query":"Nike OR Adidas","messages_per_request":"250","max_requests_limit":"130","msg_limit":"5000","time_limit":"1200","from_date":"20181201235959","to_date":"20181231235959","languages":"en"}'
+```
+
+#### Output example:
+
+The result will be a base64 text like this:
+
+```
+RmFpciBkcmFtYS9sb3ZlIHN0b3J5IG1vdmllIHRoYXQgZm9jdXNlcyBvbiB0aGUgbGl2ZXMgb2YgYmx1ZSBjb2xsYXIgcGVvcGxlIGZpbmRpbmcgbmV3IGxpZmUgdGhydSBuZXcgbG92ZS4KKCdwb3MnLCAxLjApCgpJIGd1ZXNzIGhlIHdhcyB0cnlpbmcgdG8gbWFrZSBhIHN0eWxpc2ggbW92aWUuIEFueSB3YXkgSSB0aGluayB0aGlzIG1vdmllIGlzIGEgdG90YWwgd2FzdGUgb2YgdGltZSBhbmQgZWZmb3J0LiAKKCduZWcnLCAxLjApCg==
 ```
 
 After you decode the base64 result the output will be like this:
@@ -64,57 +195,30 @@ Bad people are coming.
 {'neg': 0.538, 'neu': 0.462, 'pos': 0.0, 'compound': -0.5423}
 ```
 
-### Consensus Analysis:
-#### Method signature: 
-ConsensusAnalysis()
-
-To use this method, you must build the input message as shown below:
-
-#### Input Message Attributes:
-- value - Base64 text
-
-#### Service call example:
-```
-$ snet client call GetConsensusAnalysis '{"value": "VGVzdGluZyBzZXJ2aWNl"}' --no-confirm
-```
-
-#### Output example:
-The result of analysis will be a base64 text including the result of analysis for each captured message.
-
-Output example:
-
-```
-This t-shirt is awesome.
-{'neg': 0.0, 'neu': 0.423, 'pos': 0.577, 'compound': 0.6249}
-
-Bad people are coming.
-{'neg': 0.538, 'neu': 0.462, 'pos': 0.0, 'compound': -0.5423}
-
-```
-
 ### Twitter Stream Search:
 
 #### Method signature: 
 StreamAnalysis()
 
-To use this services, you must fill the input parameters below:
+Note: This method request data on twitter stream api, it captures live twitter messages. 
 
-#### Input Message Attributes:
-- credentials - Twitter credentials (get on twitter for developers page)
-- languages - languages the service will consider in the analysis. For unique language: "en". For multiple languages: "en,pt,es".
-- keywords - This parameter can be used for one word or a sentence. E.g: For one word: => "happiness". For a sentence => "People are discussing about Donald Trump decisions".
-- msg_limit - number of messages to analyse.
-- time_limit - duration of the analysis (in seconds).
+To use this services, you must fill the method with the Twitter input message parameters according to message details above:
+ 
 
 #### Service call example:
 ```
-$ snet client call StreamAnalysis '{"credentials":{"consumer_key":"TscHeuS3vQN7bY82vNhE419ka","consumer_secret":"5rCTzeRgwT0rTx56KCIQm0OUvgCmQ2WF9BLBC8NdkpmDpNYVoH","access_token":"91892303-CUT4ZuJTqAxX2Ra2Bj7g1Hw0WmRPRtaiCPW2qm8CD","token_secret":"SK7TVAL4QC9O93rhiyv1W4vLJUP0tUMWnjLbO7GkQ0IvE"},"languages":"en","keywords":"happy","time_limit":"3","msg_limit":"3"}' --no-confirm
+$ snet client call StreamAnalysis '{"credentials":{"consumer_key":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj","consumer_secret":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj","access_token":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj","token_secret":"5ROv9lN1WBfmFtJKmNU4m0hNyFu6J1GB3eSFMbJMwBbmj"},"product":"30day","environment":"development","query":"Nike OR Adidas","messages_per_request":"250","max_requests_limit":"130","msg_limit":"5000","time_limit":"1200","from_date":"20181201235959","to_date":"20181231235959","languages":"en"}'
 ```
 
 #### Output example:
-The result of analysis will be a base64 text including the result of analysis for each captured message.
 
-Output example:
+The result will be a base64 text like this:
+
+```
+RmFpciBkcmFtYS9sb3ZlIHN0b3J5IG1vdmllIHRoYXQgZm9jdXNlcyBvbiB0aGUgbGl2ZXMgb2YgYmx1ZSBjb2xsYXIgcGVvcGxlIGZpbmRpbmcgbmV3IGxpZmUgdGhydSBuZXcgbG92ZS4KKCdwb3MnLCAxLjApCgpJIGd1ZXNzIGhlIHdhcyB0cnlpbmcgdG8gbWFrZSBhIHN0eWxpc2ggbW92aWUuIEFueSB3YXkgSSB0aGluayB0aGlzIG1vdmllIGlzIGEgdG90YWwgd2FzdGUgb2YgdGltZSBhbmQgZWZmb3J0LiAKKCduZWcnLCAxLjApCg==
+```
+
+After you decode the base64 result the output will be like this:
 
 ```
 This t-shirt is awesome.
@@ -122,40 +226,4 @@ This t-shirt is awesome.
 
 Bad people are coming.
 {'neg': 0.538, 'neu': 0.462, 'pos': 0.0, 'compound': -0.5423}
-
-```
-
-### Twitter Historical Search:
-#### Method signature: 
-HistoricalAnalysis()
-
-To use this services, you must fill the input parameters below:
-
-#### Input Message Attributes:
-- credentials - Twitter credentials (get on twitter for developers page)
-- languages - languages the service will consider in the analysis. For unique language: "en". For multiple languages: "en,pt,es".
-- keywords - This parameter can be used for one word or a sentence. E.g: For one word: => "happiness". For a sentence => "People are discussing about Donald Trump decisions".
-- from_date - Start date range. Date format: yyyymmddhhmmss E.g =>  20180110091005.
-- to_date - End date range. Date format: yyyymmddhhmmss E.g =>  20180110091005.
-- max_results - Number of results per page. 
-- product - Twitter search product. e.g 'premiun' or 'enterprise'
-- environment - Environment name on Twitter Developer Profile Page
-
-#### Service call example:
-```
-$ snet client call HistoricalAnalysis '{"credentials":{"consumer_key":"TscHeuS3vQN7bY82vNhE419ka","consumer_secret":"5rCTzeRgwT0rTx56KCIQm0OUvgCmQ2WF9BLBC8NdkpmDpNYVoH","access_token":"91892303-CUT4ZuJTqAxX2Ra2Bj7g1Hw0WmRPRtaiCPW2qm8CD","token_secret":"SK7TVAL4QC9O93rhiyv1W4vLJUP0tUMWnjLbO7GkQ0IvE"},"languages":"en","keywords":"happy","max_results":"10", "from_date":"200801010910", "to_date":"200801150910", "product": "fullarchive", "environment":"SentimentAnalysis01"}' --no-confirm
-```
-
-#### Output example:
-The result of analysis will be a base64 text including the result of analysis for each captured message.
-
-Output example:
-
-```
-This t-shirt is awesome.
-{'neg': 0.0, 'neu': 0.423, 'pos': 0.577, 'compound': 0.6249}
-
-Bad people are coming.
-{'neg': 0.538, 'neu': 0.462, 'pos': 0.0, 'compound': -0.5423}
-
 ```
