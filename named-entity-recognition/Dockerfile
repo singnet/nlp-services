@@ -30,12 +30,7 @@ RUN cd / && \
     cd platform-contracts && \
     npm install && \
     npm install ganache-cli && \
-    ./node_modules/.bin/truffle compile && \
-    cd $SINGNET_REPOS && \
-    git clone https://github.com/singnet/snet-cli && \
-    cd snet-cli && \
-    ./scripts/blockchain install && \
-    pip3 install -e .
+    ./node_modules/.bin/truffle compile
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/snet-daemon && \
     cd snet-daemon && \
@@ -44,11 +39,13 @@ RUN cd $SINGNET_REPOS && \
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/named-entity-recognition && \
+	ls && \
+    pwd && \
     ln -s $SINGNET_REPOS/snet-daemon/build/snetd-linux-amd64 ./snetd && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     bash buildproto.sh
 
 WORKDIR  $SINGNET_REPOS/nlp-services/named-entity-recognition
-EXPOSE 7012-7013
+EXPOSE 7010-7011
 CMD ["python3", "run_service.py", "--daemon-conf", "config/"]

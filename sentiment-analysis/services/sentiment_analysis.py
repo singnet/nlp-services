@@ -1,7 +1,6 @@
 import json
 import os
 import datetime
-import sqlite3
 import sys
 import base64
 import grpc
@@ -11,7 +10,6 @@ from services.service_spec import sentiment_analysis_rpc_pb2_grpc as grpc_servic
 from services.service_spec.sentiment_analysis_rpc_pb2 import OutputMessage
 from services import common
 from log import log_config
-from services.modules import entity_recognizer_mod
 from nltk.sentiment import SentimentIntensityAnalyzer
 
 # Services Path
@@ -171,104 +169,6 @@ class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisS
             self.result = OutputMessage()
             self.result.value = self.resultBase64
             logger.debug('call => historicalAnalysis()={}'.format(self.result.value))
-            return self.result
-
-    def MarketAnalysis(self, request, context):
-        """ The method that will be exposed to the snet-cli call command.
-
-        WORK IN PROGRESS
-
-        :param request: incoming data
-        :param context: object that provides RPC-specific information (timeout, etc).
-        :return:
-        """
-
-        try:
-
-            # New instance of entity recognizer
-            self.recognizer = entity_recognizer_mod.SnetEntityRecognizer()
-
-            # Setting up the Stream Manager
-            self.reader = twitter_mod.TwitterApiReader(consumer_key=request.credentials.consumer_key,
-                                                       consumer_secret=request.credentials.consumer_secret,
-                                                       access_token=request.credentials.access_token,
-                                                       token_secret=request.credentials.token_secret,
-                                                       product=request.product,
-                                                       environment=request.environment,
-                                                       query=request.query,
-                                                       messages_per_request=request.messages_per_request,
-                                                       max_requests_limit=request.max_requests_limit,
-                                                       msg_limit=request.msg_limit,
-                                                       time_limit=request.time_limit,
-                                                       from_date=request.from_date,
-                                                       to_date=request.to_date,
-                                                       db_name=request.db_name)
-
-            # Start reading on twitter
-            self.reader.read()
-            # t1 = threading.Thread(target=self.reader.read, args=(url, params), daemon=True)
-            # t1.start()
-
-            # TODO working in progress
-            # logger.debug("Start listening database")
-            # while self.reader.reading:
-            with sqlite3.connect(request.db_name) as conn:
-                cur = conn.cursor()
-                cur.execute("SELECT * FROM messages WHERE ROWID >= 0 AND ROWID <= 60")
-                self.reader.messages = []
-                self.reader.messages.append(cur.fetchall())
-
-            if len(self.reader.messages) > 0:
-                analizer = SentimentIntensityAnalyzer()
-
-                # Writing on txt file
-                with open(request.db_name+'.txt', 'w') as filehandle:
-                    # Reading all page of messages
-                    for page in self.reader.messages:
-                        for item in page:
-                            dict = json.loads(item[0])
-
-                            # Extracting entities
-                            sentence_entities = self.recognizer.stanford_recognizer(dict['text'])
-
-                            # Sentiment Analysis
-                            temp_sentiment_analysis = analizer.polarity_scores(dict['text'])
-
-                            # Writing output file
-                            for entity in sentence_entities:
-
-                                # Twitter id
-                                filehandle.write(str(dict['id']) + ';')
-
-                                # Entity
-                                filehandle.write(str(entity[0]) + ';')
-
-                                # Entity type
-                                filehandle.write(str(entity[1]) + ';')
-
-                                # Set Sentiment Analysis
-                                filehandle.write(str(temp_sentiment_analysis))
-
-                                filehandle.write('\n')
-
-                            filehandle.write('\n')
-
-                self.stringResult = "Data generated successfully"
-
-            else:
-                self.stringResult = "Messages not found"
-
-        except Exception as e:
-            self.stringResult = "Error => " + str(e) + " at: " + str(datetime.datetime.now())
-            logger.debug("call => HistoricalAnalysis() " + str(self.stringResult))
-
-        finally:
-            # Encoding result
-            self.resultBase64 = base64.b64encode(str(self.stringResult).encode('utf-8'))
-            # To respond we need to create a OutputMessage() object (from .proto file)
-            self.result = OutputMessage()
-            self.result.value = self.resultBase64
-            logger.debug('call => HistoricalAnalysisToDatabase()={}'.format(self.result.value))
             return self.result
 
 

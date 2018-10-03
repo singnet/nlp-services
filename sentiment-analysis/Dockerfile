@@ -30,20 +30,17 @@ RUN cd / && \
     cd platform-contracts && \
     npm install && \
     npm install ganache-cli && \
-    ./node_modules/.bin/truffle compile && \
-    cd $SINGNET_REPOS && \
-    git clone https://github.com/singnet/snet-cli && \
-    cd snet-cli && \
-    ./scripts/blockchain install && \
-    pip3 install -e .
+    ./node_modules/.bin/truffle compile
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/snet-daemon && \
     cd snet-daemon && \
     ./scripts/install && \
     ./scripts/build linux amd64
 RUN cd $SINGNET_REPOS && \
-    git clone https://github.com/singnet/nlp-services.git && \
+    git clone -b nlp_temp https://github.com/glautervl/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/sentiment-analysis && \
+	ls && \
+    pwd && \
     ln -s $SINGNET_REPOS/snet-daemon/build/snetd-linux-amd64 ./snetd && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \

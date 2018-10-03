@@ -44,7 +44,6 @@ service SentimentConsensusAnalysis {
 
 service TwitterHistoricalAnalysis {
     rpc HistoricalAnalysis(TwitterInputMessage) returns (OutputMessage) {}
-    rpc MarketAnalysis(TwitterInputMessage) returns (OutputMessage) {}
 }
 
 service TwitterStreamAnalysis {
