@@ -1,5 +1,5 @@
 {
-    "AGENT_CONTRACT_ADDRESS": "0x85Eb06a330239bE5b005a021aAa167F2a2Da9F0A",
+    "AGENT_CONTRACT_ADDRESS": "",
     "AUTO_SSL_DOMAIN": "",
     "AUTO_SSL_CACHE_DIR": "",
     "BLOCKCHAIN_ENABLED": true,
@@ -15,7 +15,7 @@
     "PASSTHROUGH_ENABLED": true,
     "PASSTHROUGH_ENDPOINT": "http://localhost:7011",
     "POLL_SLEEP": "",
-    "PRIVATE_KEY": "efd523f4f9fa7c00a0e30da13fba9ad17dfb8fbfb7d14c43d44bbc8a0473ee37",
+    "PRIVATE_KEY": "",
     "SERVICE_TYPE": "grpc",
     "SSL_CERT": "",
     "SSL_KEY": "",
