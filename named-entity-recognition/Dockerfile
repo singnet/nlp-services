@@ -37,6 +37,7 @@ RUN cd $SINGNET_REPOS && \
     cd snet-daemon && \
     ./scripts/install && \
     ./scripts/build linux amd64 && \
+    cd build && \
     mv snetd-linux-amd64 snetd
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/nlp-services.git && \
