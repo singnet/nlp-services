@@ -1,0 +1,7 @@
+grpcio==1.14.1
+grpcio-tools==1.14.1
+scikit-learn==0.19.2
+nltk
+numpy
+scipy
+pytest

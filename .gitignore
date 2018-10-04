@@ -11,7 +11,7 @@ __pycache__/
 build/
 develop-eggs/
 dist/
-downloads/
+**/downloads
 eggs/
 .eggs/
 lib/
@@ -102,4 +102,15 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+**/*.DS_Store
 /.idea/
+**/service_spec/*.py
+*.log.*
+**/models
+**/output.txt
+**/twitter_messages
+**/*temp.db
+**/snetd.db
+**/db
+**/*.icloud
+twitter_messages.txt
