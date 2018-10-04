@@ -2,10 +2,6 @@
 
 #### This repository contains a named entity recognition service.
 
-##### Avaliable methods of sentiment analysis:
-
-- classify - Tokenize and Classify words or sentences.
-
 ## Usage:
 
 ### Named Entity Recognition:
