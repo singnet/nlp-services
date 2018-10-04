@@ -3,6 +3,7 @@ WORKDIR /
 ENV GOPATH=/singnet
 ENV SINGNET_REPOS=${GOPATH}/src/github.com/singnet
 ENV PATH=${GOPATH}/bin:${PATH}
+ENV PATH=${PATH}:/singnet/src/github.com/singnet/snet-daemon/build
 
 RUN apt-get update && \
     apt-get -y upgrade && \
@@ -35,11 +36,11 @@ RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/snet-daemon && \
     cd snet-daemon && \
     ./scripts/install && \
-    ./scripts/build linux amd64
+    ./scripts/build linux amd64 && \
+    mv snetd-linux-amd64 snetd
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/sentiment-analysis && \
-    ln -s $SINGNET_REPOS/snet-daemon/build/snetd-linux-amd64 ./snetd && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     bash buildproto.sh

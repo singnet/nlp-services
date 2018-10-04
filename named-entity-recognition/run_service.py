@@ -29,7 +29,7 @@ def main():
     ]
 
     # Removing all previous snetd .db file
-    os.system('rm snetd.db')
+    os.system('rm -f db')
 
     # Call for all the services listed in service_modules
     start_all_services(root_path, service_modules, args.daemon_config_path)
