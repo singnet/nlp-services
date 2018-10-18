@@ -33,11 +33,10 @@ RUN cd / && \
     npm install ganache-cli && \
     ./node_modules/.bin/truffle compile
 RUN cd $SINGNET_REPOS && \
-    git clone https://github.com/singnet/snet-daemon && \
+    mkdir snet-daemon && \
     cd snet-daemon && \
-    ./scripts/install && \
-    ./scripts/build linux amd64 && \
-    cd build && \
+    wget https://github.com/singnet/snet-daemon/releases/download/v0.1.0/snetd-0.1.0.tar.gz && \
+    tar -xvf snetd-0.1.0.tar.gz && \
     mv snetd-linux-amd64 snetd
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/nlp-services.git && \
