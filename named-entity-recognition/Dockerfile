@@ -3,7 +3,7 @@ WORKDIR /
 ENV GOPATH=/singnet
 ENV SINGNET_REPOS=${GOPATH}/src/github.com/singnet
 ENV PATH=${GOPATH}/bin:${PATH}
-ENV PATH=${PATH}:/singnet/src/github.com/singnet/snet-daemon/build
+ENV PATH=${PATH}:/singnet/src/github.com/singnet/snet-daemon
 
 RUN apt-get update && \
     apt-get -y upgrade && \
@@ -13,6 +13,7 @@ RUN apt-get update && \
     wget \
     curl \
     apt-utils \
+    net-tools \
     sudo \
     libudev-dev \
     libusb-1.0-0-dev
@@ -41,8 +42,6 @@ RUN cd $SINGNET_REPOS && \
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/named-entity-recognition && \
-    cp $SINGNET_REPOS/snet-daemon/snetd-linux-amd64 ./snetd && \
-    ln -s $SINGNET_REPOS/snet-daemon/build/snetd-linux-amd64 ./snetd && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     bash buildproto.sh
