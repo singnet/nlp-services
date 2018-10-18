@@ -36,11 +36,11 @@ RUN cd $SINGNET_REPOS && \
     mkdir snet-daemon && \
     cd snet-daemon && \
     wget https://github.com/singnet/snet-daemon/releases/download/v0.1.0/snetd-0.1.0.tar.gz && \
-    tar -xvf snetd-0.1.0.tar.gz && \
-    mv snetd-linux-amd64 snetd
+    tar -xvf snetd-0.1.0.tar.gz
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/sentiment-analysis && \
+    cp $SINGNET_REPOS/snet-daemon/snetd-linux-amd64 ./snetd && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     bash buildproto.sh
