@@ -5,3 +5,5 @@ nltk
 numpy
 scipy
 pytest
+msgpack
+tqdm
