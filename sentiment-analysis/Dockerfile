@@ -3,7 +3,7 @@ WORKDIR /
 ENV GOPATH=/singnet
 ENV SINGNET_REPOS=${GOPATH}/src/github.com/singnet
 ENV PATH=${GOPATH}/bin:${PATH}
-ENV PATH=${PATH}:/singnet/src/github.com/singnet/snet-daemon/build
+ENV PATH=${PATH}:/singnet/src/github.com/singnet/snet-daemon
 
 RUN apt-get update && \
     apt-get -y upgrade && \
@@ -13,6 +13,7 @@ RUN apt-get update && \
     wget \
     curl \
     apt-utils \
+    net-tools \
     sudo \
     libudev-dev \
     libusb-1.0-0-dev
@@ -33,11 +34,10 @@ RUN cd / && \
     npm install ganache-cli && \
     ./node_modules/.bin/truffle compile
 RUN cd $SINGNET_REPOS && \
-    git clone https://github.com/singnet/snet-daemon && \
+    mkdir snet-daemon && \
     cd snet-daemon && \
-    ./scripts/install && \
-    ./scripts/build linux amd64 && \
-    cd build && \
+    wget https://github.com/singnet/snet-daemon/releases/download/v0.1.0/snetd-0.1.0.tar.gz && \
+    tar -xvf snetd-0.1.0.tar.gz && \
     mv snetd-linux-amd64 snetd
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/nlp-services.git && \
