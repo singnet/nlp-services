@@ -46,8 +46,8 @@ RUN cd $SINGNET_REPOS && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     python3 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
-    python3 ../fetch_models.py && \
     bash buildproto.sh
+RUN python3 ../fetch_models.py
 
 WORKDIR  $SINGNET_REPOS/nlp-services/named-entity-recognition
 EXPOSE 7010-7011
