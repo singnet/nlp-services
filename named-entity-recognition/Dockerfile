@@ -41,11 +41,12 @@ RUN cd $SINGNET_REPOS && \
     tar -xvf snetd-0.1.0.tar.gz && \
     mv snetd-linux-amd64 snetd
 RUN cd $SINGNET_REPOS && \
-    git clone https://github.com/singnet/nlp-services.git && \
+    git clone https://github.com/glautervl/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/named-entity-recognition && \
-    sudo python3 -m pip install -r requirements.txt && \
+    pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     python3 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
+    python3 ../fetch_models.py && \
     bash buildproto.sh
 
 WORKDIR  $SINGNET_REPOS/nlp-services/named-entity-recognition
