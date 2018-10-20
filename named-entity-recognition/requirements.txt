@@ -7,3 +7,4 @@ scipy
 pytest
 msgpack
 tqdm
+requests
