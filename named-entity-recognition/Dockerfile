@@ -41,7 +41,7 @@ RUN cd $SINGNET_REPOS && \
     tar -xvf snetd-0.1.0.tar.gz && \
     mv snetd-linux-amd64 snetd
 RUN cd $SINGNET_REPOS && \
-    git clone https://github.com/singnet/nlp-services.git && \
+    git clone https://github.com/glautervl/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/named-entity-recognition && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
@@ -50,5 +50,5 @@ RUN cd $SINGNET_REPOS && \
     bash buildproto.sh
 
 WORKDIR  $SINGNET_REPOS/nlp-services/named-entity-recognition
-EXPOSE 7010-7011
+EXPOSE 7012-7013
 CMD ["python3", "run_service.py", "--daemon-conf", "config/"]
