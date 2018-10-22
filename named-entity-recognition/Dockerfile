@@ -19,6 +19,7 @@ RUN apt-get update && \
     libusb-1.0-0-dev
 
 RUN apt-get install -y golang go-dep golang-goprotobuf-dev golint
+RUN apt-get install -y default-jre
 RUN apt-get install -y nodejs npm
 RUN apt-get install -y python3 python3-pip
 
@@ -44,8 +45,10 @@ RUN cd $SINGNET_REPOS && \
     cd $SINGNET_REPOS/nlp-services/named-entity-recognition && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
+    python3 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
+    python3 ../fetch_models.py && \
     bash buildproto.sh
 
 WORKDIR  $SINGNET_REPOS/nlp-services/named-entity-recognition
-EXPOSE 7010-7011
+EXPOSE 7012-7013
 CMD ["python3", "run_service.py", "--daemon-conf", "config/"]

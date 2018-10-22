@@ -7,3 +7,6 @@ twython
 numpy
 scipy
 pytest
+msgpack
+tqdm
+requests
