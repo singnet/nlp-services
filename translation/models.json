@@ -1,5 +1,5 @@
 {
     "model_urls": [
-        ["https://s3-us-west-2.amazonaws.com/jpwp-ml/models/translation/en_de_translation.tar.bz2", null]
+        ["https://snet-models.s3.amazonaws.com/translation/en_de_translation.tar.bz2", null]
     ]
 }
