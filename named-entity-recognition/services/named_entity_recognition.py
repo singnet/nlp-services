@@ -65,7 +65,7 @@ class RecognizeMessageServicer(grpc_bt_grpc.RecognizeMessageServicer):
         for item in entities:
             start_index = sentence.find(item[0])
             end_index = start_index + len(item[0])
-            result_list.append((item[0], item[1], 'Start index:', start_index, 'End index:', end_index))
+            result_list.append((item[0], item[1], 'Start span:', start_index, 'End span:', end_index))
 
         # Encoding result
         resultBase64 = base64.b64encode(str(result_list).encode('utf-8'))

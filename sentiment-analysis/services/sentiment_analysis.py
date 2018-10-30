@@ -73,13 +73,16 @@ class SentimentConsensusAnalysisServicer(grpc_services.SentimentConsensusAnalysi
         # Result of sentences
         stringResult = ''
 
+        # Sentiment Analyser Instance
+        analizer = SentimentIntensityAnalyzer()
+
         # Generating result
         for line in tempArray:
             if line is not None:
                 if len(line) > 1:
                     stringResult += line
                     stringResult += '\n'
-                    stringResult += str(consensus_mod.sentiment(line))
+                    stringResult += str(analizer.polarity_scores(line))
                     stringResult += '\n\n'
 
         # Encoding result
@@ -113,12 +116,13 @@ class TwitterHistoricalAnalysisServicer(grpc_services.TwitterHistoricalAnalysisS
         string_result = ''
 
         if len(reader.messages) > 0:
+            analizer = SentimentIntensityAnalyzer()
             # Generating result
             for page in reader.messages:
                 for item in page:
                     string_result += item['text']
                     string_result += '\n'
-                    string_result += str(consensus_mod.sentiment(item['text']))
+                    string_result += str(analizer.polarity_scores(item['text']))
                     string_result += '\n\n'
 
         return string_result
