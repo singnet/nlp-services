@@ -21,9 +21,11 @@ To use this method, you must build the input message as shown below:
 
 For this example sentence as input data:
 ```
-Fair drama/love story movie that focuses on the lives of blue collar people finding new life thru new love.
+Great price, fast shipping, great product.
 
-I guess he was trying to make a stylish movie. Any way I think this movie is a total waste of time and effort. 
+@Olielayus I want to go to promote GEAR AND GROOVE but unfornately no ride there  I may b going to the one in Anaheim in May though.
+
+@maja_dren2, is still sick, and worrying the orange she just ate is going to come back up... ugh. 
 ```
 
 Ps: You must break line between the sentences before encoding
@@ -31,7 +33,7 @@ Ps: You must break line between the sentences before encoding
 
 Encode in base64 utf-8 text and the result will be like this:
 ```
-RmFpciBkcmFtYS9sb3ZlIHN0b3J5IG1vdmllIHRoYXQgZm9jdXNlcyBvbiB0aGUgbGl2ZXMgb2YgYmx1ZSBjb2xsYXIgcGVvcGxlIGZpbmRpbmcgbmV3IGxpZmUgdGhydSBuZXcgbG92ZS4KCkkgZ3Vlc3MgaGUgd2FzIHRyeWluZyB0byBtYWtlIGEgc3R5bGlzaCBtb3ZpZS4gQW55IHdheSBJIHRoaW5rIHRoaXMgbW92aWUgaXMgYSB0b3RhbCB3YXN0ZSBvZiB0aW1lIGFuZCBlZmZvcnQuIAo
+R3JlYXQgcHJpY2UsIGZhc3Qgc2hpcHBpbmcsIGdyZWF0IHByb2R1Y3QuCgpAT2xpZWxheXVzIEkgd2FudCB0byBnbyB0byBwcm9tb3RlIEdFQVIgQU5EIEdST09WRSBidXQgdW5mb3JuYXRlbHkgbm8gcmlkZSB0aGVyZSAgSSBtYXkgYiBnb2luZyB0byB0aGUgb25lIGluIEFuYWhlaW0gaW4gTWF5IHRob3VnaC4KCkBtYWphX2RyZW4yLCBpcyBzdGlsbCBzaWNrLCBhbmQgd29ycnlpbmcgdGhlIG9yYW5nZSBzaGUganVzdCBhdGUgaXMgZ29pbmcgdG8gY29tZSBiYWNrIHVwLi4uIHVnaC4=
 ```
 
 #### Service call example:
@@ -44,17 +46,20 @@ $ snet client call ConsensusAnalysis '{"value": "put your encoded input data her
 The result will be a base64 text like this:
 
 ```
-RmFpciBkcmFtYS9sb3ZlIHN0b3J5IG1vdmllIHRoYXQgZm9jdXNlcyBvbiB0aGUgbGl2ZXMgb2YgYmx1ZSBjb2xsYXIgcGVvcGxlIGZpbmRpbmcgbmV3IGxpZmUgdGhydSBuZXcgbG92ZS4KKCdwb3MnLCAxLjApCgpJIGd1ZXNzIGhlIHdhcyB0cnlpbmcgdG8gbWFrZSBhIHN0eWxpc2ggbW92aWUuIEFueSB3YXkgSSB0aGluayB0aGlzIG1vdmllIGlzIGEgdG90YWwgd2FzdGUgb2YgdGltZSBhbmQgZWZmb3J0LiAKKCduZWcnLCAxLjApCg==
+R3JlYXQgcHJpY2UsIGZhc3Qgc2hpcHBpbmcsIGdyZWF0IHByb2R1Y3QuCnsnbmVnJzogMC4wLCAnbmV1JzogMC4zMjgsICdwb3MnOiAwLjY3MiwgJ2NvbXBvdW5kJzogMC44NDgxfQoKQE9saWVsYXl1cyBJIHdhbnQgdG8gZ28gdG8gcHJvbW90ZSBHRUFSIEFORCBHUk9PVkUgYnV0IHVuZm9ybmF0ZWx5IG5vIHJpZGUgdGhlcmUgIEkgbWF5IGIgZ29pbmcgdG8gdGhlIG9uZSBpbiBBbmFoZWltIGluIE1heSB0aG91Z2guCnsnbmVnJzogMC4xMDUsICduZXUnOiAwLjc4NSwgJ3Bvcyc6IDAuMTEsICdjb21wb3VuZCc6IC0wLjIxNDR9CgpAbWFqYV9kcmVuMiwgaXMgc3RpbGwgc2ljaywgYW5kIHdvcnJ5aW5nIHRoZSBvcmFuZ2Ugc2hlIGp1c3QgYXRlIGlzIGdvaW5nIHRvIGNvbWUgYmFjayB1cC4uLiB1Z2guCnsnbmVnJzogMC4zNjIsICduZXUnOiAwLjYzOCwgJ3Bvcyc6IDAuMCwgJ2NvbXBvdW5kJzogLTAuODE3Nn0KCg==
 ```
 
 After you decode the base64 result the output will be like this:
 
 ```
-Fair drama/love story movie that focuses on the lives of blue collar people finding new life thru new love.
-('pos', 1.0)
+Great price, fast shipping, great product.
+{'neg': 0.0, 'neu': 0.328, 'pos': 0.672, 'compound': 0.8481}
 
-I guess he was trying to make a stylish movie. Any way I think this movie is a total waste of time and effort. 
-('neg', 1.0)
+@Olielayus I want to go to promote GEAR AND GROOVE but unfornately no ride there  I may b going to the one in Anaheim in May though.
+{'neg': 0.105, 'neu': 0.785, 'pos': 0.11, 'compound': -0.2144}
+
+@maja_dren2, is still sick, and worrying the orange she just ate is going to come back up... ugh.
+{'neg': 0.362, 'neu': 0.638, 'pos': 0.0, 'compound': -0.8176}
 ```
 
 #### Twitter input message attributes:
