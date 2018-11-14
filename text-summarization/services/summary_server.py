@@ -5,7 +5,6 @@ import io
 import os
 import grpc
 import concurrent.futures
-import base64
 import time
 from multiprocessing import Pool
 
@@ -13,8 +12,6 @@ from services import registry
 from services.onmt_utils import stanford_ptb_detokenizer, stanford_ptb_tokenizer, summary
 import services.service_spec.summary_pb2 as ss_pb
 import services.service_spec.summary_pb2_grpc as ss_grpc 
-
-import services.common
 
 
 log = logging.getLogger(__package__ + "." + __name__)

@@ -13,13 +13,6 @@ import services.service_spec.summary_pb2 as grpc_bt_pb2
 SERVER_NAME = 'summary_server'
 
 
-def save_img(fn, pb_img):
-    binary_image = base64.b64decode(pb_img.content)
-    img_data = io.BytesIO(binary_image)
-    img = skimage.io.imread(img_data)
-    skimage.io.imsave(fn, img)
-
-
 def main():
     script_name = sys.argv[0]
     parser = argparse.ArgumentParser(prog=script_name)
