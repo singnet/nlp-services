@@ -10,6 +10,8 @@ while at the same keeping the interface the same (as much as possible)
 
 ## Setup
 
+These steps are run on Ubuntu 18.04, if you use a different distro/OS, the specifics may be different.
+
 OpenNMT-py is a submodule, so you should clone the `nlp-services` repo with `--recurse-submodules`
 
 ```
@@ -21,6 +23,7 @@ with the version from opennmt-py's requirements.
 
 ```
 cd nlp-services/text-summarization
+mkvirtualenv --python=/usr/bin/python3.6 text-summarization
 pip install -r opennmt-py/requirements.txt
 pip install numpy -I
 pip install -r requirements.txt
@@ -31,16 +34,32 @@ the Stanford CoreNLP java library. While an external java library is clunky, it 
 We use it to tokenize new user input to avoid differences in tokenization algorithms affecting results.
 
 ```
-python fetch_models.py
-./fetch_corenlp.sh
+python ../fetch_models.py
 ```
 
 The above will download archives and extract to the `nlp-services/text-summarization/models` directory.
 
+## Running the server and making calls
+
+Start the server with:
+
+```
+python -m services.summary_server
+```
+
+In another terminal, make a request to summarize an article with:
+
+```
+$ python client.py --source-text example_article.txt
+ Senior National Collins is standing by her tweet of a fake news story. she says she had got her "sourcing" wrong, insisting it had some details wrong.
+```
+
 ## OpenNMT Notes
 
-In its current state OpenNMT is biased towards command line usage. These commands were useful for initially experimenting with
-the summarization models:
+In its current state OpenNMT is biased towards command line usage. These commands, to be run in the opennmt-py directory, were useful for initially experimenting with
+the summarization models.
+
+You will need to first download models from the [opennmt-py model page](http://opennmt.net/Models-py/).
 
 ```
 python translate.py -gpu 0 \
@@ -88,3 +107,7 @@ These repos have preprocessing code, including tokenization using CoreNLP:
 - https://github.com/abisee/cnn-dailymail - original, converts straight into tensorflow binaries
 
 Tokenization is done by Stanford's Java library [CoreNLP](https://stanfordnlp.github.io/CoreNLP/index.html)
+
+## License
+
+MIT

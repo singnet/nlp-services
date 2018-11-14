@@ -1,2 +1,3 @@
 pyyaml
 grpcio==1.16.0
+protobuf
