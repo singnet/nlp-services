@@ -29,12 +29,6 @@ defaults_br: &default_steps_br
           python3 ../fetch_models.py /caches/models
           ls -la models
     - run:
-        name: Compile probubuf
-        command: |
-          cd $SERVICE_NAME
-          sh buildproto.sh
-          ls -la services/service_spec/
-    - run:
         name: Build application Docker image
         command: |
           cd $SERVICE_NAME
