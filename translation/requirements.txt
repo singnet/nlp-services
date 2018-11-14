@@ -1,6 +1,3 @@
-aiohttp
-jsonrpcserver
-jsonrpcclient==2.6.0
 pyyaml
-snetd-alpha
 sentencepiece
+grpcio==1.16.0
