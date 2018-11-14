@@ -57,7 +57,7 @@ def main():
         metadata = [("snet-job-address", job_address), ("snet-job-signature", job_signature)]
 
     response = stub.translate(request, metadata=metadata)
-    print(response.translation)
+    print(response)
 
     return 0
 

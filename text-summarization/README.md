@@ -27,6 +27,7 @@ mkvirtualenv --python=/usr/bin/python3.6 text-summarization
 pip install -r opennmt-py/requirements.txt
 pip install numpy -I
 pip install -r requirements.txt
+./buildproto.sh
 ```
 
 Last, you need to download the trained transformer model for summarization ([details](http://opennmt.net/Models-py/)) and
@@ -57,7 +58,7 @@ $ python client.py --source-text example_article.txt
 ## OpenNMT Notes
 
 In its current state OpenNMT is biased towards command line usage. These commands, to be run in the opennmt-py directory, were useful for initially experimenting with
-the summarization models.
+the summarization models. (OpenNMT's `translate.py` script is used for calling all their models, whether they do language translation or not)
 
 You will need to first download models from the [opennmt-py model page](http://opennmt.net/Models-py/).
 

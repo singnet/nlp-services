@@ -1,3 +1,4 @@
 pyyaml
-sentencepiece
+sentencepiece==0.1.6
 grpcio==1.16.0
+grpcio-tools==1.16.0

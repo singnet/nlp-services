@@ -36,6 +36,7 @@ class TranslationServicer(ss_grpc.TranslationServicer):
         pass
 
     def translate(self, request, context):
+        print("blah")
         # text = kwargs.get("text", None)
         # source = kwargs.get("source", None)
         # target = kwargs.get("target", None)
@@ -51,7 +52,7 @@ class TranslationServicer(ss_grpc.TranslationServicer):
 
         self.q.send((request,))
         result = self.q.recv()
-        print(result)
+        print("result", result)
         if isinstance(result, Exception):
             raise result
         pb_result = ss_pb.Result(translation=result)
@@ -107,23 +108,16 @@ def translate_text(text, source, target):
     s.Load(os.path.join(ROOT_DIR, 'models', t["sentencepiece_model"]))
     pieces = s.encode_as_pieces(text)
 
-    indices = [i for i, _x in enumerate(pieces) if _x == b"."]
+    indices = [i for i, _x in enumerate(pieces) if _x == "."]
     complete_result = []
     start=0
     for i in indices:
-        x = " ".join([e.decode('utf-8') for e in pieces[start:i+1]])
+        x = " ".join([e for e in pieces[start:i+1]])
         result = _translate(x, translate_model=t['translate_model'])
         y = s.decode_pieces(result[1][0].split(" "))
-        complete_result.append(y.decode('utf-8'))
+        complete_result.append(y)
         start = i
     return "\n".join(complete_result)
-
-
-    global config
-    with Pool(1) as p:
-        result = p.apply(translate_text, (text, source, target))
-
-    return {'summary': result}
 
 
 def serve(dispatch_queue, max_workers=1, port=7777):
