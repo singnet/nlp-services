@@ -1,39 +1,53 @@
-import jsonrpcclient
 import sys
 import os
+import io
+import grpc
 import argparse
-import base64
 
 from services.snet import snet_setup
 from services import registry
+
+import services.service_spec.summary_pb2_grpc as grpc_bt_grpc
+import services.service_spec.summary_pb2 as grpc_bt_pb2
+
+SERVER_NAME = 'summary_server'
+
+
+def save_img(fn, pb_img):
+    binary_image = base64.b64decode(pb_img.content)
+    img_data = io.BytesIO(binary_image)
+    img = skimage.io.imread(img_data)
+    skimage.io.imsave(fn, img)
 
 
 def main():
     script_name = sys.argv[0]
     parser = argparse.ArgumentParser(prog=script_name)
-    server_name = "summary_server"
-    default_endpoint = "http://127.0.0.1:{}".format(registry[server_name]['jsonrpc'])
-    parser.add_argument("--endpoint", help="jsonrpc server to connect to", default=default_endpoint,
+
+    default_endpoint = "127.0.0.1:{}".format(registry[SERVER_NAME]['grpc'])
+    parser.add_argument("--endpoint", help="grpc server to connect to", default=default_endpoint,
                         type=str, required=False)
-    parser.add_argument("--snet", help="call service on SingularityNet - requires configured snet CLI",
+    parser.add_argument("--snet", help="call services on SingularityNet - requires configured snet CLI",
                         action='store_true')
     parser.add_argument("--source-text", help="path to txt file to summarise",
                         type=str, required=True)
     args = parser.parse_args(sys.argv[1:])
 
-    endpoint = args.endpoint
+    channel = grpc.insecure_channel("{}".format(args.endpoint))
+    stub = grpc_bt_grpc.TextSummaryStub(channel)
 
     with open(args.source_text, 'r') as f:
         text = f.read()
-    params = {'text': text}
+
+    request = grpc_bt_pb2.Request(article_content=text)
+
+    metadata = []
     if args.snet:
         endpoint, job_address, job_signature = snet_setup(service_name="text_summarization", max_price=10000000)
-        params['job_address'] = job_address
-        params['job_signature'] = job_signature
+        metadata = [("snet-job-address", job_address), ("snet-job-signature", job_signature)]
 
-    response = jsonrpcclient.request(endpoint, "summarise", **params)
-    print(response)
-
+    response = stub.summary(request, metadata=metadata)
+    print(response.article_summary)
 
 
 if __name__ == '__main__':
