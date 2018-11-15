@@ -1,0 +1,17 @@
+{
+    "name": "translation",
+    "service_spec": "services/service_spec/",
+    "organization": "SNET",
+    "path": "",
+    "price": 1000000,
+    "endpoint": "http://34.216.72.29:6208",
+    "tags": [],
+    "metadata": {
+        "description": ""
+    },
+    "networks": {
+        "42": {
+            "agentAddress": "0xf7Bffee4205580891b33EFFCb0e6229C9EF0cd36"
+        }
+    }
+}

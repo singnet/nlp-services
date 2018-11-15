@@ -1,19 +1,22 @@
-import jsonrpcclient
 import sys
 import os
+import io
+import grpc
 import argparse
-import base64
 
 from services.snet import snet_setup
 from services import registry
 
+import services.service_spec.translate_pb2_grpc as grpc_bt_grpc
+import services.service_spec.translate_pb2 as grpc_bt_pb2
+
+SERVER_NAME = 'translate_server'
 
 def main():
     script_name = sys.argv[0]
     parser = argparse.ArgumentParser(prog=script_name)
-    server_name = "translate_server"
-    default_endpoint = "http://127.0.0.1:{}".format(registry[server_name]['jsonrpc'])
-    parser.add_argument("--endpoint", help="jsonrpc server to connect to", default=default_endpoint,
+    default_endpoint = "127.0.0.1:{}".format(registry[SERVER_NAME]['grpc'])
+    parser.add_argument("--endpoint", help="grpc server to connect to", default=default_endpoint,
                         type=str, required=False)
     parser.add_argument("--snet", help="call service on SingularityNet - requires configured snet CLI",
                         action='store_true')
@@ -42,19 +45,20 @@ def main():
 
     with open(args.source_text, 'r') as f:
         text = f.read()
-    params = {
-        'text': text,
-        'source': args.source_language,
-        'target': args.target_language,
-    }
 
+    channel = grpc.insecure_channel("{}".format(args.endpoint))
+    stub = grpc_bt_grpc.TranslationStub(channel)
+
+    request = grpc_bt_pb2.Request(text=text, source_language=args.source_language, target_language=args.target_language)
+
+    metadata = []
     if args.snet:
         endpoint, job_address, job_signature = snet_setup(service_name="translation", max_price=10000000)
-        params['job_address'] = job_address
-        params['job_signature'] = job_signature
+        metadata = [("snet-job-address", job_address), ("snet-job-signature", job_signature)]
 
-    response = jsonrpcclient.request(endpoint, "translate", **params)
+    response = stub.translate(request, metadata=metadata)
     print(response)
+
     return 0
 
 

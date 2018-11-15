@@ -4,6 +4,10 @@ import base64
 import io
 import os
 import argparse
+import grpc
+import time
+import concurrent.futures
+from multiprocessing import Pool
 
 # Torch needs to be imported before sentencepiece otherwise segfault
 # https://github.com/pytorch/pytorch/issues/8358
@@ -17,16 +21,43 @@ sys.path.insert(0, os.path.join(ROOT_DIR, 'opennmt-py'))
 from onmt.translate.translator import build_translator
 import onmt.opts
 
-from aiohttp import web
-from jsonrpcserver.aio import methods
-from jsonrpcserver.exceptions import InvalidParams
-
-import services.common
 from services import translations
+from services import registry
+import services.service_spec.translate_pb2 as ss_pb
+import services.service_spec.translate_pb2_grpc as ss_grpc 
 
 
 log = logging.getLogger(__package__ + "." + __name__)
 
+
+class TranslationServicer(ss_grpc.TranslationServicer):
+    def __init__(self, q):
+        self.q = q
+        pass
+
+    def translate(self, request, context):
+        print("blah")
+        # text = kwargs.get("text", None)
+        # source = kwargs.get("source", None)
+        # target = kwargs.get("target", None)
+
+        # if text is None:
+        #     raise InvalidParams("text param is required")
+
+        # if source not in translations:
+        #     raise InvalidParams("source param must be one of", translations.keys())
+
+        # if target not in translations[source]:
+        #     raise InvalidParams("target param must be one of", translations[source].keys())
+
+        self.q.send((request,))
+        result = self.q.recv()
+        print("result", result)
+        if isinstance(result, Exception):
+            raise result
+        pb_result = ss_pb.Result(translation=result)
+
+        return pb_result
 
 def _translate(tokenized, translate_model):
     # OpenNMT is awkwardly designed which makes it annoying to programmatic load a model.
@@ -77,56 +108,66 @@ def translate_text(text, source, target):
     s.Load(os.path.join(ROOT_DIR, 'models', t["sentencepiece_model"]))
     pieces = s.encode_as_pieces(text)
 
-    indices = [i for i, _x in enumerate(pieces) if _x == b"."]
+    indices = [i for i, _x in enumerate(pieces) if _x == "."]
     complete_result = []
     start=0
     for i in indices:
-        x = " ".join([e.decode('utf-8') for e in pieces[start:i+1]])
+        x = " ".join([e for e in pieces[start:i+1]])
         result = _translate(x, translate_model=t['translate_model'])
         y = s.decode_pieces(result[1][0].split(" "))
-        complete_result.append(y.decode('utf-8'))
+        complete_result.append(y)
         start = i
     return "\n".join(complete_result)
 
 
-@methods.add
-async def ping():
-    return 'pong'
+def serve(dispatch_queue, max_workers=1, port=7777):
+    assert max_workers == 1, "No support for more than one worker"
+    server = grpc.server(concurrent.futures.ThreadPoolExecutor(max_workers=max_workers))
+    ss_grpc.add_TranslationServicer_to_server(TranslationServicer(dispatch_queue), server)
+    server.add_insecure_port("[::]:{}".format(port))
+    return server
 
 
-@methods.add
-async def translate(**kwargs):
-    text = kwargs.get("text", None)
-    source = kwargs.get("source", None)
-    target = kwargs.get("target", None)
+def main_loop(dispatch_queue, grpc_serve_function, grpc_port, grpc_args={}):
+    server = None
+    if grpc_serve_function is not None:
+        server = grpc_serve_function(dispatch_queue, port=grpc_port, **grpc_args)
+        server.start()
 
-    if text is None:
-        raise InvalidParams("text param is required")
+    try:
+        while True:
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        server.stop(0)
 
-    if source not in translations:
-        raise InvalidParams("source param must be one of", translations.keys())
-
-    if target not in translations[source]:
-        raise InvalidParams("target param must be one of", translations[source].keys())
-
-    from multiprocessing import Pool
-    global config
-    with Pool(1) as p:
-        result = p.apply(translate_text, (text, source, target))
-
-    return {'summary': result}
-
-
-async def handle(request):
-    request = await request.text()
-    response = await methods.dispatch(request, trim_log_values=True)
-    if response.is_notification:
-        return web.Response()
-    else:
-        return web.json_response(response, status=response.http_status)
+def worker(q):
+    while True:
+        try:
+            item = q.recv()
+            with Pool(1) as p:
+                result = p.apply(translate_text, (item[0].text, item[0].source_language, item[0].target_language))
+            q.send(result)
+        except Exception as e:
+            q.send(e)
 
 
-if __name__ == '__main__':
-    parser = services.common.common_parser(__file__)
+if __name__ == "__main__":
+    script_name = __file__
+    parser = argparse.ArgumentParser(prog=script_name)
+    server_name = os.path.splitext(os.path.basename(script_name))[0]
+    parser.add_argument("--grpc-port", help="port to bind grpc services to", default=registry[server_name]['grpc'], type=int, required=False)
     args = parser.parse_args(sys.argv[1:])
-    services.common.main_loop(None, None, handle, args)
+
+    # Need queue system and spawning grpc server in separate process because of:
+    # https://github.com/grpc/grpc/issues/16001
+
+    import multiprocessing as mp
+    pipe = mp.Pipe()
+    p = mp.Process(target=main_loop, args=(pipe[0], serve, args.grpc_port))
+    p.start()
+
+    w = mp.Process(target=worker, args=(pipe[1],))
+    w.start()
+
+    p.join()
+    w.join()

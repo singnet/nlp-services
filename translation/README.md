@@ -8,6 +8,8 @@ We use OpenNMT-py and Google's Transformer network.
 
 ## Setup
 
+These steps are run on Ubuntu 18.04, if you use a different distro/OS, the specifics may be different.
+
 OpenNMT-py is a submodule, so you should clone the `nlp-services` repo with `--recurse-submodules`
 
 ```
@@ -19,9 +21,11 @@ with the version from opennmt-py's requirements.
 
 ```
 cd nlp-services/translation
+mkvirtualenv --python=/usr/bin/python3.6 translation
 pip install -r opennmt-py/requirements.txt
 pip install numpy -I
 pip install -r requirements.txt
+./buildproto.sh
 ```
 
 Last, you need to download the trained transformer models for translation.
@@ -40,6 +44,21 @@ is available in the translate.py script
 
 ```
 python translate.py
+```
+
+## Running the server and making calls
+
+Start the server with:
+
+```
+python -m services.translate_server
+```
+
+In another terminal, make a request to summarize an article with:
+
+```
+$ python client.py --source-text example_article.txt
+ Senior National Collins is standing by her tweet of a fake news story. she says she had got her "sourcing" wrong, insisting it had some details wrong.
 ```
 
 ## OpenNMT Notes

@@ -17,6 +17,13 @@ RUN apt-get install -y git default-jre && pip3.6 install -r opennmt_requirements
 ADD requirements.txt /service_requirements.txt
 RUN pip3.6 install -r service_requirements.txt
 
+# Install snet daemon
+RUN mkdir -p /tmp/snetd && cd /tmp/snetd && \
+      curl -OL https://github.com/singnet/snet-daemon/releases/download/v0.1.1/snetd-0.1.1.tar.gz && \
+      tar xzvf snetd-0.1.1.tar.gz && \
+      cp snetd-linux-amd64 /usr/local/bin/snetd && \
+      rm -r /tmp/snetd
+
 ADD . /translation
 WORKDIR /translation
 
