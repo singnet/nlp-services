@@ -101,7 +101,7 @@ def start_snetd(cwd, daemon_config_file=None, db_file=None):
     '''
     Starts the Daemon 'snetd' with:
     - Configurations from: daemon_config_file
-    - Database in db_file
+    - Database in db_file.
     '''
     logger.debug('call => start_snetd()')
     cmd = ['snetd']
