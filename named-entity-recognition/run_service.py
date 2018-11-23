@@ -19,7 +19,7 @@ def main():
     args = parser.parse_args(sys.argv[1:])
 
     if args.daemon_config_path is None:
-        args.daemon_config_path = 'config/'
+        args.daemon_config_path = 'config/snetd_named_entity_recognition_server_config.json'
 
     root_path = pathlib.Path(__file__).absolute().parent
 
@@ -57,14 +57,9 @@ def start_all_services(cwd, service_modules, config_path=None):
             service_name = service_module.split('.')[-1]
             print("Launching", service_module,"on ports", str(registry[service_name]))
 
-            snetd_config = None
-            if config_path:
-                snetd_config = pathlib.Path(
-                    config_path) / ('snetd_' + service_name + '_server_config.json')
-
             processThread = threading.Thread(
                 target=start_service,
-                args=(cwd, service_module, snetd_config,))
+                args=(cwd, service_module, config_path,))
 
             # Bind the thread with the main() to abort it when main() exits.
             processThread.daemon = True
@@ -102,6 +97,7 @@ def start_snetd(cwd, daemon_config_file=None, db_file=None):
     - Configurations from: daemon_config_file
     - Database in db_file
     '''
+
     logger.debug('call => start_snetd()')
     cmd = ['snetd']
     if daemon_config_file is not None:
