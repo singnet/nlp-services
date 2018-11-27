@@ -36,9 +36,10 @@ RUN cd / && \
 RUN cd $SINGNET_REPOS && \
     mkdir snet-daemon && \
     cd snet-daemon && \
-    wget https://github.com/singnet/snet-daemon/releases/download/v0.1.0/snetd-0.1.0.tar.gz && \
-    tar -xvf snetd-0.1.0.tar.gz && \
-    mv snetd-linux-amd64 snetd
+    wget https://github.com/singnet/snet-daemon/releases/download/v0.1.2/snetd-0.1.2.tar.gz && \
+    tar -xvf snetd-0.1.2.tar.gz && \
+    cd snetd-0.1.2 && \
+    mv snetd-linux-amd64 ../snetd
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/sentiment-analysis && \
@@ -49,4 +50,4 @@ RUN cd $SINGNET_REPOS && \
 
 WORKDIR  $SINGNET_REPOS/nlp-services/sentiment-analysis
 EXPOSE 7010-7011
-CMD ["python3", "run_service.py", "--daemon-conf", "config/"]
+CMD ["python3", "run_service.py"]

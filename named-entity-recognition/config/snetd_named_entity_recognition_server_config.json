@@ -1,23 +1,18 @@
 {
-    "AGENT_CONTRACT_ADDRESS": "",
-    "AUTO_SSL_DOMAIN": "",
-    "AUTO_SSL_CACHE_DIR": "",
-    "BLOCKCHAIN_ENABLED": true,
-    "CONFIG_PATH": "",
-    "DAEMON_LISTENING_PORT": 7012,
-    "DAEMON_TYPE": "grpc",
-    "DB_PATH": "./db",
-    "ETHEREUM_JSON_RPC_ENDPOINT": "https://kovan.infura.io",
-    "EXECUTABLE_PATH": "",
-    "HDWALLET_INDEX": 0,
-    "HDWALLET_MNEMONIC": "",
-    "LOG_LEVEL": 5,
-    "PASSTHROUGH_ENABLED": true,
-    "PASSTHROUGH_ENDPOINT": "http://localhost:7013",
-    "POLL_SLEEP": "",
-    "PRIVATE_KEY": "",
-    "SERVICE_TYPE": "grpc",
-    "SSL_CERT": "",
-    "SSL_KEY": "",
-    "WIRE_ENCODING": "json"
+  "PRIVATE_KEY": "1000000000000000000000000000000000000000000000000000000000000000",
+  "DAEMON_LISTENING_PORT": 7012,
+  "ETHEREUM_JSON_RPC_ENDPOINT": "https://kovan.infura.io",
+  "PASSTHROUGH_ENABLED": true,
+  "PASSTHROUGH_ENDPOINT": "http://localhost:7013",
+  "REGISTRY_ADDRESS_KEY": "0x2e4b2f2b72402b9b2d6a7851e37c856c329afe38",
+  "DAEMON_END_POINT": "http://54.203.198.53:7012",
+  "IPFS_END_POINT": "http://ipfs.singularitynet.io:80",
+  "ORGANIZATION_NAME": "snet",
+  "SERVICE_NAME": "named-entity-recognition",
+  "log": {
+  "level": "debug",
+  "output": {
+  "type": "stdout"
+     }
+  }
 }
