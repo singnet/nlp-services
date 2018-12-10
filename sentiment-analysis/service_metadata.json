@@ -1,0 +1,26 @@
+{
+    "version": 1,
+    "display_name": "sentiment-analysis",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "payment_expiration_threshold": 40320,
+    "model_ipfs_hash": "QmYqrUGVHB5iVpZsKtPJGvV1p1Jyf1EMm6fMWU76sE22C4",
+    "mpe_address": "0xdd4292864063d0DA1F294AC65D74d55a44F4766C",
+    "pricing": {
+        "price_model": "fixed_price",
+        "price_in_cogs": 0
+    },
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "d14ZkQFwvEUS89bgpmcJ/+0b6Jkh35139ZEp1dChKT0=",
+            "payment_address": "0x4b4546ce47089925E5792E0a6d085BfB876cE621"
+        }
+    ],
+    "endpoints": [
+        {
+            "group_name": "default_group",
+            "endpoint": "http://54.203.198.53:7010"
+        }
+    ]
+}

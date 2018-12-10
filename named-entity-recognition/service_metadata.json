@@ -1,0 +1,26 @@
+{
+    "version": 1,
+    "display_name": "named-entity-recognition",
+    "encoding": "proto",
+    "service_type": "grpc",
+    "payment_expiration_threshold": 40320,
+    "model_ipfs_hash": "QmTohaQs4P3zXRRQbMsC41mGw4LqzSn1FEv1saX3GtzdLu",
+    "mpe_address": "0xdd4292864063d0DA1F294AC65D74d55a44F4766C",
+    "pricing": {
+        "price_model": "fixed_price",
+        "price_in_cogs": 1
+    },
+    "groups": [
+        {
+            "group_name": "default_group",
+            "group_id": "9GKoJWnlQkKXopHseVlIwDwV+IRc30Fh4BKdfisjNeo=",
+            "payment_address": "0x4b4546ce47089925E5792E0a6d085BfB876cE621"
+        }
+    ],
+    "endpoints": [
+        {
+            "group_name": "default_group",
+            "endpoint": "http://54.203.198.53:7012"
+        }
+    ]
+}
