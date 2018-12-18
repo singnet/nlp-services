@@ -36,9 +36,9 @@ RUN cd / && \
 RUN cd $SINGNET_REPOS && \
     mkdir snet-daemon && \
     cd snet-daemon && \
-    wget https://github.com/singnet/snet-daemon/releases/download/v0.1.3/snetd-0.1.3.tar.gz && \
-    tar -xvf snetd-0.1.3.tar.gz && \
-    mv linux-amd64/snetd ./snetd
+    wget https://github.com/singnet/snet-daemon/releases/download/v0.1.4/snetd-0.1.4.tar.gz && \
+    tar -xvf snetd-0.1.4.tar.gz && \
+    mv snetd-0.1.4/snetd-linux-amd64 ./snetd
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/sentiment-analysis && \
