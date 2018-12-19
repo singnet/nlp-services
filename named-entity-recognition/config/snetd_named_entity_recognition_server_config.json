@@ -7,8 +7,8 @@
   "REGISTRY_ADDRESS_KEY": "0xe331bf20044a5b24c1a744abc90c1fd711d2c08d",
   "DAEMON_END_POINT": "http://54.203.198.53:7012",
   "IPFS_END_POINT": "http://ipfs.singularitynet.io:80",
-  "ORGANIZATION_NAME": "snet",
-  "SERVICE_NAME": "named-entity-recognition",
+  "ORGANIZATION_ID": "snet",
+  "SERVICE_ID": "named-entity-recognition",
   "log": {
   "level": "debug",
   "output": {
