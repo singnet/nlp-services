@@ -10,7 +10,7 @@
 
 ### Development
 
-Clone this repository and download the dependencies
+Clone this repository and download the dependencies.
 
 ```
 $ git clone https://github.com/singnet/nlp-services.git
