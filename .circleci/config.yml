@@ -114,7 +114,85 @@ defaults: &default_steps
             docker push $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
             docker push $DOCKER_ORG/$SERVICE_NAME:latest
           fi
-version: 2
+
+commands:
+  build_and_deploy_cmd:
+    description: "Build and deploy SingularityNET Services"
+    parameters:
+      docker_image_name:
+        type: string
+        default: ""
+      docker_container_name:
+        type: string
+        default: ""
+      docker_mount_volumes:
+        type: boolean
+        default: false
+      docker_mount_src:
+        type: string
+        default: ""
+      docker_mount_dest:
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: Build docker image
+          command: |
+            echo "==================================================== Configs ==================================================="
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            export DOCKER_MOUNT_VOLUMES=<< parameters.docker_mount_volumes >>
+            export DOCKER_MOUNT_SRC=<< parameters.docker_mount_src >>
+            export DOCKER_MOUNT_DEST=<< parameters.docker_mount_dest >>
+            PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
+            echo            git_user  : ${CIRCLE_PROJECT_USERNAME}
+            echo            git_repo  : ${CIRCLE_PROJECT_REPONAME}
+            echo            git_branch: ${CIRCLE_BRANCH}
+            echo            ssh_user  : ${SSH_USER_BR}
+            echo            ssh_host  : ${SSH_HOST_BR}
+            echo DOCKER_IMAGE_NAME    : ${DOCKER_IMAGE_NAME}
+            echo DOCKER_CONTAINER_NAME: ${DOCKER_CONTAINER_NAME}
+            echo DOCKER_MOUNT_VOLUMES : ${DOCKER_MOUNT_VOLUMES}
+            echo DOCKER_MOUNT_SRC     : ${DOCKER_MOUNT_SRC}
+            echo DOCKER_MOUNT_DEST    : ${DOCKER_MOUNT_DEST}
+            echo "================================================================================================================"
+
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER_BR}@${SSH_HOST_BR} \<< EOF
+              nvidia-docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME} || true && nvidia-docker rename ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
+              nvidia-docker build \
+                --build-arg git_owner=${CIRCLE_PROJECT_USERNAME} \
+                --build-arg git_repo=${CIRCLE_PROJECT_REPONAME} \
+                --build-arg git_branch=${CIRCLE_BRANCH} \
+                -t ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git#${CIRCLE_BRANCH}:${SERVICE_FOLDER}
+              nvidia-docker run --runtime=nvidia \
+                --name ${PROD_TAG}${DOCKER_CONTAINER_NAME} \
+                --restart unless-stopped \
+                $([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "-p ${SNETD_PORT}:${SNETD_PORT}" || echo "") \
+                $([ "${DOCKER_MOUNT_VOLUMES}" = "true" ] && echo "-v ${DOCKER_MOUNT_SRC}:${DOCKER_MOUNT_DEST}" || echo "") \
+                -di ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} ${SERVICE_RUN_COMMAND}
+            EOF
+      - run:
+          name: Remove Old Docker Container
+          command: |
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
+
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER_BR}@${SSH_HOST_BR} \<< EOF
+            nvidia-docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true && nvidia-docker rm ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
+            EOF
+      - run:
+          name: Test local
+          command: |
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
+
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER_BR}@${SSH_HOST_BR} \<< EOF
+              nvidia-docker exec -i ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${SERVICE_TEST_COMMAND}
+            EOF
+
+version: 2.1
 jobs:
   build-translation-container:
     working_directory: /translation
@@ -138,7 +216,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            ssh $SSH_USER@$SSH_HOST << EOF
+            ssh $SSH_USER@$SSH_HOST \<< EOF
               docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
               docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
@@ -166,7 +244,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            ssh $SSH_USER@$SSH_HOST << EOF
+            ssh $SSH_USER@$SSH_HOST \<< EOF
               docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
               docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
@@ -194,7 +272,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            ssh $SSH_USER_BR@$SSH_HOST_BR << EOF
+            ssh $SSH_USER_BR@$SSH_HOST_BR \<< EOF
               docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
               docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
@@ -222,14 +300,31 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            ssh $SSH_USER_BR@$SSH_HOST_BR << EOF
+            ssh $SSH_USER_BR@$SSH_HOST_BR \<< EOF
               docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
               docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
               docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -p $SNETD_PORT:$SNETD_PORT -v /home/ubuntu/nlp-services/$SERVICE_NAME/config:/$SERVICE_NAME/config -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
             EOF
+  deploy-cntk-language-understanding:
+    docker:
+      - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
+    environment:
+      SERVICE_FOLDER: nlp-services/cntk-language-understanding
+      SERVICE_RUN_COMMAND: bash -c "source '/cntk/activate-cntk';git pull;python3 run_language_understanding_service.py"
+      SERVICE_TEST_COMMAND: bash -c "source '/cntk/activate-cntk';python3 test_language_understanding_service.py auto"
+      SNETD_PORT: 7075
+    steps:
+      - build_and_deploy_cmd:
+          docker_image_name: cntk-language-understanding
+          docker_container_name: ARTUR_CNTK_LANGUAGE_UNDERSTANDING
+          docker_mount_volumes: true
+          docker_mount_src: /home/admin/storage/LanguageUnderstanding/CNTK/Output
+          docker_mount_dest: /opt/singnet/output
+
 workflows:
-  version: 2
+  version: 2.1
   build-and-maybe-deploy:
     jobs:
       - build-translation-container
@@ -260,3 +355,6 @@ workflows:
           filters:
             branches:
               only: master
+  build-and-deploy-cntk:
+    jobs:
+      - deploy-cntk-language-understanding
