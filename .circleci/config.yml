@@ -1,5 +1,122 @@
+defaults_br: &default_steps_br
+  steps:
+    - checkout
+    - setup_remote_docker
+    - run:
+        name: Install dependencies
+        command: |
+          apk add --no-cache python3 && \
+            python3 -m ensurepip && \
+            rm -r /usr/lib/python*/ensurepip && \
+            pip3 install --upgrade pip setuptools
+          pip3 install \
+            requests \
+            tqdm
+    - restore_cache:
+        keys:
+          - v2-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}
+    - run:
+        name: Load Docker image layer cache
+        command: |
+          set +o pipefail
+          mkdir -p /caches
+          ls -la /caches
+          docker load -i /caches/docker_image.tar | true
+    - run:
+        name: Fetch models
+        command: |
+          cd $SERVICE_NAME
+          python3 ../fetch_models.py /caches/models
+          ls -la models
+    - run:
+        name: Build application Docker image
+        command: |
+          cd $SERVICE_NAME
+          docker build --cache-from=$SERVICE_NAME -t $SERVICE_NAME .
+    - run:
+        name: Save Docker image layer cache
+        command: |
+          mkdir -p /caches
+          docker save -o /caches/docker_image.tar $SERVICE_NAME
+          ls -la /caches/
+    - save_cache:
+        key: v2-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ epoch }}
+        paths:
+          - /caches/docker_image.tar
+          - /caches/models
+    - deploy:
+        name: Push Docker image
+        command: |
+          if [ "$CIRCLE_BRANCH" == "master" ]; then
+            docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
+            docker tag $SERVICE_NAME $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
+            docker tag $SERVICE_NAME $DOCKER_ORG/$SERVICE_NAME:latest
+            docker push $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
+            docker push $DOCKER_ORG/$SERVICE_NAME:latest
+          fi
+defaults: &default_steps
+  steps:
+    - checkout
+    - run:
+        name: "Pull Submodules"
+        command: |
+          git submodule update --init -- $SERVICE_NAME/opennmt-py
+    - setup_remote_docker
+    - run:
+        name: Install dependencies
+        command: |
+          apk add --no-cache python3 && \
+            python3 -m ensurepip && \
+            rm -r /usr/lib/python*/ensurepip && \
+            pip3 install --upgrade pip setuptools
+          pip3 install \
+            requests \
+            tqdm
+    - restore_cache:
+        keys:
+          - v2-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}
+    - run:
+        name: Load Docker image layer cache
+        command: |
+          set +o pipefail
+          mkdir -p /caches
+          ls -la /caches
+          docker load -i /caches/docker_image.tar | true
+    - run:
+        name: Fetch models
+        command: |
+          cd $SERVICE_NAME
+          python3 ../fetch_models.py /caches/models
+          ls -la models
+    - run:
+        name: Build application Docker image
+        command: |
+          cd $SERVICE_NAME
+          docker build --cache-from=$SERVICE_NAME -t $SERVICE_NAME .
+    - run:
+        name: Save Docker image layer cache
+        command: |
+          mkdir -p /caches
+          docker save -o /caches/docker_image.tar $SERVICE_NAME
+          ls -la /caches/
+    - save_cache:
+        key: v2-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ epoch }}
+        paths:
+          - /caches/docker_image.tar
+          - /caches/models
+    - deploy:
+        name: Push Docker image
+        command: |
+          if [ "$CIRCLE_BRANCH" == "master" ]; then
+            docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
+            docker tag $SERVICE_NAME $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
+            docker tag $SERVICE_NAME $DOCKER_ORG/$SERVICE_NAME:latest
+            docker push $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
+            docker push $DOCKER_ORG/$SERVICE_NAME:latest
+          fi
+
 commands:
-  bnd_cmd:
+  build_and_deploy_cmd:
     description: "Build and deploy SingularityNET Services"
     parameters:
       docker_image_name:
@@ -19,7 +136,7 @@ commands:
         default: ""
     steps:
       - run:
-          name: Build docker image
+          name: Build Docker Image
           command: |
             echo "==================================================== Configs ==================================================="
             export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
@@ -28,6 +145,8 @@ commands:
             export DOCKER_MOUNT_SRC=<< parameters.docker_mount_src >>
             export DOCKER_MOUNT_DEST=<< parameters.docker_mount_dest >>
             PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
+            echo              SSH_USER: ${SSH_USER_BR}
+            echo              SSH_HOST: ${SSH_HOST_BR}
             echo            git_user  : ${CIRCLE_PROJECT_USERNAME}
             echo            git_repo  : ${CIRCLE_PROJECT_REPONAME}
             echo            git_branch: ${CIRCLE_BRANCH}
@@ -75,6 +194,118 @@ commands:
 
 version: 2.1
 jobs:
+  build-translation-container:
+    working_directory: /translation
+    docker:
+      - image: docker:18.06.1-ce-git
+    environment:
+      SERVICE_NAME: translation
+      ORG: singnet
+      DOCKER_ORG: singularitynet
+    <<: *default_steps
+  deploy-translation:
+    machine:
+      enabled: true
+    environment:
+      SERVICE_NAME: translation
+      ORG: singnet
+      DOCKER_ORG: singularitynet
+      SNETD_PORT: 6208
+      SNETD_CONFIG: config/snetd_translation_server_config.json
+    steps:
+      - run:
+          name: Deploy Over SSH
+          command: |
+            ssh $SSH_USER@$SSH_HOST \<< EOF
+              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
+              docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
+              docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
+              docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -p $SNETD_PORT:$SNETD_PORT -v /home/ubuntu/nlp-services/$SERVICE_NAME/config:/$SERVICE_NAME/config -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
+            EOF
+  build-summarization-container:
+    working_directory: /text-summarization
+    docker:
+      - image: docker:18.06.1-ce-git
+    environment:
+      SERVICE_NAME: text-summarization
+      ORG: singnet
+      DOCKER_ORG: singularitynet
+    <<: *default_steps
+  deploy-summarization:
+    machine:
+      enabled: true
+    environment:
+      SERVICE_NAME: text-summarization
+      ORG: singnet
+      DOCKER_ORG: singularitynet
+      SNETD_PORT: 6207
+      SNETD_CONFIG: config/snetd_text_summarization_server_config.json
+    steps:
+      - run:
+          name: Deploy Over SSH
+          command: |
+            ssh $SSH_USER@$SSH_HOST \<< EOF
+              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
+              docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
+              docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
+              docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -p $SNETD_PORT:$SNETD_PORT -v /home/ubuntu/nlp-services/$SERVICE_NAME/config:/$SERVICE_NAME/config -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
+            EOF
+  build-sentiment-analysis-container:
+    working_directory: /sentiment-analysis
+    docker:
+      - image: docker:18.06.1-ce-git
+    environment:
+      SERVICE_NAME: sentiment-analysis
+      ORG: singnet
+      DOCKER_ORG: singularitynet
+    <<: *default_steps_br
+  deploy-sentiment-analysis:
+    machine:
+      enabled: true
+    environment:
+      SERVICE_NAME: sentiment-analysis
+      ORG: singnet
+      DOCKER_ORG: singularitynet
+      SNETD_PORT: 7010
+      SNETD_CONFIG: config/snetd_sentiment_analysis_server_config.json
+    steps:
+      - run:
+          name: Deploy Over SSH
+          command: |
+            ssh $SSH_USER_BR@$SSH_HOST_BR \<< EOF
+              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
+              docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
+              docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
+              docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -p $SNETD_PORT:$SNETD_PORT -v /home/ubuntu/nlp-services/$SERVICE_NAME/config:/$SERVICE_NAME/config -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
+            EOF
+  build-named-entity-recognition-container:
+    working_directory: /named-entity-recognition
+    docker:
+      - image: docker:18.06.1-ce-git
+    environment:
+      SERVICE_NAME: named-entity-recognition
+      ORG: singnet
+      DOCKER_ORG: singularitynet
+    <<: *default_steps_br
+  deploy-named-entity-recognition:
+    machine:
+      enabled: true
+    environment:
+      SERVICE_NAME: named-entity-recognition
+      ORG: singnet
+      DOCKER_ORG: singularitynet
+      SNETD_PORT: 7012
+      SNETD_CONFIG: config/snetd_named_entity_recognition_server_config.json
+    steps:
+      - run:
+          name: Deploy Over SSH
+          command: |
+            ssh $SSH_USER_BR@$SSH_HOST_BR \<< EOF
+              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
+              docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
+              docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
+              docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -p $SNETD_PORT:$SNETD_PORT -v /home/ubuntu/nlp-services/$SERVICE_NAME/config:/$SERVICE_NAME/config -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
+            EOF
   deploy-cntk-language-understanding:
     docker:
     - image: circleci/python:3.6.6-node
@@ -85,7 +316,7 @@ jobs:
       SERVICE_TEST_COMMAND: bash -c "source '/cntk/activate-cntk';python3 test_language_understanding_service.py auto"
       SNETD_PORT: 7075
     steps:
-      - bnd_cmd:
+      - build_and_deploy_cmd:
           docker_image_name: cntk-language-understanding
           docker_container_name: ARTUR_CNTK_LANGUAGE_UNDERSTANDING
           docker_mount_volumes: true
@@ -94,6 +325,34 @@ jobs:
 
 workflows:
   version: 2.1
-  build-and-deploy:
+  build-and-maybe-deploy:
     jobs:
+      - build-translation-container
+      - deploy-translation:
+          requires:
+            - build-translation-container
+          filters:
+            branches:
+              only: master
+      - build-summarization-container
+      - deploy-summarization:
+          requires:
+            - build-summarization-container
+          filters:
+            branches:
+              only: master
+      - build-sentiment-analysis-container
+      - deploy-sentiment-analysis:
+          requires:
+            - build-sentiment-analysis-container
+          filters:
+            branches:
+              only: master
+      - build-named-entity-recognition-container
+      - deploy-named-entity-recognition:
+          requires:
+            - build-named-entity-recognition-container
+          filters:
+            branches:
+              only: master
       - deploy-cntk-language-understanding
