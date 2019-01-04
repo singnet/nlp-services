@@ -40,7 +40,7 @@ commands:
             echo DOCKER_MOUNT_DEST    : ${DOCKER_MOUNT_DEST}
             echo "================================================================================================================"
 
-            ssh -o "StrictHostKeyChecking no" ${SSH_USER_BR}@${SSH_HOST_BR} \<< EOF
+            ssh -o "StrictHostKeyChecking no" admin@54.203.198.53 \<< EOF
               nvidia-docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME} || true && nvidia-docker rename ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
               nvidia-docker build \
                 --build-arg git_owner=${CIRCLE_PROJECT_USERNAME} \
@@ -61,7 +61,7 @@ commands:
             export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
             PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
 
-            ssh -o "StrictHostKeyChecking no" ${SSH_USER_BR}@${SSH_HOST_BR} \<< EOF
+            ssh -o "StrictHostKeyChecking no" admin@54.203.198.53 \<< EOF
             nvidia-docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true && nvidia-docker rm ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
             EOF
       - run:
@@ -71,7 +71,7 @@ commands:
             export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
             PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
 
-            ssh -o "StrictHostKeyChecking no" ${SSH_USER_BR}@${SSH_HOST_BR} \<< EOF
+            ssh -o "StrictHostKeyChecking no" admin@54.203.198.53 \<< EOF
               nvidia-docker exec -i ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${SERVICE_TEST_COMMAND}
             EOF
 
