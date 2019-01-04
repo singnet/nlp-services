@@ -32,7 +32,7 @@ RUN cd ${SINGNET_REPOS} && \
 RUN cd ${SINGNET_REPOS} && \
     git clone -b ${git_branch} https://github.com/${git_owner}/${GITHUB_REPO_NAME}.git
 
-RUN cd ${SINGNET_REPOS}/${GITHUB_REPO_NAME}/nlp-services/${SERVICE_NAME} && \
+RUN cd ${SINGNET_REPOS}/${GITHUB_REPO_NAME}/${SERVICE_NAME} && \
     sh -c "echo '{ \"DAEMON_END_POINT\": \"http://${SNETD_HOST}:${SNETD_PORT}\", \
                    \"ETHEREUM_JSON_RPC_ENDPOINT\": \"https://kovan.infura.io\", \
                    \"IPFS_END_POINT\": \"http://ipfs.singularitynet.io:80\", \
@@ -46,8 +46,8 @@ RUN cd ${SINGNET_REPOS}/${GITHUB_REPO_NAME}/nlp-services/${SERVICE_NAME} && \
                    } \
                 }'" > ${SNETD_CONFIG}
 
-RUN cd ${SINGNET_REPOS}/${GITHUB_REPO_NAME}/nlp-services/${SERVICE_NAME} && \
+RUN cd ${SINGNET_REPOS}/${GITHUB_REPO_NAME}/${SERVICE_NAME} && \
     /root/anaconda3/envs/cntk-py35/bin/python -m pip install -r requirements.txt && \
     sh buildproto.sh
 
-WORKDIR ${SINGNET_REPOS}/${GITHUB_REPO_NAME}/nlp-services/${SERVICE_NAME}
+WORKDIR ${SINGNET_REPOS}/${GITHUB_REPO_NAME}/${SERVICE_NAME}
