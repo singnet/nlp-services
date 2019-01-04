@@ -304,7 +304,6 @@ jobs:
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
               docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -p $SNETD_PORT:$SNETD_PORT -v /home/ubuntu/nlp-services/$SERVICE_NAME/config:/$SERVICE_NAME/config -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
             EOF
-
   deploy-cntk-language-understanding:
     docker:
       - image: circleci/python:3.6.6-node
