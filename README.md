@@ -8,3 +8,4 @@ Each service has it's own README.md with full details:
 - [Translation](translation/) - Convert between language pairs. Currently limited to English <-> German.
 - [Sentiment Analysis](sentiment-analysis/) - Sentiment Analysis of sentences in different formats, please check the service home page out.
 - [Named Entity Recognition](named-entity-recognition/) - Recognize entities like PERSON, ORGANIZATION and LOCATION inside texts.
+CI TEST
