@@ -319,7 +319,7 @@ jobs:
       SERVICE_TEST_COMMAND: bash -c "source '/cntk/activate-cntk';python3 test_language_understanding_service.py auto"
       SNETD_PORT: 7075
     steps:
-      - bnd_cmd:
+      - build_and_deploy_cmd:
           docker_image_name: cntk-language-understanding
           docker_container_name: ARTUR_CNTK_LANGUAGE_UNDERSTANDING
           docker_mount_volumes: true
