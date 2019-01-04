@@ -155,7 +155,7 @@ commands:
             echo DOCKER_MOUNT_DEST    : ${DOCKER_MOUNT_DEST}
             echo "================================================================================================================"
 
-            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER_BR}@${SSH_HOST_BR} \<< EOF
               nvidia-docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME} || true && nvidia-docker rename ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
               nvidia-docker build \
                 --build-arg git_owner=${CIRCLE_PROJECT_USERNAME} \
@@ -176,7 +176,7 @@ commands:
             export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
             PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
 
-            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER_BR}@${SSH_HOST_BR} \<< EOF
             nvidia-docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true && nvidia-docker rm ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
             EOF
       - run:
@@ -186,7 +186,7 @@ commands:
             export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
             PROD_TAG=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "PROD_" || echo "")
 
-            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER_BR}@${SSH_HOST_BR} \<< EOF
               nvidia-docker exec -i ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${SERVICE_TEST_COMMAND}
             EOF
 
@@ -214,7 +214,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            ssh $SSH_USER@$SSH_HOST << EOF
+            ssh $SSH_USER@$SSH_HOST \<< EOF
               docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
               docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
@@ -242,7 +242,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            ssh $SSH_USER@$SSH_HOST << EOF
+            ssh $SSH_USER@$SSH_HOST \<< EOF
               docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
               docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
@@ -270,7 +270,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            ssh $SSH_USER_BR@$SSH_HOST_BR << EOF
+            ssh $SSH_USER_BR@$SSH_HOST_BR \<< EOF
               docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
               docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
@@ -298,7 +298,7 @@ jobs:
       - run:
           name: Deploy Over SSH
           command: |
-            ssh $SSH_USER_BR@$SSH_HOST_BR << EOF
+            ssh $SSH_USER_BR@$SSH_HOST_BR \<< EOF
               docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
               docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
