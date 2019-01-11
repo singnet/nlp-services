@@ -90,10 +90,10 @@ per quanto riguarda il contenuto della relazione goldstone, l'unione europea non
 
 Inputs:
 
- - `gRPC method`: translate
- - `source_lang`: "es"
- - `target_lang`: "fr"
- - `sentences_url`: "http://54.203.198.53:7000/Translation/OpenNMT/Romance/input_one_sentence.txt"
+ - `gRPC method`: `translate`
+ - `source_lang`: `es`
+ - `target_lang`: `fr`
+ - `sentences_url`: `http://54.203.198.53:7000/Translation/OpenNMT/Romance/input_one_sentence.txt`
 
 Response:
 
@@ -105,10 +105,10 @@ je suis une personne très heureuse.
 
 Inputs:
 
- - `gRPC method`: translate
- - `source_lang`: "es"
- - `target_lang`: "it"
- - `sentences_url`: "http://54.203.198.53:7000/Translation/OpenNMT/Romance/input_one_sentence.txt"
+ - `gRPC method`: `translate`
+ - `source_lang`: `es`
+ - `target_lang`: `it`
+ - `sentences_url`: `http://54.203.198.53:7000/Translation/OpenNMT/Romance/input_one_sentence.txt`
 
 Response:
 
@@ -120,10 +120,10 @@ io sono una persona molto felice.
 
 Inputs:
 
- - `gRPC method`: translate
- - `source_lang`: "es"
- - `target_lang`: "pt"
- - `sentences_url`: "http://54.203.198.53:7000/Translation/OpenNMT/Romance/input_one_sentence.txt"
+ - `gRPC method`: `translate`
+ - `source_lang`: `es`
+ - `target_lang`: `pt`
+ - `sentences_url`: `http://54.203.198.53:7000/Translation/OpenNMT/Romance/input_one_sentence.txt`
 
 Response:
 
@@ -135,10 +135,10 @@ eu sou uma pessoa muito feliz.
 
 Inputs:
 
- - `gRPC method`: translate
- - `source_lang`: "es"
- - `target_lang`: "ro"
- - `sentences_url`: "http://54.203.198.53:7000/Translation/OpenNMT/Romance/input_one_sentence.txt"
+ - `gRPC method`: `translate`
+ - `source_lang`: `es`
+ - `target_lang`: `ro`
+ - `sentences_url`: `http://54.203.198.53:7000/Translation/OpenNMT/Romance/input_one_sentence.txt`
 
 Response:
 
