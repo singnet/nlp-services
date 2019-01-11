@@ -91,7 +91,7 @@ class LanguageUnderstandingServicer(grpc_bt_grpc.LanguageUnderstandingServicer):
 
             tmp_response = mst.language_understanding()
 
-            # To respond we need to create a Output() object (from .proto file)
+            # To respond we need to create an Output() object (from .proto file)
             self.response = Output()
             self.response.model_url = str(tmp_response["model_url"]).encode("utf-8")
             self.response.output_url = str(tmp_response["output_url"]).encode("utf-8")
