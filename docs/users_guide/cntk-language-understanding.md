@@ -1,7 +1,7 @@
 [issue-template]: ../../../issues/new?template=BUG_REPORT.md
 [feature-template]: ../../../issues/new?template=FEATURE_REQUEST.md
 
-![singnetlogo](../../assets/singnet-logo.jpg?raw=true 'SingularityNET')
+![singnetlogo](../assets/singnet-logo.jpg?raw=true 'SingularityNET')
 
 # CNTK Language Understanding
 

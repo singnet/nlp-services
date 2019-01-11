@@ -322,6 +322,19 @@ jobs:
           docker_mount_volumes: true
           docker_mount_src: /home/admin/storage/LanguageUnderstanding/CNTK/Output
           docker_mount_dest: /opt/singnet/output
+  deploy-opennmt-romance-translator:
+    docker:
+      - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
+    environment:
+      SERVICE_FOLDER: opennmt-romance-translator
+      SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_romance_translator_service.py"
+      SERVICE_TEST_COMMAND: bash -c "python3 test_romance_translator_service.py auto"
+      SNETD_PORT: 7076
+    steps:
+      - build_and_deploy_cmd:
+          docker_image_name: opennmt-romance-translator
+          docker_container_name: ARTUR_OPENNMT_ROMANCE_TRANSLATOR
 
 workflows:
   version: 2.1
@@ -358,3 +371,6 @@ workflows:
   build-and-deploy-cntk:
     jobs:
       - deploy-cntk-language-understanding
+  build-and-deploy-opennmt:
+    jobs:
+      - deploy-opennmt-romance-translator
