@@ -23,6 +23,7 @@ For more details on how to publish and test a service, select it from the list b
 ([User's Guide](docs/users_guide/cntk-language-understanding.md)) - CNTK recurrent LSTM network to process text for slot tagging and intent classification
 [[Reference](https://cntk.ai/pythondocs/CNTK_202_Language_Understanding.html)].
 - [Named Entity Recognition](named-entity-recognition/) - Recognize entities like PERSON, ORGANIZATION and LOCATION inside texts.
+- [OpenNMT Romance Translator](opennmt-romance-translator/) - OpenNTM model to translate romance languages [[Reference](http://forum.opennmt.net/t/training-romance-multi-way-model/86)].
 - [Sentiment Analysis](sentiment-analysis/) - Sentiment Analysis of sentences in different formats, please check the service home page out.
 - [Text Summarization](text-summarization/) - Create a summary for a piece of text. Currently limited to the domain of news articles.
 - [Translation](translation/) - Convert between language pairs. Currently limited to English <-> German.
@@ -46,3 +47,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Each service is licensed as followed:
 
 - cntk-language-understanding - [MIT License](https://github.com/Microsoft/CNTK/blob/master/LICENSE.md)
+- opennmt-romance-translator - [MIT License](https://github.com/OpenNMT/OpenNMT/blob/master/LICENSE.md)
