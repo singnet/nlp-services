@@ -26,6 +26,6 @@ RUN mkdir -p /tmp/snetd && cd /tmp/snetd && \
 
 ADD . /text-summarization
 WORKDIR /text-summarization
-RUN bash build_proto.sh
+RUN bash buildproto.sh
 
 CMD ["python3.6", "run_service.py"]
