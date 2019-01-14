@@ -26,5 +26,6 @@ RUN mkdir -p /tmp/snetd && cd /tmp/snetd && \
 
 ADD . /translation
 WORKDIR /translation
+RUN bash build_proto.sh
 
 CMD ["python3.6", "run_service.py"]
