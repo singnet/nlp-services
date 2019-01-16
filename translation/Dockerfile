@@ -19,10 +19,10 @@ RUN pip3.6 install -r service_requirements.txt
 
 # Install snet daemon
 RUN mkdir -p /tmp/snetd && cd /tmp/snetd && \
-      curl -OL https://github.com/singnet/snet-daemon/releases/download/v0.1.1/snetd-0.1.1.tar.gz && \
-      tar xzvf snetd-0.1.1.tar.gz && \
-      cp snetd-linux-amd64 /usr/local/bin/snetd && \
-      rm -r /tmp/snetd
+      curl -OL https://github.com/singnet/snet-daemon/releases/download/v0.1.4/snetd-0.1.4.tar.gz && \
+      tar -xvf snetd-0.1.4.tar.gz && \
+      mv snetd-0.1.4/snetd-linux-amd64 /usr/bin/snetd && \
+      cd / && rm -r /tmp/snetd
 
 ADD . /translation
 WORKDIR /translation
