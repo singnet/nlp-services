@@ -44,7 +44,7 @@ defaults_br: &default_steps_br
         paths:
           - /caches/docker_image.tar
           - /caches/models
-    - publish_image:
+    - deploy:
         name: Push Docker image
         command: |
           if [ "$CIRCLE_BRANCH" == "master" ]; then
@@ -104,7 +104,7 @@ defaults: &default_steps
         paths:
           - /caches/docker_image.tar
           - /caches/models
-    - publish_image:
+    - deploy:
         name: Push Docker image
         command: |
           if [ "$CIRCLE_BRANCH" == "master" ]; then
