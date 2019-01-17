@@ -35,6 +35,7 @@ defaults_br: &default_steps_br
           docker build --cache-from=$SERVICE_NAME -t $SERVICE_NAME .
     - run:
         name: Save Docker image layer cache
+        no_output_timeout: 20m
         command: |
           mkdir -p /caches
           docker save -o /caches/docker_image.tar $SERVICE_NAME
