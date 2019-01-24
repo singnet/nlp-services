@@ -35,6 +35,7 @@ defaults_br: &default_steps_br
           docker build --cache-from=$SERVICE_NAME -t $SERVICE_NAME .
     - run:
         name: Save Docker image layer cache
+        no_output_timeout: 20m
         command: |
           mkdir -p /caches
           docker save -o /caches/docker_image.tar $SERVICE_NAME
@@ -208,10 +209,11 @@ jobs:
       enabled: true
     environment:
       SERVICE_NAME: translation
-      ORG: singnet
       DOCKER_ORG: singularitynet
       SNETD_PORT: 6208
-      SNETD_CONFIG: config/snetd_translation_server_config.json
+      SNETD_CONFIG: snetd.config.json
+      ETCD_VOLUME: translation-etcd
+      ETCD_CONTAINER_FOLDER: /translation/storage-data-dir-1.etcd/
     steps:
       - run:
           name: Deploy Over SSH
@@ -220,7 +222,7 @@ jobs:
               docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
               docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
-              docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -p $SNETD_PORT:$SNETD_PORT -v /home/ubuntu/nlp-services/$SERVICE_NAME/config:/$SERVICE_NAME/config -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
+              docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -v $ETCD_VOLUME:$ETCD_CONTAINER_FOLDER -p $SNETD_PORT:$SNETD_PORT -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
             EOF
   build-summarization-container:
     working_directory: /text-summarization
@@ -236,10 +238,11 @@ jobs:
       enabled: true
     environment:
       SERVICE_NAME: text-summarization
-      ORG: singnet
       DOCKER_ORG: singularitynet
       SNETD_PORT: 6207
-      SNETD_CONFIG: config/snetd_text_summarization_server_config.json
+      SNETD_CONFIG: snetd.config.json
+      ETCD_VOLUME: summarization-etcd
+      ETCD_CONTAINER_FOLDER: /text-summarization/storage-data-dir-1.etcd/
     steps:
       - run:
           name: Deploy Over SSH
@@ -248,7 +251,7 @@ jobs:
               docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
               docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
-              docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -p $SNETD_PORT:$SNETD_PORT -v /home/ubuntu/nlp-services/$SERVICE_NAME/config:/$SERVICE_NAME/config -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
+              docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -v $ETCD_VOLUME:$ETCD_CONTAINER_FOLDER -p $SNETD_PORT:$SNETD_PORT -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
             EOF
   build-sentiment-analysis-container:
     working_directory: /sentiment-analysis
