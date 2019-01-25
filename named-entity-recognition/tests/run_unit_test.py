@@ -4,7 +4,7 @@ import compile_proto
 from services import named_entity_recognition as ner
 from test_data import b64_sentences
 from log import log_config
-logger = log_config.getLogger('unity_test_service.py', test=True)
+logger = log_config.getLogger('run_unit_test.py', test=True)
 
 
 class Request(object):
@@ -14,25 +14,6 @@ class Request(object):
 
 def test_compiled():
     assert compile_proto.success
-
-
-def test_show():
-    """
-    Test calling show method
-    :return:
-    """
-
-    servicer = ner.ShowMessageServicer()
-    request = Request()
-    request.value = 'Some input message'
-    context = object()
-    response = servicer.Show(request, context)
-
-    if len(response.value) > 10:
-        logger.debug("test_show() - OK")
-        assert True
-    else:
-        assert False, "Call service error"
 
 
 def test_recognize():
@@ -53,5 +34,6 @@ def test_recognize():
         assert True
     else:
         assert False, "Generated result is not valid"
+
 
 path_setup.clean_paths()

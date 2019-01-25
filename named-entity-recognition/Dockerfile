@@ -18,28 +18,18 @@ RUN apt-get update && \
     libudev-dev \
     libusb-1.0-0-dev
 
-RUN apt-get install -y golang go-dep golang-goprotobuf-dev golint
 RUN apt-get install -y default-jre
-RUN apt-get install -y nodejs npm
 RUN apt-get install -y python3 python3-pip
 
 RUN cd / && \
     mkdir -p singnet/src/github.com/singnet && \
     mkdir -p ${GOPATH}/ipfs && \
-    cd $GOPATH && \
-    mkdir log && \
     cd $SINGNET_REPOS && \
-    git clone https://github.com/singnet/platform-contracts && \
-    cd platform-contracts && \
-    npm install && \
-    npm install ganache-cli && \
-    ./node_modules/.bin/truffle compile
-RUN cd $SINGNET_REPOS && \
     mkdir snet-daemon && \
     cd snet-daemon && \
-    wget https://github.com/singnet/snet-daemon/releases/download/v0.1.4/snetd-0.1.4.tar.gz && \
-    tar -xvf snetd-0.1.4.tar.gz && \
-    mv snetd-0.1.4/snetd-linux-amd64 ./snetd
+    wget https://github.com/singnet/snet-daemon/releases/download/v0.1.6/snet-daemon-v0.1.6-linux-amd64.tar.gz && \
+    tar -xvf snet-daemon-v0.1.6-linux-amd64.tar.gz && \
+    mv snet-daemon-v0.1.6-linux-amd64/snetd ./snetd
 RUN cd $SINGNET_REPOS && \
     git clone https://github.com/singnet/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/named-entity-recognition && \

@@ -1,60 +1,3 @@
-defaults_br: &default_steps_br
-  steps:
-    - checkout
-    - setup_remote_docker
-    - run:
-        name: Install dependencies
-        command: |
-          apk add --no-cache python3 && \
-            python3 -m ensurepip && \
-            rm -r /usr/lib/python*/ensurepip && \
-            pip3 install --upgrade pip setuptools
-          pip3 install \
-            requests \
-            tqdm
-    - restore_cache:
-        keys:
-          - v2-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}
-    - run:
-        name: Load Docker image layer cache
-        command: |
-          set +o pipefail
-          mkdir -p /caches
-          ls -la /caches
-          docker load -i /caches/docker_image.tar | true
-    - run:
-        name: Fetch models
-        command: |
-          cd $SERVICE_NAME
-          python3 ../fetch_models.py /caches/models
-          ls -la models
-    - run:
-        name: Build application Docker image
-        command: |
-          cd $SERVICE_NAME
-          docker build --cache-from=$SERVICE_NAME -t $SERVICE_NAME .
-    - run:
-        name: Save Docker image layer cache
-        no_output_timeout: 20m
-        command: |
-          mkdir -p /caches
-          docker save -o /caches/docker_image.tar $SERVICE_NAME
-          ls -la /caches/
-    - save_cache:
-        key: v2-{{ .Branch }}-{{ .Environment.CIRCLE_JOB }}-{{ epoch }}
-        paths:
-          - /caches/docker_image.tar
-          - /caches/models
-    - deploy:
-        name: Push Docker image
-        command: |
-          if [ "$CIRCLE_BRANCH" == "master" ]; then
-            docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
-            docker tag $SERVICE_NAME $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
-            docker tag $SERVICE_NAME $DOCKER_ORG/$SERVICE_NAME:latest
-            docker push $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
-            docker push $DOCKER_ORG/$SERVICE_NAME:latest
-          fi
 defaults: &default_steps
   steps:
     - checkout
@@ -117,6 +60,159 @@ defaults: &default_steps
           fi
 
 commands:
+  build_service:
+    description: "Build service"
+    parameters:
+      service_name:
+        type: string
+        default: ""
+      org:
+        type: string
+        default: ""
+      docker_org:
+        type: string
+        default: ""
+    steps:
+      - run:
+          name: Container setup
+          command: |
+            sudo mkdir -p << parameters.service_name >>/caches/models
+            pyenv global 3.6.5
+            pip install --upgrade pip
+            pip install pipenv
+            sudo chown -R circleci:circleci << parameters.service_name >>
+            sudo chown -R circleci:circleci /usr/local/bin
+            sudo chown -R circleci:circleci /opt/circleci/.pyenv/versions/3.6.5/lib/python3.6/site-packages
+
+      - restore_cache:
+          keys:
+            - pip-dependencies-v5-{{ .Branch }}-{{ checksum "<< parameters.service_name >>/requirements.txt" }}
+            - pip-dependencies-v5-{{ .Branch }}-
+            - pip-dependencies-v5-
+      - run:
+          name: Install dependencies
+          command: |
+            pipenv install -r << parameters.service_name >>/requirements.txt
+      - save_cache:
+          key: pip-dependencies-v5-{{ .Branch }}-{{ checksum "<< parameters.service_name >>/requirements.txt" }}
+          paths:
+            - ".virtualenvs"
+            - "/usr/local/bin"
+            - "/opt/circleci/.pyenv/bin/pyenv"
+            - "/opt/circleci/.pyenv/versions/3.6.5/lib/python3.6/venv"
+            - "/opt/circleci/.pyenv/versions/3.6.5/lib/python3.6/site-packages"
+      - restore_cache:
+          keys:
+            - docker-image-v2-{{ .Branch }}-{{ checksum "<< parameters.service_name >>/Dockerfile" }}
+            - docker-image-v2-{{ .Branch }}-
+            - docker-image-v3-
+      - run:
+          name: Load docker image cache.
+          command: |
+            sudo docker load -i << parameters.service_name >>/caches/docker_image.tar || true
+      - run:
+          name: Build application Docker image
+          command: |
+            cd << parameters.service_name >>
+            export PRODUCTION_DEPLOYMENT=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
+            if [[ "$PRODUCTION_DEPLOYMENT" == "true" && "$CIRCLE_BRANCH" == "master" ]]; then
+            	echo "PRODUCTION DEPLOYMENT"
+            	docker build --cache-from=<< parameters.docker_org >>/<< parameters.service_name >>:latest -t << parameters.docker_org >>/<< parameters.service_name >>:latest .
+            else
+            	echo "DEVELOPMENT DEPLOYMENT"
+            	docker build --cache-from=$DEV_DOCKER_ORG/<< parameters.service_name >>:latest -t $DEV_DOCKER_ORG/<< parameters.service_name >>:latest .
+            fi
+      - run:
+          name: Save docker image
+          no_output_timeout: 20m
+          command: |
+            pwd
+            cd << parameters.service_name >>/caches/
+            export PRODUCTION_DEPLOYMENT=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
+            if [[ "$PRODUCTION_DEPLOYMENT" == "true" && "$CIRCLE_BRANCH" == "master" ]]; then
+                echo "PRODUCTION DEPLOYMENT"
+                docker save -o docker_image.tar << parameters.docker_org >>/<< parameters.service_name >>:latest
+                ls -sh
+            else
+            	echo "DEVELOPMENT DEPLOYMENT"
+                docker save -o docker_image.tar $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
+            fi
+            pwd
+            ls -la
+      - save_cache:
+          key: docker-image-v2-{{ .Branch }}-{{ checksum "<< parameters.service_name >>/Dockerfile" }}
+          paths:
+            - << parameters.service_name >>/caches/docker_image.tar
+      - run:
+          name: Deploying docker image
+          command: |
+            export PRODUCTION_DEPLOYMENT=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
+            if [[ "$PRODUCTION_DEPLOYMENT" == "true" && "$CIRCLE_BRANCH" == "master" ]]; then
+            	echo "PRODUCTION DEPLOYMENT"
+              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
+              docker tag $DOCKER_ORG/<< parameters.service_name >>:latest $DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
+              docker push << parameters.docker_org >>/<< parameters.service_name >>:$CIRCLE_SHA1
+            else
+            	echo "DEVELOPMENT DEPLOYMENT"
+              docker login -u $DEV_DOCKER_HUB_USER_ID -p $DEV_DOCKER_HUB_PWD
+              docker tag $DEV_DOCKER_ORG/<< parameters.service_name >>:latest $DEV_DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
+              docker push $DEV_DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
+            fi
+
+  deploy_service:
+    description: "Deploy service"
+    parameters:
+      service_name:
+        type: string
+        default: ""
+      org:
+        type: string
+        default: ""
+      docker_org:
+        type: string
+        default: ""
+      container_name_backup:
+        type: string
+        default: ""
+      snetd_port:
+        type: integer
+        default: 0
+    steps:
+      - run:
+          name: Deploy Over SSH
+          command: |
+            export PRODUCTION_DEPLOYMENT=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
+            if [ "$PRODUCTION_DEPLOYMENT" == "true" ]; then
+              echo "PRODUCTION DEPLOYMENT"
+              ssh -o "StrictHostKeyChecking no" ${SSH_USER_PROD}@${SSH_HOST_PROD} \<<-EOF
+            docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
+            docker pull << parameters.docker_org >>/<< parameters.service_name >>:latest
+            docker rename << parameters.service_name >> << parameters.container_name_backup >> || true
+            docker stop << parameters.container_name_backup >> || true
+            docker run --runtime=nvidia --name << parameters.service_name >> --restart unless-stopped -p << parameters.snetd_port >>:<< parameters.snetd_port >> \
+            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/config:/config \
+            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/etcd:/etcd \
+            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/storage-data-dir-1.etcd:/storage-data-dir-1.etcd \
+            -di << parameters.docker_org >>/<< parameters.service_name >>:latest
+            docker rm << parameters.container_name_backup >> || true
+            EOF
+            else
+              echo "DEVELOPMENT DEPLOYMENT"
+              ssh -o "StrictHostKeyChecking no" ${SSH_USER_DEV}@${SSH_HOST_DEV} \<<-EOF
+            docker login -u $DEV_DOCKER_HUB_USER_ID -p $DEV_DOCKER_HUB_PWD;
+            docker pull $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
+            docker rename << parameters.service_name >> << parameters.container_name_backup >> || true
+            docker stop << parameters.container_name_backup >> || true
+            docker run --runtime=nvidia --name << parameters.service_name >> --restart unless-stopped -p << parameters.snetd_port >>:<< parameters.snetd_port >> \
+            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/config:/config \
+            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/etcd:/etcd \
+            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/storage-data-dir-1.etcd:/storage-data-dir-1.etcd \
+            -di $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
+            docker rm << parameters.container_name_backup >> || true
+            ls -la
+            EOF
+            fi
+
   build_and_deploy_cmd:
     description: "Build and deploy SingularityNET Services"
     parameters:
@@ -254,61 +350,124 @@ jobs:
               docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -v $ETCD_VOLUME:$ETCD_CONTAINER_FOLDER -p $SNETD_PORT:$SNETD_PORT -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
             EOF
   build-sentiment-analysis-container:
-    working_directory: /sentiment-analysis
-    docker:
-      - image: docker:18.06.1-ce-git
+    machine:
+      image: circleci/classic:201808-01
+    working_directory: ~/singnet
     environment:
       SERVICE_NAME: sentiment-analysis
-      ORG: singnet
-      DOCKER_ORG: singularitynet
-    <<: *default_steps_br
+      CACHE_MODELS_PATH: sentiment-analysis/caches/models
+    steps:
+      - checkout
+      - build_service:
+          service_name: sentiment-analysis
+          org: singnet
+          docker_org: singularitynet
+      - run:
+          name: Install NLTK depedencies.
+          command: |
+            cd $SERVICE_NAME
+            pipenv run python -c "import nltk; nltk.download('punkt')"
+            pipenv run python -c "import nltk; nltk.download('vader_lexicon')"
+      - restore_cache:
+          keys:
+            - service-models-v1-{{ .Branch }}-{{ checksum  "sentiment-analysis/models.json" }}
+            - service-models-v1-{{ .Branch }}-
+            - service-models-v1-
+      - run:
+          name: Fetch models
+          command: |
+            cd $SERVICE_NAME
+            pipenv run python ../fetch_models.py
+            ls -la
+      - save_cache:
+          key: service-models-v1-{{ .Branch }}-{{ checksum "sentiment-analysis/models.json" }}
+          paths:
+            - $CACHE_MODELS_PATH
+      - run:
+          name: Run unit tests
+          command: |
+            echo "Running unit tests"
+            cd $SERVICE_NAME/tests
+            pipenv run pytest
+      - run:
+          name: Run grpc test
+          command: |
+            echo "Running GRPC tests"
+            cd $SERVICE_NAME
+            pipenv run sh buildproto.sh
+            pipenv run python run_service.py --no-daemon &
+            sleep 10
+            cd tests
+            pipenv run python run_test_service.py
+
   deploy-sentiment-analysis:
     machine:
       enabled: true
-    environment:
-      SERVICE_NAME: sentiment-analysis
-      ORG: singnet
-      DOCKER_ORG: singularitynet
-      SNETD_PORT: 7010
-      SNETD_CONFIG: config/snetd_sentiment_analysis_server_config.json
     steps:
-      - run:
-          name: Deploy Over SSH
-          command: |
-            ssh $SSH_USER_BR@$SSH_HOST_BR \<< EOF
-              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
-              docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
-              docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
-              docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -p $SNETD_PORT:$SNETD_PORT -v /home/ubuntu/nlp-services/$SERVICE_NAME/config:/$SERVICE_NAME/config -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
-            EOF
+      - deploy_service:
+          service_name: sentiment-analysis
+          org: singnet
+          docker_org: singularitynet
+          snetd_port: 7010
+          container_name_backup: sentiment-analysis-temp-bk
+
   build-named-entity-recognition-container:
-    working_directory: /named-entity-recognition
-    docker:
-      - image: docker:18.06.1-ce-git
+    working_directory: ~/singnet
+    machine:
+      image: circleci/classic:201808-01
     environment:
       SERVICE_NAME: named-entity-recognition
-      ORG: singnet
-      DOCKER_ORG: singularitynet
-    <<: *default_steps_br
+      CACHE_MODELS_PATH: named-entity-recognition/caches/models
+    steps:
+      - checkout
+      - build_service:
+          service_name: named-entity-recognition
+          org: singnet
+          docker_org: singularitynet
+      - run:
+          name: Install NLTK depedencies.
+          command: |
+            cd $SERVICE_NAME
+            pipenv run python -c "import nltk; nltk.download('punkt')"
+            pipenv run python -c "import nltk; nltk.download('averaged_perceptron_tagger')"
+      - run:
+          name: Fetch models
+          command: |
+            cd $SERVICE_NAME
+            pipenv run python ../fetch_models.py
+            ls -la
+      - save_cache:
+          key: service-models-v1-{{ .Branch }}-{{ checksum "named-entity-recognition/models.json" }}
+          paths:
+            - $CACHE_MODELS_PATH
+      - run:
+          name: Run unit tests
+          command: |
+            echo "Running unit tests"
+            cd $SERVICE_NAME/tests
+            pipenv run pytest
+      - run:
+          name: Run grpc test
+          command: |
+            echo "Running GRPC tests"
+            cd $SERVICE_NAME
+            pipenv run sh buildproto.sh
+            pipenv run python run_service.py --no-daemon &
+            sleep 10
+            cd tests
+            pipenv run python run_test_service.py
+
   deploy-named-entity-recognition:
     machine:
       enabled: true
-    environment:
-      SERVICE_NAME: named-entity-recognition
-      ORG: singnet
-      DOCKER_ORG: singularitynet
-      SNETD_PORT: 7012
-      SNETD_CONFIG: config/snetd_named_entity_recognition_server_config.json
     steps:
-      - run:
-          name: Deploy Over SSH
-          command: |
-            ssh $SSH_USER_BR@$SSH_HOST_BR \<< EOF
-              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD;
-              docker pull $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1
-              docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
-              docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -p $SNETD_PORT:$SNETD_PORT -v /home/ubuntu/nlp-services/$SERVICE_NAME/config:/$SERVICE_NAME/config -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
-            EOF
+      - deploy_service:
+          service_name: named-entity-recognition
+          org: singnet
+          docker_org: singularitynet
+          snetd_port: 7012
+          container_name_backup: named-entity-recognition-temp-bk
+
   deploy-cntk-language-understanding:
     docker:
       - image: circleci/python:3.6.6-node
@@ -343,20 +502,20 @@ workflows:
   version: 2.1
   build-and-maybe-deploy:
     jobs:
-      - build-translation-container
-      - deploy-translation:
-          requires:
-            - build-translation-container
-          filters:
-            branches:
-              only: master
-      - build-summarization-container
-      - deploy-summarization:
-          requires:
-            - build-summarization-container
-          filters:
-            branches:
-              only: master
+#      - build-translation-container
+#      - deploy-translation:
+#          requires:
+#            - build-translation-container
+#          filters:
+#            branches:
+#              only: master
+#      - build-summarization-container
+#      - deploy-summarization:
+#          requires:
+#            - build-summarization-container
+#          filters:
+#            branches:
+#              only: master
       - build-sentiment-analysis-container
       - deploy-sentiment-analysis:
           requires:
@@ -366,14 +525,14 @@ workflows:
               only: master
       - build-named-entity-recognition-container
       - deploy-named-entity-recognition:
-          requires:
-            - build-named-entity-recognition-container
-          filters:
-            branches:
-              only: master
-  build-and-deploy-cntk:
-    jobs:
-      - deploy-cntk-language-understanding
-  build-and-deploy-opennmt:
-    jobs:
-      - deploy-opennmt-romance-translator
+         requires:
+           - build-named-entity-recognition-container
+         filters:
+           branches:
+             only: master
+#  build-and-deploy-cntk:
+#    jobs:
+#      - deploy-cntk-language-understanding
+#  build-and-deploy-opennmt:
+#    jobs:
+#      - deploy-opennmt-romance-translator
