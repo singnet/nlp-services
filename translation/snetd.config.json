@@ -4,7 +4,7 @@
    "IPFS_END_POINT": "http://ipfs.singularitynet.io:80",
    "REGISTRY_ADDRESS_KEY": "0xe331bf20044a5b24c1a744abc90c1fd711d2c08d",
    "PASSTHROUGH_ENABLED": true,
-   "PASSTHROUGH_ENDPOINT": "http://127.0.0.1:6108",
+   "PASSTHROUGH_ENDPOINT": "http://127.0.0.1:6008",
    "ORGANIZATION_ID": "snet",
    "SERVICE_ID": "translation",
    "LOG": {
