@@ -108,11 +108,12 @@ def translate_text(text, source, target):
     s.Load(os.path.join(ROOT_DIR, 'models', t["sentencepiece_model"]))
     pieces = s.encode_as_pieces(text)
 
-    # add final full stop to ensure we don't lose any trailing words.
-    if pieces[-1] != ".":
-        pieces.append(".")
-
-    indices = [i for i, _x in enumerate(pieces) if _x == "."]
+    # Ensure any trailing words without terminating punctuation is also translated.
+    if pieces[-1] != '.':
+        pieces.append('.')
+    # For other languages we will need a better system for chunking sentences or parts of text.
+    indices = [i for i, _x in enumerate(pieces) if _x in [".", "!", "?"]]
+    
     complete_result = []
     start=0
     for i in indices:
