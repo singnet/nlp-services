@@ -108,6 +108,10 @@ def translate_text(text, source, target):
     s.Load(os.path.join(ROOT_DIR, 'models', t["sentencepiece_model"]))
     pieces = s.encode_as_pieces(text)
 
+    # add final full stop to ensure we don't lose any trailing words.
+    if pieces[-1] != ".":
+        pieces.append(".")
+
     indices = [i for i, _x in enumerate(pieces) if _x == "."]
     complete_result = []
     start=0

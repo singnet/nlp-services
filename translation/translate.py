@@ -17,6 +17,7 @@ import onmt.opts
 
 # Dictionary mapping for what languages we know how to translate
 from services import translations
+from services.translate_server import translate_text
 
 
 def translate(tokenized, translate_model):
@@ -67,21 +68,5 @@ if __name__ == "__main__":
     # transations[from][to]
     source_language = "de"
     target_language = "en"
-    t = translations[source_language][target_language]
-    s = spm.SentencePieceProcessor()
-    s.Load(os.path.join(ROOT_DIR, 'models', t["sentencepiece_model"]))
-    pieces = s.encode_as_pieces(text)
 
-    indices = [i for i, _x in enumerate(pieces) if _x == b"."]
-    complete_result = []
-    start=0
-    for i in indices:
-        x = " ".join([e.decode('utf-8') for e in pieces[start:i+1]])
-        result = translate(x, translate_model=t['translate_model'])
-        print(result)
-        y = s.decode_pieces(result[1][0].split(" "))
-        print(y)
-        complete_result.append(y.decode('utf-8'))
-        start = i
-
-    print("\n".join(complete_result))
+    print(translate_text(text, source_language, target_language))
