@@ -532,9 +532,9 @@ workflows:
           filters:
             branches:
               only: master
-  build-and-deploy-cntk:
-    jobs:
-      - deploy-cntk-language-understanding
-  build-and-deploy-opennmt:
-    jobs:
-      - deploy-opennmt-romance-translator
+#  build-and-deploy-cntk:
+#    jobs:
+#      - deploy-cntk-language-understanding
+#  build-and-deploy-opennmt:
+#    jobs:
+#      - deploy-opennmt-romance-translator
