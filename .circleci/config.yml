@@ -60,6 +60,7 @@ defaults: &default_steps
           fi
 
 commands:
+
   build_service:
     description: "Build service"
     parameters:
@@ -349,6 +350,7 @@ jobs:
               docker stop $SERVICE_NAME && docker rm $SERVICE_NAME
               docker run --runtime=nvidia --name $SERVICE_NAME --restart unless-stopped -v $ETCD_VOLUME:$ETCD_CONTAINER_FOLDER -p $SNETD_PORT:$SNETD_PORT -di $DOCKER_ORG/$SERVICE_NAME:$CIRCLE_SHA1 python3.6 run_service.py --daemon-config-path $SNETD_CONFIG
             EOF
+
   build-sentiment-analysis-container:
     machine:
       image: circleci/classic:201808-01
@@ -502,20 +504,20 @@ workflows:
   version: 2.1
   build-and-maybe-deploy:
     jobs:
-#      - build-translation-container
-#      - deploy-translation:
-#          requires:
-#            - build-translation-container
-#          filters:
-#            branches:
-#              only: master
-#      - build-summarization-container
-#      - deploy-summarization:
-#          requires:
-#            - build-summarization-container
-#          filters:
-#            branches:
-#              only: master
+      - build-translation-container
+      - deploy-translation:
+          requires:
+            - build-translation-container
+          filters:
+            branches:
+              only: master
+      - build-summarization-container
+      - deploy-summarization:
+          requires:
+            - build-summarization-container
+          filters:
+            branches:
+              only: master
       - build-sentiment-analysis-container
       - deploy-sentiment-analysis:
           requires:
@@ -525,14 +527,14 @@ workflows:
               only: master
       - build-named-entity-recognition-container
       - deploy-named-entity-recognition:
-         requires:
-           - build-named-entity-recognition-container
-         filters:
-           branches:
-             only: master
-#  build-and-deploy-cntk:
-#    jobs:
-#      - deploy-cntk-language-understanding
-#  build-and-deploy-opennmt:
-#    jobs:
-#      - deploy-opennmt-romance-translator
+          requires:
+            - build-named-entity-recognition-container
+          filters:
+            branches:
+              only: master
+  build-and-deploy-cntk:
+    jobs:
+      - deploy-cntk-language-understanding
+  build-and-deploy-opennmt:
+    jobs:
+      - deploy-opennmt-romance-translator
