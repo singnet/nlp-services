@@ -31,14 +31,14 @@ RUN cd / && \
     tar -xvf snet-daemon-v0.1.6-linux-amd64.tar.gz && \
     mv snet-daemon-v0.1.6-linux-amd64/snetd ./snetd
 RUN cd $SINGNET_REPOS && \
-    git clone https://github.com/singnet/nlp-services.git && \
+    git clone https://github.com/glautervl/nlp-services.git && \
     cd $SINGNET_REPOS/nlp-services/named-entity-recognition && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     python3 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
     python3 ../fetch_models.py && \
-    bash buildproto.sh
-
+    sh buildproto.sh && \
+    ls -la services/service_spec/
 WORKDIR  $SINGNET_REPOS/nlp-services/named-entity-recognition
 EXPOSE 7012-7013
 CMD ["python3", "run_service.py"]

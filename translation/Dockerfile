@@ -1,6 +1,6 @@
 FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
 ENV DEBIAN_FRONTEND noninteractive 
-RUN apt-get update && apt-get install -y locales software-properties-common
+RUN apt-get update && apt-get install -y locales software-properties-common git
 RUN add-apt-repository -y ppa:deadsnakes/ppa && \
       apt-get update && \
       apt-get upgrade -y && \
@@ -11,11 +11,18 @@ RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     update-locale LANG=en_US.UTF-8
 ENV LANG en_US.UTF-8
 
-ADD opennmt-py/requirements.txt /opennmt_requirements.txt
-RUN apt-get install -y git default-jre && pip3.6 install -r opennmt_requirements.txt && pip3.6 install numpy -I
+RUN mkdir -p /singnet/translation/ && \
+    cd /singnet && \
+    git clone https://github.com/singnet/nlp-services.git && \
+    cd nlp-services/translation && \
+    git submodule update --init -- opennmt-py && \
+    cd .. && mv translation/ /translation
 
-ADD requirements.txt /service_requirements.txt
-RUN pip3.6 install -r service_requirements.txt
+RUN cd /translation/opennmt-py && apt-get install -y git default-jre && pip3.6 install -r requirements.txt && pip3.6 install numpy -I
+
+RUN cd /translation && pip3.6 install -r requirements.txt
+
+RUN rm -rf /singnet
 
 # Install snet daemon
 RUN mkdir -p /tmp/snetd && cd /tmp/snetd && \
@@ -24,7 +31,6 @@ RUN mkdir -p /tmp/snetd && cd /tmp/snetd && \
       mv snet-daemon-v0.1.6-linux-amd64/snetd /usr/bin/snetd && \
       cd / && rm -r /tmp/snetd
 
-ADD . /translation
 WORKDIR /translation
 RUN bash buildproto.sh
 
