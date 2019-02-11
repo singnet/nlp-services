@@ -37,7 +37,7 @@ RUN cd $SINGNET_REPOS && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     python3 -c "import nltk; nltk.download('vader_lexicon')" && \
-    bash buildproto.sh
+    sh buildproto.sh
 
 WORKDIR  $SINGNET_REPOS/nlp-services/sentiment-analysis
 EXPOSE 7010-7011
