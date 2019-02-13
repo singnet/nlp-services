@@ -72,6 +72,9 @@ commands:
       docker_org:
         type: string
         default: ""
+      test_command:
+        type: string
+        default: ""
     steps:
       - run:
           name: Container setup
@@ -114,12 +117,12 @@ commands:
             if [[ "$PRODUCTION_DEPLOYMENT" == "true" && "$CIRCLE_BRANCH" == "master" ]]; then
                 echo "PRODUCTION DEPLOYMENT"
                 docker run --name << parameters.service_name >> -idt << parameters.docker_org >>/<< parameters.service_name >>:latest
-                docker exec -it << parameters.service_name >> /bin/bash -c 'cd tests; pytest'
+                docker exec -it << parameters.service_name >> /bin/bash -c << parameters.test_command >>
             else
             	echo "DEVELOPMENT DEPLOYMENT"
                 cd << parameters.service_name >>/tests/
                 docker run --name << parameters.service_name >> -idt $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
-                docker exec -it << parameters.service_name >> /bin/bash -c 'cd tests; pytest'
+                docker exec -it << parameters.service_name >> /bin/bash -c << parameters.test_command >>
             fi
       - run:
           name: Save docker image
@@ -371,6 +374,7 @@ jobs:
           service_name: sentiment-analysis
           org: singnet
           docker_org: singularitynet
+          test_command: "cd tests; pytest"
       - persist_to_workspace:
           root: ~/singnet
           paths: sentiment-analysis
@@ -400,6 +404,7 @@ jobs:
           service_name: named-entity-recognition
           org: singnet
           docker_org: singularitynet
+          test_command: "cd tests; pytest"
       - persist_to_workspace:
           root: ~/singnet
           paths: named-entity-recognition
