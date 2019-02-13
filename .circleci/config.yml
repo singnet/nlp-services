@@ -374,7 +374,7 @@ jobs:
           service_name: sentiment-analysis
           org: singnet
           docker_org: singularitynet
-          test_command: "cd tests; pytest"
+          test_command: "'cd tests; pytest'"
       - persist_to_workspace:
           root: ~/singnet
           paths: sentiment-analysis
@@ -404,7 +404,7 @@ jobs:
           service_name: named-entity-recognition
           org: singnet
           docker_org: singularitynet
-          test_command: "cd tests; pytest"
+          test_command: "'cd tests; pytest'"
       - persist_to_workspace:
           root: ~/singnet
           paths: named-entity-recognition
