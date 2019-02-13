@@ -61,7 +61,7 @@ defaults: &default_steps
 
 commands:
   build_and_test_service:
-    description: "Build service"
+    description: "Build and test service"
     parameters:
       service_name:
         type: string
