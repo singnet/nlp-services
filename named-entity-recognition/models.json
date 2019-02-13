@@ -1,5 +1,5 @@
 {
     "model_urls": [
-        ["https://nlp.stanford.edu/software/stanford-ner-2018-02-27.zip",null]
+        ["https://snet-models.s3.amazonaws.com/bh/named-entity-recognition/stanford-ner-2018-02-27.zip",null]
     ]
 }
