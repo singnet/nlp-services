@@ -118,7 +118,6 @@ commands:
           command: |
             export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
             if [ "$DOCKER_DEPLOY" = "true" ]; then
-
             	echo "PRODUCTION DEPLOYMENT"
               echo $DOCKER_PWD | docker login -u $DOCKER_HUB_USER_ID --password-stdin;
               docker tag $DOCKER_ORG/<< parameters.service_name >>:latest $DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
@@ -136,8 +135,6 @@ commands:
           command: |
             export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
             if [ "$DOCKER_DEPLOY" = "true" ]; then
-            export PRODUCTION_DEPLOYMENT=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
-            if [[ "$PRODUCTION_DEPLOYMENT" == "true" && "$CIRCLE_BRANCH" == "master" ]]; then
               echo "PRODUCTION DEPLOYMENT"
               ssh -o "StrictHostKeyChecking no" ${SSH_USER_PROD}@${SSH_HOST_PROD} \<<-EOF
             docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
