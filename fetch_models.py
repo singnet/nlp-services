@@ -49,7 +49,7 @@ if __name__ == "__main__":
         if local_name.endswith('.bz2'):
             if '.tar.' in local_name:
                 import tarfile
-                tar = tarfile.open(local_name, "r:bz2")  
+                tar = tarfile.open(local_name, "r:bz2")
                 for tar_item in tar:
                     if file_filter is None or tar_item.name in file_filter:
                         print("Extracting %s : %s => %s" % (local_name, tar_item.name, os.path.join(model_dir, tar_item.name)))

@@ -22,21 +22,6 @@ if __name__ == '__main__':
         logger.debug("Error found Creating Channel => " + e)
 
     try:
-        # ShowMessage() Method Test
-        # create a stub (client)
-        stub = grpc_bt_grpc.ShowMessageStub(channel)
-        # create a valid request message
-        test_text = "some input message"
-        message = grpc_bt_pb2.InputMessage(value=test_text)
-        # make the call
-        response = stub.Show(message)
-        logger.debug("call => ShowMessage() Method Test Passed => " + response.value)
-        print()
-
-    except Exception as e:
-        logger.debug("Error found => " + e)
-
-    try:
         logger.debug("call => RecognizeMessage() Method Test Starting... ")
         # RecognizeMessage() Method Test
         # create a stub (client)

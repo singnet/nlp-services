@@ -114,5 +114,5 @@ venv.bak/
 **/db
 **/*.icloud
 twitter_messages.txt
-
+**/etcd
 .vscode/

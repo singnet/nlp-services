@@ -1,9 +1,5 @@
 syntax = "proto3";
 
-service ShowMessage {
-    rpc Show(InputMessage) returns (OutputMessage) {}
-}
-
 message InputMessage {
     string value = 1;
 }
@@ -12,40 +8,6 @@ message OutputMessage {
     string value = 1;
 }
 
-message TwitterCredentials {
-    string consumer_key = 1;
-    string consumer_secret = 2;
-    string access_token = 3;
-    string token_secret = 4;
-}
-
-message TwitterInputMessage {
-    TwitterCredentials credentials = 1;
-    string product = 2;
-    string environment = 3;
-    string languages = 4;
-    string query = 5;
-    int32 messages_per_request = 6;
-    int32 max_requests_limit = 7;
-    int32 msg_limit = 8;
-    int32 time_limit = 9;
-    string from_date = 10;
-    string to_date = 11;
-    string db_name = 12;
-}
-
-message TwitterOutputMessage {
-    string value = 1;
-}
-
-service SentimentConsensusAnalysis {
-    rpc ConsensusAnalysis(InputMessage) returns (OutputMessage) {}
-}
-
-service TwitterHistoricalAnalysis {
-    rpc HistoricalAnalysis(TwitterInputMessage) returns (OutputMessage) {}
-}
-
-service TwitterStreamAnalysis {
-    rpc StreamAnalysis(TwitterInputMessage) returns (OutputMessage) {}
+service SentimentAnalysis {
+    rpc Analyze(InputMessage) returns (OutputMessage) {}
 }

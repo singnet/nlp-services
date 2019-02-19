@@ -1,6 +1,7 @@
 FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
-ENV DEBIAN_FRONTEND noninteractive 
-RUN apt-get update && apt-get install -y locales software-properties-common
+ENV DEBIAN_FRONTEND noninteractive
+ARG GITHUB_ACCOUNT=singnet
+RUN apt-get update && apt-get install -y locales software-properties-common git
 RUN add-apt-repository -y ppa:deadsnakes/ppa && \
       apt-get update && \
       apt-get upgrade -y && \
@@ -11,20 +12,25 @@ RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     update-locale LANG=en_US.UTF-8
 ENV LANG en_US.UTF-8
 
-ADD opennmt-py/requirements.txt /opennmt_requirements.txt
+ADD https://raw.githubusercontent.com/OpenNMT/OpenNMT-py/master/requirements.txt /opennmt_requirements.txt
 RUN apt-get install -y git default-jre && pip3.6 install -r opennmt_requirements.txt && pip3.6 install numpy -I
 
-ADD requirements.txt /service_requirements.txt
+ADD https://raw.githubusercontent.com/${GITHUB_ACCOUNT}/nlp-services/master/text-summarization/requirements.txt /service_requirements.txt
 RUN pip3.6 install -r service_requirements.txt
 
-# Install snet daemon
-RUN mkdir -p /tmp/snetd && cd /tmp/snetd && \
-      curl -OL https://github.com/singnet/snet-daemon/releases/download/v0.1.6/snet-daemon-v0.1.6-linux-amd64.tar.gz && \
-      tar -xvf snet-daemon-v0.1.6-linux-amd64.tar.gz && \
-      mv snet-daemon-v0.1.6-linux-amd64/snetd /usr/bin/snetd && \
-      cd / && rm -r /tmp/snetd
+ADD https://api.github.com/repos/${GITHUB_ACCOUNT}/nlp-services/compare/master...HEAD /dev/null
+RUN git clone https://github.com/${GITHUB_ACCOUNT}/nlp-services.git && \
+    cd nlp-services/text-summarization && \
+    python3.6 ../fetch_models.py && \
+    git submodule update --init -- opennmt-py && \
+    cd .. && mv text-summarization/ /text-summarization && \
+    rm -rf /nlp-services
 
-ADD . /text-summarization
+ADD https://github.com/singnet/snet-daemon/releases/download/v0.1.6/snet-daemon-v0.1.6-linux-amd64.tar.gz /snet-daemon-v0.1.6-linux-amd64.tar.gz
+RUN tar -xvf snet-daemon-v0.1.6-linux-amd64.tar.gz && \
+    mv snet-daemon-v0.1.6-linux-amd64/snetd /usr/bin/snetd && \
+    rm -rf /snet-daemon-v0.1.6-linux-amd64
+
 WORKDIR /text-summarization
 RUN bash buildproto.sh
 

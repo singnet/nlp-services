@@ -5,7 +5,7 @@ from statistics import mode
 from nltk.tokenize import word_tokenize
 from log import log_config
 
-logger = log_config.getLogger('consensus_mod.py')
+logger = log_config.getLogger('analyze_mod.py')
 
 #Service paths
 current_path = os.path.dirname(os.path.realpath(__file__))
