@@ -119,13 +119,13 @@ commands:
             export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
             if [ "$DOCKER_DEPLOY" = "true" ]; then
             	echo "PRODUCTION DEPLOYMENT"
-              echo $DOCKER_PWD | docker login -u $DOCKER_HUB_USER_ID --password-stdin;
+              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
               docker tag $DOCKER_ORG/<< parameters.service_name >>:latest $DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
               docker push << parameters.docker_org >>/<< parameters.service_name >>:$CIRCLE_SHA1
               docker push << parameters.docker_org >>/<< parameters.service_name >>:latest
             else
             	echo "DEVELOPMENT DEPLOYMENT"
-              echo $DEV_DOCKER_HUB_PWD | docker login -u $DEV_DOCKER_HUB_USER_ID --password-stdin
+              docker login -u $DEV_DOCKER_HUB_USER_ID -p $DEV_DOCKER_HUB_PWD
               docker tag $DEV_DOCKER_ORG/<< parameters.service_name >>:latest $DEV_DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
               docker push $DEV_DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
               docker push $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
