@@ -137,7 +137,7 @@ commands:
             if [ "$DOCKER_DEPLOY" = "true" ]; then
               echo "PRODUCTION DEPLOYMENT"
               ssh -o "StrictHostKeyChecking no" ${SSH_USER_PROD}@${SSH_HOST_PROD} \<<-EOF
-            echo $DOCKER_PWD | docker login -u $DOCKER_HUB_USER_ID --password-stdin;
+            docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
             docker pull << parameters.docker_org >>/<< parameters.service_name >>:latest
             docker rename << parameters.service_name >> << parameters.container_name_backup >> || true
             docker stop << parameters.container_name_backup >> || true
@@ -151,7 +151,7 @@ commands:
             else
               echo "DEVELOPMENT DEPLOYMENT"
               ssh -o "StrictHostKeyChecking no" ${SSH_USER_DEV}@${SSH_HOST_DEV} \<<-EOF
-            echo $DEV_DOCKER_HUB_PWD | docker login -u $DEV_DOCKER_HUB_USER_ID --password-stdin
+            docker login -u $DEV_DOCKER_HUB_USER_ID -p $DEV_DOCKER_HUB_PWD
             docker pull $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
             docker rename << parameters.service_name >> << parameters.container_name_backup >> || true
             docker stop << parameters.container_name_backup >> || true
