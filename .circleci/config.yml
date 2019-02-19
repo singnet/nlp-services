@@ -19,15 +19,6 @@ commands:
         default: ""
     steps:
       - run:
-          name: Getting environment
-          command: |
-            if [[ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ]]; then
-            	echo "PRODUCTION DEPLOYMENT"
-                export PRODUCTION_ENV=true
-            else
-            	echo "DEVELOPMENT DEPLOYMENT"
-            fi
-      - run:
           name: Container setup
           command: |
             pyenv global 3.6.5
@@ -53,7 +44,8 @@ commands:
           name: Build application Docker image
           command: |
             cd << parameters.service_name >>
-            if [[ $PRODUCTION_ENV ]]; then
+            export PRODUCTION_DEPLOYMENT=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
+            if [[ "$PRODUCTION_DEPLOYMENT" == "true" && "$CIRCLE_BRANCH" == "master" ]]; then
             	echo "PRODUCTION DEPLOYMENT"
             	docker build --cache-from=<< parameters.docker_org >>/<< parameters.service_name >>:latest -t << parameters.docker_org >>/<< parameters.service_name >>:latest --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} .
             else
@@ -66,7 +58,8 @@ commands:
             - run:
                 name: Run tests
                 command: |
-                  if [[ $PRODUCTION_ENV ]]; then
+                  export PRODUCTION_DEPLOYMENT=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
+                  if [[ "$PRODUCTION_DEPLOYMENT" == "true" && "$CIRCLE_BRANCH" == "master" ]]; then
                       echo "PRODUCTION DEPLOYMENT"
                       docker run --name << parameters.service_name >> -idt << parameters.docker_org >>/<< parameters.service_name >>:latest
                   else
@@ -81,7 +74,8 @@ commands:
           command: |
             pwd
             mkdir -p << parameters.service_name >>/caches
-            if [[ $PRODUCTION_ENV ]]; then
+            export PRODUCTION_DEPLOYMENT=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
+            if [[ "$PRODUCTION_DEPLOYMENT" == "true" && "$CIRCLE_BRANCH" == "master" ]]; then
                 echo "PRODUCTION DEPLOYMENT"
                 docker save -o << parameters.service_name >>/caches/docker_image.tar << parameters.docker_org >>/<< parameters.service_name >>:latest
                 ls -sh << parameters.service_name >>/caches
@@ -116,17 +110,14 @@ commands:
         default: 0
     steps:
       - run:
-          name: Getting environment
-          command: |
-            export PRODUCTION_ENV=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
-      - run:
           name: Load docker image cache.
           command: |
             docker load -i << parameters.service_name >>/caches/docker_image.tar
       - run:
           name: Deploy docker image
           command: |
-            if [[ $PRODUCTION_ENV ]]; then
+            export PRODUCTION_DEPLOYMENT=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
+            if [[ "$PRODUCTION_DEPLOYMENT" == "true" && "$CIRCLE_BRANCH" == "master" ]]; then
             	echo "PRODUCTION DEPLOYMENT"
               echo $DOCKER_PWD | docker login -u $DOCKER_HUB_USER_ID --password-stdin;
               docker tag $DOCKER_ORG/<< parameters.service_name >>:latest $DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
@@ -142,7 +133,8 @@ commands:
       - run:
           name: Deploy service over SSH
           command: |
-            if [[ $PRODUCTION_ENV ]]; then
+            export PRODUCTION_DEPLOYMENT=$([ "${CIRCLE_PROJECT_USERNAME}" == "singnet" ] && [ echo "true" ] || echo "false")
+            if [[ "$PRODUCTION_DEPLOYMENT" == "true" && "$CIRCLE_BRANCH" == "master" ]]; then
               echo "PRODUCTION DEPLOYMENT"
               ssh -o "StrictHostKeyChecking no" ${SSH_USER_PROD}@${SSH_HOST_PROD} \<<-EOF
             echo $DOCKER_PWD | docker login -u $DOCKER_HUB_USER_ID --password-stdin;
