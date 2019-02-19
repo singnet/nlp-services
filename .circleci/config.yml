@@ -55,10 +55,10 @@ commands:
             cd << parameters.service_name >>
             if [[ $PRODUCTION_ENV ]]; then
             	echo "PRODUCTION DEPLOYMENT"
-            	docker build --cache-from=<< parameters.docker_org >>/<< parameters.service_name >>:latest -t << parameters.docker_org >>/<< parameters.service_name >>:latest .
+            	docker build --cache-from=<< parameters.docker_org >>/<< parameters.service_name >>:latest -t << parameters.docker_org >>/<< parameters.service_name >>:latest --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} .
             else
             	echo "DEVELOPMENT DEPLOYMENT"
-            	docker build --cache-from=$DEV_DOCKER_ORG/<< parameters.service_name >>:latest -t $DEV_DOCKER_ORG/<< parameters.service_name >>:latest .
+            	docker build --cache-from=$DEV_DOCKER_ORG/<< parameters.service_name >>:latest -t $DEV_DOCKER_ORG/<< parameters.service_name >>:latest --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} .
             fi
       - when:
           condition: << parameters.run_test >>
