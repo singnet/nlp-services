@@ -1,6 +1,6 @@
 commands:
   build_and_test_service:
-    description: "Build and test service"
+    description: "Build and test services"
     parameters:
       service_name:
         type: string
@@ -12,6 +12,9 @@ commands:
         type: string
         default: ""
       run_test:
+        type: boolean
+        default: true
+      use_cache:
         type: boolean
         default: true
       unit_test_command:
@@ -36,21 +39,25 @@ commands:
           command: |
             cd << parameters.service_name >>
             python ../fetch_models.py
-      - run:
-          name: Load docker image cache.
-          command: |
-            docker load -i << parameters.service_name >>/caches/docker_image.tar || true
+      - when:
+          condition: << parameters.use_cache >>
+          steps:
+            - run:
+                name: Load docker image cache.
+                command: |
+                  docker load -i << parameters.service_name >>/caches/docker_image.tar || true
       - run:
           name: Build application Docker image
           command: |
+            echo Github Account: ${CIRCLE_PROJECT_USERNAME}
             cd << parameters.service_name >>
-            export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
-            if [ "$DOCKER_DEPLOY" = "true" ]; then
+            export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
+            if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
             	echo "PRODUCTION DEPLOYMENT"
-            	docker build --cache-from=<< parameters.docker_org >>/<< parameters.service_name >>:latest -t << parameters.docker_org >>/<< parameters.service_name >>:latest --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} .
+            	docker build --cache-from=<< parameters.docker_org >>/<< parameters.service_name >>:latest -t << parameters.docker_org >>/<< parameters.service_name >>:latest --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} --build-arg SNETD_VERSION=${SNETD_VERSION} .
             else
             	echo "DEVELOPMENT DEPLOYMENT"
-            	docker build --cache-from=$DEV_DOCKER_ORG/<< parameters.service_name >>:latest -t $DEV_DOCKER_ORG/<< parameters.service_name >>:latest --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} .
+            	docker build --cache-from=$DEV_DOCKER_ORG/<< parameters.service_name >>:latest -t $DEV_DOCKER_ORG/<< parameters.service_name >>:latest --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} --build-arg SNETD_VERSION=${SNETD_VERSION} .
             fi
       - when:
           condition: << parameters.run_test >>
@@ -58,8 +65,8 @@ commands:
             - run:
                 name: Run tests
                 command: |
-                  export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
-                  if [ "$DOCKER_DEPLOY" = "true" ]; then
+                  export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
+                  if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
                       echo "PRODUCTION DEPLOYMENT"
                       docker run --name << parameters.service_name >> -idt << parameters.docker_org >>/<< parameters.service_name >>:latest
                   else
@@ -74,8 +81,8 @@ commands:
           command: |
             pwd
             mkdir -p << parameters.service_name >>/caches
-            export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
-            if [ "$DOCKER_DEPLOY" = "true" ]; then
+            export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
+            if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
                 echo "PRODUCTION DEPLOYMENT"
                 docker save -o << parameters.service_name >>/caches/docker_image.tar << parameters.docker_org >>/<< parameters.service_name >>:latest
                 ls -sh << parameters.service_name >>/caches
@@ -91,14 +98,32 @@ commands:
             - << parameters.service_name >>/caches/models
 
   deploy_service:
-    description: "Deploy service"
+    description: "Deploy services"
     parameters:
-      ssh_user_env_var_prod:
+      network:
         type: string
         default: ""
-      ssh_host_env_var_prod:
+      domain:
         type: string
         default: ""
+      host_address:
+        type: string
+        default: ""
+      ssh_user_env_var:
+        type: string
+        default: ""
+      ssh_host_env_var:
+        type: string
+        default: ""
+      ssl_cert_path_env_var:
+        type: string
+        default: ""
+      ssl_key_path_env_var:
+        type: string
+        default: ""
+      start_with_ssl:
+        type: boolean
+        default: false
       service_name:
         type: string
         default: ""
@@ -108,13 +133,29 @@ commands:
       docker_org:
         type: string
         default: ""
+      container_name:
+        type: string
+        default: ""
       container_name_backup:
         type: string
         default: ""
-      snetd_port:
-        type: integer
-        default: 0
+      snetd_ports:
+        type: string
+        default: ""
+      service_start_command:
+        type: string
+        default: ""
+      daemon_config_path:
+        type: string
+        default: ""
+      daemon_config_file:
+        type: string
+        default: ""
     steps:
+      - run:
+          name: Deploying network environment
+          command: |
+            echo Deploying on << parameters.network >>
       - run:
           name: Load docker image cache.
           command: |
@@ -122,16 +163,16 @@ commands:
       - run:
           name: Deploy docker image
           command: |
-            export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
-            if [ "$DOCKER_DEPLOY" = "true" ]; then
+            export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
+            if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
             	echo "PRODUCTION DEPLOYMENT"
-              docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
+              echo $DOCKER_HUB_PWD | docker login -u $DOCKER_HUB_USER_ID --password-stdin
               docker tag $DOCKER_ORG/<< parameters.service_name >>:latest $DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
               docker push << parameters.docker_org >>/<< parameters.service_name >>:$CIRCLE_SHA1
               docker push << parameters.docker_org >>/<< parameters.service_name >>:latest
             else
             	echo "DEVELOPMENT DEPLOYMENT"
-              docker login -u $DEV_DOCKER_HUB_USER_ID -p $DEV_DOCKER_HUB_PWD
+              echo $DEV_DOCKER_HUB_PWD | docker login -u $DEV_DOCKER_HUB_USER_ID --password-stdin
               docker tag $DEV_DOCKER_ORG/<< parameters.service_name >>:latest $DEV_DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
               docker push $DEV_DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
               docker push $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
@@ -139,35 +180,44 @@ commands:
       - run:
           name: Deploy service over SSH
           command: |
-            export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
-            if [ "$DOCKER_DEPLOY" = "true" ]; then
+            export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
+            if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
               echo "PRODUCTION DEPLOYMENT"
-              ssh -o "StrictHostKeyChecking no" ${<< parameters.ssh_user_env_var_prod >>}@${<< parameters.ssh_host_env_var_prod >>} \<<-EOF
-            docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
+              ssh -o "StrictHostKeyChecking no" ${<< parameters.ssh_user_env_var >>}@${<< parameters.ssh_host_env_var >>} \<<-EOF
+            echo $DOCKER_HUB_PWD | docker login -u $DOCKER_HUB_USER_ID --password-stdin
             docker pull << parameters.docker_org >>/<< parameters.service_name >>:latest
-            docker rename << parameters.service_name >> << parameters.container_name_backup >> || true
-            docker stop << parameters.container_name_backup >> || true
-            docker run --runtime=nvidia --name << parameters.service_name >> --restart unless-stopped -p << parameters.snetd_port >>:<< parameters.snetd_port >> \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/config:/config \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/etcd:/etcd \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/storage-data-dir-1.etcd:/storage-data-dir-1.etcd \
-            -di << parameters.docker_org >>/<< parameters.service_name >>:latest
+            docker stop << parameters.container_name >> || true
+            docker rename << parameters.container_name >> << parameters.container_name_backup >> || true
+            docker run --runtime=nvidia --name << parameters.container_name >> --restart unless-stopped << parameters.snetd_ports >> \
+            -v ${CERTS_FOLDER}:/opt/singnet/.certs \
+            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/etcd:/<< parameters.service_name >>/etcd \
+            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/storage-data-dir-1.etcd:/<< parameters.service_name >>/storage-data-dir-1.etcd \
+            -di << parameters.docker_org >>/<< parameters.service_name >>:latest << parameters.service_start_command >> << parameters.daemon_config_path >><< parameters.daemon_config_file >>
+            if [[ << parameters.start_with_ssl >> = true ]]; then
+              echo Starting with ssl
+              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"ssl_cert\": \"${SSL_PATH}/<<parameters.domain>>/fullchain.pem\", \"ssl_key\": \"${SSL_PATH}/<<parameters.domain>>/privkey.pem\"' << parameters.daemon_config_file >>
+              docker restart << parameters.container_name >>
+            fi
             docker rm << parameters.container_name_backup >> || true
             EOF
             else
               echo "DEVELOPMENT DEPLOYMENT"
-              ssh -o "StrictHostKeyChecking no" ${SSH_USER_DEV}@${SSH_HOST_DEV} \<<-EOF
-            docker login -u $DEV_DOCKER_HUB_USER_ID -p $DEV_DOCKER_HUB_PWD
+              ssh -o "StrictHostKeyChecking no" ${<< parameters.ssh_user_env_var >>}@${<< parameters.ssh_host_env_var >>} \<<-EOF
+            echo $DEV_DOCKER_HUB_PWD | docker login -u $DEV_DOCKER_HUB_USER_ID --password-stdin
             docker pull $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
-            docker rename << parameters.service_name >> << parameters.container_name_backup >> || true
-            docker stop << parameters.container_name_backup >> || true
-            docker run --runtime=nvidia --name << parameters.service_name >> --restart unless-stopped -p << parameters.snetd_port >>:<< parameters.snetd_port >> \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/config:/config \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/etcd:/etcd \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/storage-data-dir-1.etcd:/storage-data-dir-1.etcd \
-            -di $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
+            docker stop << parameters.container_name >> || true
+            docker rename << parameters.container_name >> << parameters.container_name_backup >> || true
+            docker run --runtime=nvidia --name << parameters.container_name >> --restart unless-stopped << parameters.snetd_ports >> \
+            -v ${CERTS_FOLDER}:${CERTS_FOLDER} \
+            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/etcd:/<< parameters.service_name >>/etcd \
+            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/storage-data-dir-1.etcd:/<< parameters.service_name >>/storage-data-dir-1.etcd \
+            -di $DEV_DOCKER_ORG/<< parameters.service_name >>:latest << parameters.service_start_command >> << parameters.daemon_config_path >><< parameters.daemon_config_file >>
+            if [[ << parameters.start_with_ssl >> = true ]]; then
+              echo Starting with ssl
+              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"ssl_cert\": \"${SSL_PATH}/<<parameters.domain>>/fullchain.pem\", \"ssl_key\": \"${SSL_PATH}/<<parameters.domain>>/privkey.pem\"' << parameters.daemon_config_file >>
+              docker restart << parameters.container_name >>
+            fi
             docker rm << parameters.container_name_backup >> || true
-            ls -la
             EOF
             fi
 
@@ -201,14 +251,42 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/singnet
-      - deploy_service:
-          ssh_user_env_var_prod: SSH_USER_TRANSLATION
-          ssh_host_env_var_prod: SSH_HOST_TRANSLATION
-          service_name: translation
-          org: singnet
-          docker_org: singularitynet
-          snetd_port: 6208
-          container_name_backup: translation-temp-bk
+      - when:
+          condition: false
+          steps:
+            - deploy_service:
+                network: mainnet
+                domain: services-1.snet.sh
+                ssh_user_env_var: MAINNET_SSH_USER_TRANSLATION
+                ssh_host_env_var: MAINNET_SSH_HOST_TRANSLATION
+                org: singnet
+                docker_org: singularitynet
+                container_name: translation-mainnet
+                service_name: translation
+                start_with_ssl: true
+                snetd_ports: -p 6408:6408
+                service_start_command: python3.6 run_service.py --daemon-config-path
+                daemon_config_path:
+                daemon_config_file: snetd.mainnet.config.json
+                container_name_backup: translation-mainnet-temp-bk
+      - when:
+          condition: true
+          steps:
+            - deploy_service:
+                network: testnet
+                domain: services-1.snet.sh
+                ssh_user_env_var: TESTNET_SSH_USER_TRANSLATION
+                ssh_host_env_var: TESTNET_SSH_HOST_TRANSLATION
+                org: singnet
+                docker_org: singularitynet
+                container_name: translation-testnet
+                service_name: translation
+                start_with_ssl: true
+                snetd_ports: -p 6308:6308
+                service_start_command: python3 run_service.py --daemon-config-path
+                daemon_config_path:
+                daemon_config_file: snetd.testnet.config.json
+                container_name_backup: translation-testnet-temp-bk
 
   build-summarization-container:
     executor: singnet-executor
@@ -233,14 +311,42 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/singnet
-      - deploy_service:
-          ssh_user_env_var_prod: SSH_USER_TEXT_SUMMARIZATION
-          ssh_host_env_var_prod: SSH_HOST_TEXT_SUMMARIZATION
-          service_name: text-summarization
-          org: singnet
-          docker_org: singularitynet
-          snetd_port: 6207
-          container_name_backup: text-summarization-temp-bk
+      - when:
+          condition: false
+          steps:
+            - deploy_service:
+                network: mainnet
+                domain: services-1.snet.sh
+                ssh_user_env_var: MAINNET_SSH_USER_TEXT_SUMMARIZATION
+                ssh_host_env_var: MAINNET_SSH_HOST_TEXT_SUMMARIZATION
+                org: singnet
+                docker_org: singularitynet
+                container_name: text-summarization-mainnet
+                service_name: text-summarization
+                start_with_ssl: true
+                snetd_ports: -p 6407:6407
+                service_start_command: python3 run_service.py --daemon-config-path
+                daemon_config_path:
+                daemon_config_file: snetd.mainnet.config.json
+                container_name_backup: text-summarization-mainnet-temp-bk
+      - when:
+          condition: true
+          steps:
+            - deploy_service:
+                network: testnet
+                domain: services-1.snet.sh
+                ssh_user_env_var: TESTNET_SSH_USER_TEXT_SUMMARIZATION
+                ssh_host_env_var: TESTNET_SSH_HOST_TEXT_SUMMARIZATION
+                org: singnet
+                docker_org: singularitynet
+                container_name: text-summarization-testnet
+                service_name: text-summarization
+                start_with_ssl: true
+                snetd_ports: -p 6307:6307
+                service_start_command: python3 run_service.py --daemon-config-path
+                daemon_config_path:
+                daemon_config_file: snetd.testnet.config.json
+                container_name_backup: text-summarization-testnet-temp-bk
 
   build-sentiment-analysis-container:
     executor: singnet-executor
@@ -264,14 +370,42 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/singnet
-      - deploy_service:
-          ssh_user_env_var_prod: SSH_USER_SENTIMENT_ANALYSIS
-          ssh_host_env_var_prod: SSH_HOST_SENTIMENT_ANALYSIS
-          service_name: sentiment-analysis
-          org: singnet
-          docker_org: singularitynet
-          snetd_port: 7010
-          container_name_backup: sentiment-analysis-temp-bk
+      - when:
+          condition: false
+          steps:
+            - deploy_service:
+                network: mainnet
+                domain: bh.singularitynet.io
+                ssh_user_env_var: MAINNET_SSH_USER_SENTIMENT_ANALYSIS
+                ssh_host_env_var: MAINNET_SSH_HOST_SENTIMENT_ANALYSIS
+                org: singnet
+                docker_org: singularitynet
+                container_name: sentiment-analysis-mainnet
+                service_name: sentiment-analysis
+                start_with_ssl: true
+                snetd_ports: -p 7010:7010
+                service_start_command: python3 run_service.py --daemon-config-path
+                daemon_config_path: config/
+                daemon_config_file: snetd.mainnet.config.json
+                container_name_backup: sentiment-analysis-mainnet-temp-bk
+      - when:
+          condition: true
+          steps:
+            - deploy_service:
+                network: testnet
+                domain: bh.singularitynet.io
+                ssh_user_env_var: TESTNET_SSH_USER_SENTIMENT_ANALYSIS
+                ssh_host_env_var: TESTNET_SSH_HOST_SENTIMENT_ANALYSIS
+                org: singnet
+                docker_org: singularitynet
+                container_name: sentiment-analysis-testnet
+                service_name: sentiment-analysis
+                start_with_ssl: true
+                snetd_ports: -p 7013:7013
+                service_start_command: python3 run_service.py --daemon-config-path
+                daemon_config_path: config/
+                daemon_config_file: snetd.testnet.config.json
+                container_name_backup: sentiment-analysis-testnet-temp-bk
 
   build-named-entity-recognition-container:
     executor: singnet-executor
@@ -284,6 +418,7 @@ jobs:
           service_name: named-entity-recognition
           org: singnet
           docker_org: singularitynet
+          use_cache: false
           unit_test_command: "'cd tests; pytest'"
       - persist_to_workspace:
           root: ~/singnet
@@ -296,14 +431,42 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/singnet
-      - deploy_service:
-          ssh_user_env_var_prod: SSH_USER_NAMED_ENTITY_RECOGNITION
-          ssh_host_env_var_prod: SSH_HOST_NAMED_ENTITY_RECOGNITION
-          service_name: named-entity-recognition
-          org: singnet
-          docker_org: singularitynet
-          snetd_port: 7012
-          container_name_backup: named-entity-recognition-temp-bk
+      - when:
+          condition: false
+          steps:
+            - deploy_service:
+                network: mainnet
+                domain: bh.singularitynet.io
+                ssh_user_env_var: MAINNET_SSH_USER_NAMED_ENTITY_RECOGNITION
+                ssh_host_env_var: MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION
+                org: singnet
+                docker_org: singularitynet
+                container_name: named-entity-recognition-mainnet
+                service_name: named-entity-recognition
+                start_with_ssl: true
+                snetd_ports: -p 7012:7012
+                service_start_command: python3 run_service.py --daemon-config-path
+                daemon_config_path: config/
+                daemon_config_file: snetd.mainnet.config.json
+                container_name_backup: named-entity-recognition-mainnet-temp-bk
+      - when:
+          condition: true
+          steps:
+            - deploy_service:
+                network: testnet
+                domain: bh.singularitynet.io
+                ssh_user_env_var: TESTNET_SSH_USER_NAMED_ENTITY_RECOGNITION
+                ssh_host_env_var: TESTNET_SSH_HOST_NAMED_ENTITY_RECOGNITION
+                org: singnet
+                docker_org: singularitynet
+                container_name: named-entity-recognition-testnet
+                service_name: named-entity-recognition
+                start_with_ssl: true
+                snetd_ports: -p 7014:7014
+                service_start_command: python3 run_service.py --daemon-config-path
+                daemon_config_path: config/
+                daemon_config_file: snetd.testnet.config.json
+                container_name_backup: named-entity-recognition-testnet-temp-bk
 
 #  deploy-cntk-language-understanding:
 #    docker:
