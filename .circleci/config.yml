@@ -93,6 +93,12 @@ commands:
   deploy_service:
     description: "Deploy service"
     parameters:
+      ssh_user_env_var_prod:
+        type: string
+        default: ""
+      ssh_host_env_var_prod:
+        type: string
+        default: ""
       service_name:
         type: string
         default: ""
@@ -136,7 +142,7 @@ commands:
             export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
             if [ "$DOCKER_DEPLOY" = "true" ]; then
               echo "PRODUCTION DEPLOYMENT"
-              ssh -o "StrictHostKeyChecking no" ${SSH_USER_PROD}@${SSH_HOST_PROD} \<<-EOF
+              ssh -o "StrictHostKeyChecking no" ${<< parameters.ssh_user_env_var_prod >>}@${<< parameters.ssh_host_env_var_prod >>} \<<-EOF
             docker login -u $DOCKER_HUB_USER_ID -p $DOCKER_HUB_PWD
             docker pull << parameters.docker_org >>/<< parameters.service_name >>:latest
             docker rename << parameters.service_name >> << parameters.container_name_backup >> || true
@@ -196,6 +202,8 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - deploy_service:
+          ssh_user_env_var_prod: SSH_USER_TRANSLATION
+          ssh_host_env_var_prod: SSH_HOST_TRANSLATION
           service_name: translation
           org: singnet
           docker_org: singularitynet
@@ -226,6 +234,8 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - deploy_service:
+          ssh_user_env_var_prod: SSH_USER_TEXT_SUMMARIZATION
+          ssh_host_env_var_prod: SSH_HOST_TEXT_SUMMARIZATION
           service_name: text-summarization
           org: singnet
           docker_org: singularitynet
@@ -255,6 +265,8 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - deploy_service:
+          ssh_user_env_var_prod: SSH_USER_SENTIMENT_ANALYSIS
+          ssh_host_env_var_prod: SSH_HOST_SENTIMENT_ANALYSIS
           service_name: sentiment-analysis
           org: singnet
           docker_org: singularitynet
@@ -285,6 +297,8 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - deploy_service:
+          ssh_user_env_var_prod: SSH_USER_NAMED_ENTITY_RECOGNITION
+          ssh_host_env_var_prod: SSH_HOST_NAMED_ENTITY_RECOGNITION
           service_name: named-entity-recognition
           org: singnet
           docker_org: singularitynet
