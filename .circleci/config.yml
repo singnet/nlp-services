@@ -148,9 +148,9 @@ commands:
             docker rename << parameters.service_name >> << parameters.container_name_backup >> || true
             docker stop << parameters.container_name_backup >> || true
             docker run --runtime=nvidia --name << parameters.service_name >> --restart unless-stopped -p << parameters.snetd_port >>:<< parameters.snetd_port >> \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/config:/config \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/etcd:/etcd \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/storage-data-dir-1.etcd:/storage-data-dir-1.etcd \
+            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/config:/config \
+            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/etcd:/etcd \
+            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/storage-data-dir-1.etcd:/storage-data-dir-1.etcd \
             -di << parameters.docker_org >>/<< parameters.service_name >>:latest
             docker rm << parameters.container_name_backup >> || true
             EOF
@@ -162,9 +162,9 @@ commands:
             docker rename << parameters.service_name >> << parameters.container_name_backup >> || true
             docker stop << parameters.container_name_backup >> || true
             docker run --runtime=nvidia --name << parameters.service_name >> --restart unless-stopped -p << parameters.snetd_port >>:<< parameters.snetd_port >> \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/config:/config \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/etcd:/etcd \
-            -v /home/ubuntu/nlp-services/<< parameters.service_name >>/storage-data-dir-1.etcd:/storage-data-dir-1.etcd \
+            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/config:/config \
+            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/etcd:/etcd \
+            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/storage-data-dir-1.etcd:/storage-data-dir-1.etcd \
             -di $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
             docker rm << parameters.container_name_backup >> || true
             ls -la
