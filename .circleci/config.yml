@@ -157,7 +157,7 @@ commands:
           command: |
             echo Deploying on << parameters.network >>
       - run:
-          name: Load docker image cache.
+          name: Load docker image cache
           command: |
             docker load -i << parameters.service_name >>/caches/docker_image.tar
       - run:
