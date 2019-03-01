@@ -1,6 +1,7 @@
 FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
 ENV DEBIAN_FRONTEND noninteractive 
-ARG GITHUB_ACCOUNT=singnet
+ARG GITHUB_ACCOUNT="singnet"
+ARG SNETD_VERSION="v0.1.7"
 RUN apt-get update && apt-get install -y locales software-properties-common git
 RUN add-apt-repository -y ppa:deadsnakes/ppa && \
       apt-get update && \
@@ -26,12 +27,10 @@ RUN git clone https://github.com/${GITHUB_ACCOUNT}/nlp-services.git && \
     cd .. && mv translation/ /translation && \
     rm -rf /nlp-services
 
-ADD https://github.com/singnet/snet-daemon/releases/download/v0.1.6/snet-daemon-v0.1.6-linux-amd64.tar.gz /snet-daemon-v0.1.6-linux-amd64.tar.gz
-RUN tar -xvf snet-daemon-v0.1.6-linux-amd64.tar.gz && \
-    mv snet-daemon-v0.1.6-linux-amd64/snetd /usr/bin/snetd && \
-    rm -rf /snet-daemon-v0.1.6-linux-amd64
+ADD https://github.com/singnet/snet-daemon/releases/download/${SNETD_VERSION}/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz /snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz
+RUN tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
+    mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd && \
+    rm -rf /snet-daemon-${SNETD_VERSION}-linux-amd64
 
 WORKDIR /translation
 RUN bash buildproto.sh
-
-CMD ["python3.6", "run_service.py"]

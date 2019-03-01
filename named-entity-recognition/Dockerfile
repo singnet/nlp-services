@@ -1,5 +1,6 @@
 FROM ubuntu:18.04
-ARG GITHUB_ACCOUNT=singnet
+ARG GITHUB_ACCOUNT="singnet"
+ARG SNETD_VERSION="v0.1.7"
 
 RUN apt-get update && \
     apt-get -y upgrade && \
@@ -10,6 +11,7 @@ RUN apt-get update && \
     curl \
     apt-utils \
     net-tools \
+    lsof \
     sudo \
     libudev-dev \
     libusb-1.0-0-dev
@@ -30,14 +32,11 @@ RUN git clone https://github.com/${GITHUB_ACCOUNT}/nlp-services.git && \
 RUN cd /named-entity-recognition && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     python3 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
-    ls -la && \
     bash buildproto.sh
 
-ADD https://github.com/singnet/snet-daemon/releases/download/v0.1.6/snet-daemon-v0.1.6-linux-amd64.tar.gz /snet-daemon-v0.1.6-linux-amd64.tar.gz
-RUN tar -xvf snet-daemon-v0.1.6-linux-amd64.tar.gz && \
-    mv snet-daemon-v0.1.6-linux-amd64/snetd /usr/bin/snetd && \
-    rm -rf /snet-daemon-v0.1.6-linux-amd64
+ADD https://github.com/singnet/snet-daemon/releases/download/${SNETD_VERSION}/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz /snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz
+RUN tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
+    mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd && \
+    rm -rf /snet-daemon-${SNETD_VERSION}-linux-amd64
 
 WORKDIR /named-entity-recognition
-EXPOSE 7012-7013
-CMD ["python3", "run_service.py"]
