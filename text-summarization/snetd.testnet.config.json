@@ -6,7 +6,7 @@
   "passthrough_enabled": true,
   "passthrough_endpoint": "http://localhost:6007",
   "organization_id": "snet",
-  "service_id": "text-summarization",
+  "service_id": "news-summary",
 
   "payment_channel_storage_server": {
     "id": "storage-ropsten",
