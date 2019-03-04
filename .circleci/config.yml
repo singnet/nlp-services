@@ -371,7 +371,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: false
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
