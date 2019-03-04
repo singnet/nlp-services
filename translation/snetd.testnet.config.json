@@ -2,7 +2,7 @@
   "daemon_end_point": "0.0.0.0:6308",
   "ethereum_json_rpc_endpoint": "https://ropsten.infura.io",
   "ipfs_end_point": "http://ipfs.singularitynet.io:80",
-  "registry_address_key": "0xb3180a92e210b45e3447976a412ac0df859febaf",
+  "registry_address_key": "0x5156fde2ca71da4398f8c76763c41bc9633875e4",
   "passthrough_enabled": true,
   "passthrough_endpoint": "http://localhost:6008",
   "organization_id": "snet",
