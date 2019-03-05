@@ -252,7 +252,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: false
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -312,7 +312,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: false
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -371,7 +371,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: false
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -418,7 +418,6 @@ jobs:
           service_name: named-entity-recognition
           org: singnet
           docker_org: singularitynet
-          use_cache: false
           unit_test_command: "'cd tests; pytest'"
       - persist_to_workspace:
           root: ~/singnet
@@ -432,7 +431,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: false
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
