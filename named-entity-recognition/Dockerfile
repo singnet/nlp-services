@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 ARG GITHUB_ACCOUNT="singnet"
-ARG SNETD_VERSION="v0.1.7"
+ARG SNETD_VERSION="v0.1.8"
 
 RUN apt-get update && \
     apt-get -y upgrade && \
