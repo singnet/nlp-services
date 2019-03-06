@@ -189,7 +189,7 @@ commands:
             docker stop << parameters.container_name >> || true
             docker rename << parameters.container_name >> << parameters.container_name_backup >> || true
             docker run --runtime=nvidia --name << parameters.container_name >> --restart unless-stopped << parameters.snetd_ports >> \
-            -v ${CERTS_FOLDER}:/opt/singnet/.certs \
+            -v ${CERTS_FOLDER}:${CERTS_FOLDER} \
             -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/etcd:/<< parameters.service_name >>/etcd \
             -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/storage-data-dir-1.etcd:/<< parameters.service_name >>/storage-data-dir-1.etcd \
             -di << parameters.docker_org >>/<< parameters.service_name >>:latest << parameters.service_start_command >> << parameters.daemon_config_path >><< parameters.daemon_config_file >>
@@ -325,7 +325,7 @@ jobs:
                 service_name: text-summarization
                 start_with_ssl: true
                 snetd_ports: -p 6407:6407
-                service_start_command: python3 run_service.py --daemon-config-path
+                service_start_command: python3.6 run_service.py --daemon-config-path
                 daemon_config_path:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: text-summarization-mainnet-temp-bk
@@ -343,7 +343,7 @@ jobs:
                 service_name: text-summarization
                 start_with_ssl: true
                 snetd_ports: -p 6307:6307
-                service_start_command: python3 run_service.py --daemon-config-path
+                service_start_command: python3.6 run_service.py --daemon-config-path
                 daemon_config_path:
                 daemon_config_file: snetd.testnet.config.json
                 container_name_backup: text-summarization-testnet-temp-bk
