@@ -1,7 +1,7 @@
 FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
 ENV DEBIAN_FRONTEND noninteractive 
 ARG GITHUB_ACCOUNT="singnet"
-ARG SNETD_VERSION="v0.1.7"
+ARG SNETD_VERSION="v0.1.8"
 RUN apt-get update && apt-get install -y locales software-properties-common git
 RUN add-apt-repository -y ppa:deadsnakes/ppa && \
       apt-get update && \
