@@ -1,9 +1,5 @@
 syntax = "proto3";
 
-service ShowMessage {
-    rpc Show(InputMessage) returns (OutputMessage) {}
-}
-
 message InputMessage {
     string value = 1;
 }
