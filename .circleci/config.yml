@@ -563,10 +563,7 @@ jobs:
           service_name: opennmt-romance-translator
           org: singnet
           docker_org: singularitynet
-          service_start_command: python3 run_service.py --daemon-config-path
-          daemon_config_path: config/
-          daemon_config_file: snetd.testnet.config.json
-          service_test_command: bash -c 'sleep 10;python3 test_service.py auto'
+          run_test: false
       - persist_to_workspace:
           root: ~/singnet
           paths: opennmt-romance-translator
