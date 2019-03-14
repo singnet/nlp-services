@@ -17,7 +17,16 @@ commands:
       use_cache:
         type: boolean
         default: true
-      unit_test_command:
+      service_start_command:
+        type: string
+        default: ""
+      daemon_config_path:
+        type: string
+        default: ""
+      daemon_config_file:
+        type: string
+        default: ""
+      service_test_command:
         type: string
         default: ""
     steps:
@@ -54,10 +63,18 @@ commands:
             export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
             if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
             	echo "PRODUCTION DEPLOYMENT"
-            	docker build --cache-from=<< parameters.docker_org >>/<< parameters.service_name >>:latest -t << parameters.docker_org >>/<< parameters.service_name >>:latest --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} --build-arg SNETD_VERSION=${SNETD_VERSION} .
+            	docker build --cache-from=<< parameters.docker_org >>/<< parameters.service_name >>:latest \
+            	  -t << parameters.docker_org >>/<< parameters.service_name >>:latest \
+            	  --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} \
+                  --build-arg GITHUB_BRANCH=${CIRCLE_BRANCH} \
+            	  --build-arg SNETD_VERSION=${SNETD_VERSION} .
             else
             	echo "DEVELOPMENT DEPLOYMENT"
-            	docker build --cache-from=$DEV_DOCKER_ORG/<< parameters.service_name >>:latest -t $DEV_DOCKER_ORG/<< parameters.service_name >>:latest --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} --build-arg SNETD_VERSION=${SNETD_VERSION} .
+            	docker build --cache-from=$DEV_DOCKER_ORG/<< parameters.service_name >>:latest \
+            	  -t $DEV_DOCKER_ORG/<< parameters.service_name >>:latest \
+            	  --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} \
+                  --build-arg GITHUB_BRANCH=${CIRCLE_BRANCH} \
+            	  --build-arg SNETD_VERSION=${SNETD_VERSION} .
             fi
       - when:
           condition: << parameters.run_test >>
@@ -68,13 +85,20 @@ commands:
                   export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
                   if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
                       echo "PRODUCTION DEPLOYMENT"
-                      docker run --name << parameters.service_name >> -idt << parameters.docker_org >>/<< parameters.service_name >>:latest
+                      docker run \
+                        --name << parameters.service_name >> \
+                        -idt << parameters.docker_org >>/<< parameters.service_name >>:latest \
+                        << parameters.service_start_command >> << parameters.daemon_config_path >><< parameters.daemon_config_file >>
                   else
                   	echo "DEVELOPMENT DEPLOYMENT"
-                      cd << parameters.service_name >>/tests/
-                      docker run --name << parameters.service_name >> -idt $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
+                      docker run \
+                        --name << parameters.service_name >> \
+                        -idt $DEV_DOCKER_ORG/<< parameters.service_name >>:latest \
+                        << parameters.service_start_command >> << parameters.daemon_config_path >><< parameters.daemon_config_file >>
                   fi
-                  docker exec -it << parameters.service_name >> /bin/bash -c << parameters.unit_test_command >>
+                  docker exec \
+                    -it << parameters.service_name >> \
+                    << parameters.service_test_command >>
       - run:
           name: Save docker image
           no_output_timeout: 40m
@@ -240,7 +264,6 @@ jobs:
           org: singnet
           docker_org: singularitynet
           run_test: false
-          unit_test_command: "'cd tests; pytest'"
       - persist_to_workspace:
           root: ~/singnet
           paths: translation
@@ -256,9 +279,9 @@ jobs:
           steps:
             - deploy_service:
                 network: mainnet
-                domain: services-1.snet.sh
-                ssh_user_env_var: MAINNET_SSH_USER_TRANSLATION
-                ssh_host_env_var: MAINNET_SSH_HOST_TRANSLATION
+                domain: TRANSLATION_DOMAIN
+                ssh_user_env_var: TRANSLATION_SSH_USER
+                ssh_host_env_var: TRANSLATION_DOMAIN
                 org: singnet
                 docker_org: singularitynet
                 container_name: translation-mainnet
@@ -274,9 +297,9 @@ jobs:
           steps:
             - deploy_service:
                 network: testnet
-                domain: services-1.snet.sh
-                ssh_user_env_var: TESTNET_SSH_USER_TRANSLATION
-                ssh_host_env_var: TESTNET_SSH_HOST_TRANSLATION
+                domain: TRANSLATION_DOMAIN
+                ssh_user_env_var: TRANSLATION_SSH_USER
+                ssh_host_env_var: TRANSLATION_DOMAIN
                 org: singnet
                 docker_org: singularitynet
                 container_name: translation-testnet
@@ -299,7 +322,6 @@ jobs:
           org: singnet
           docker_org: singularitynet
           run_test: false
-          unit_test_command: "'cd tests; pytest'"
       - persist_to_workspace:
           root: ~/singnet
           paths: text-summarization
@@ -316,9 +338,9 @@ jobs:
           steps:
             - deploy_service:
                 network: mainnet
-                domain: services-1.snet.sh
-                ssh_user_env_var: MAINNET_SSH_USER_TEXT_SUMMARIZATION
-                ssh_host_env_var: MAINNET_SSH_HOST_TEXT_SUMMARIZATION
+                domain: TEXT_SUMMARIZATION_DOMAIN
+                ssh_user_env_var: TEXT_SUMMARIZATION_SSH_USER
+                ssh_host_env_var: TEXT_SUMMARIZATION_DOMAIN
                 org: singnet
                 docker_org: singularitynet
                 container_name: text-summarization-mainnet
@@ -334,9 +356,9 @@ jobs:
           steps:
             - deploy_service:
                 network: testnet
-                domain: services-1.snet.sh
-                ssh_user_env_var: TESTNET_SSH_USER_TEXT_SUMMARIZATION
-                ssh_host_env_var: TESTNET_SSH_HOST_TEXT_SUMMARIZATION
+                domain: TEXT_SUMMARIZATION_DOMAIN
+                ssh_user_env_var: TEXT_SUMMARIZATION_SSH_USER
+                ssh_host_env_var: TEXT_SUMMARIZATION_DOMAIN
                 org: singnet
                 docker_org: singularitynet
                 container_name: text-summarization-testnet
@@ -358,7 +380,7 @@ jobs:
           service_name: sentiment-analysis
           org: singnet
           docker_org: singularitynet
-          unit_test_command: "'cd tests; pytest'"
+          service_test_command: bash -c 'cd tests;pytest'
       - persist_to_workspace:
           root: ~/singnet
           paths: sentiment-analysis
@@ -375,9 +397,9 @@ jobs:
           steps:
             - deploy_service:
                 network: mainnet
-                domain: bh.singularitynet.io
-                ssh_user_env_var: MAINNET_SSH_USER_SENTIMENT_ANALYSIS
-                ssh_host_env_var: MAINNET_SSH_HOST_SENTIMENT_ANALYSIS
+                domain: SENTIMENT_ANALYSIS_DOMAIN
+                ssh_user_env_var: SENTIMENT_ANALYSIS_SSH_USER
+                ssh_host_env_var: SENTIMENT_ANALYSIS_DOMAIN
                 org: singnet
                 docker_org: singularitynet
                 container_name: sentiment-analysis-mainnet
@@ -393,9 +415,9 @@ jobs:
           steps:
             - deploy_service:
                 network: testnet
-                domain: bh.singularitynet.io
-                ssh_user_env_var: TESTNET_SSH_USER_SENTIMENT_ANALYSIS
-                ssh_host_env_var: TESTNET_SSH_HOST_SENTIMENT_ANALYSIS
+                domain: SENTIMENT_ANALYSIS_DOMAIN
+                ssh_user_env_var: SENTIMENT_ANALYSIS_SSH_USER
+                ssh_host_env_var: SENTIMENT_ANALYSIS_DOMAIN
                 org: singnet
                 docker_org: singularitynet
                 container_name: sentiment-analysis-testnet
@@ -418,7 +440,7 @@ jobs:
           service_name: named-entity-recognition
           org: singnet
           docker_org: singularitynet
-          unit_test_command: "'cd tests; pytest'"
+          service_test_command: bash -c 'cd tests;pytest'
       - persist_to_workspace:
           root: ~/singnet
           paths: named-entity-recognition
@@ -435,9 +457,9 @@ jobs:
           steps:
             - deploy_service:
                 network: mainnet
-                domain: bh.singularitynet.io
-                ssh_user_env_var: MAINNET_SSH_USER_NAMED_ENTITY_RECOGNITION
-                ssh_host_env_var: MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION
+                domain: NAMED_ENTITY_RECON_DOMAIN
+                ssh_user_env_var: NAMED_ENTITY_RECON_SSH_USER
+                ssh_host_env_var: NAMED_ENTITY_RECON_DOMAIN
                 org: singnet
                 docker_org: singularitynet
                 container_name: named-entity-recognition-mainnet
@@ -453,9 +475,9 @@ jobs:
           steps:
             - deploy_service:
                 network: testnet
-                domain: bh.singularitynet.io
-                ssh_user_env_var: TESTNET_SSH_USER_NAMED_ENTITY_RECOGNITION
-                ssh_host_env_var: TESTNET_SSH_HOST_NAMED_ENTITY_RECOGNITION
+                domain: NAMED_ENTITY_RECON_DOMAIN
+                ssh_user_env_var: NAMED_ENTITY_RECON_SSH_USER
+                ssh_host_env_var: NAMED_ENTITY_RECON_DOMAIN
                 org: singnet
                 docker_org: singularitynet
                 container_name: named-entity-recognition-testnet
@@ -467,35 +489,131 @@ jobs:
                 daemon_config_file: snetd.testnet.config.json
                 container_name_backup: named-entity-recognition-testnet-temp-bk
 
-#  deploy-cntk-language-understanding:
-#    docker:
-#      - image: circleci/python:3.6.6-node
-#    working_directory: ~/singnet
-#    environment:
-#      SERVICE_FOLDER: cntk-language-understanding
-#      SERVICE_RUN_COMMAND: bash -c "source '/cntk/activate-cntk';git pull;python3 run_language_understanding_service.py"
-#      SERVICE_TEST_COMMAND: bash -c "source '/cntk/activate-cntk';python3 test_language_understanding_service.py auto"
-#      SNETD_PORT: 7075
-#    steps:
-#      - build_and_deploy_cmd:
-#          docker_image_name: cntk-language-understanding
-#          docker_container_name: ARTUR_CNTK_LANGUAGE_UNDERSTANDING
-#          docker_mount_volumes: true
-#          docker_mount_src: /home/admin/storage/LanguageUnderstanding/CNTK/Output
-#          docker_mount_dest: /opt/singnet/output
-#  deploy-opennmt-romance-translator:
-#    docker:
-#      - image: circleci/python:3.6.6-node
-#    working_directory: ~/singnet
-#    environment:
-#      SERVICE_FOLDER: opennmt-romance-translator
-#      SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_romance_translator_service.py"
-#      SERVICE_TEST_COMMAND: bash -c "python3 test_romance_translator_service.py auto"
-#      SNETD_PORT: 7076
-#    steps:
-#      - build_and_deploy_cmd:
-#          docker_image_name: opennmt-romance-translator
-#          docker_container_name: ARTUR_OPENNMT_ROMANCE_TRANSLATOR
+  build-cntk-language-understanding-container:
+    executor: singnet-executor
+    environment:
+      SERVICE_NAME: cntk-language-understanding
+      CACHE_MODELS_PATH: cntk-language-understanding/caches/models
+    steps:
+      - checkout
+      - build_and_test_service:
+          service_name: cntk-language-understanding
+          org: singnet
+          docker_org: singularitynet
+          service_start_command: /root/anaconda3/envs/cntk-py35/bin/python run_service.py --daemon-config-path
+          daemon_config_path: config/
+          daemon_config_file: snetd.testnet.config.json
+          service_test_command: bash -c 'sleep 10;/root/anaconda3/envs/cntk-py35/bin/python test_service.py auto'
+      - persist_to_workspace:
+          root: ~/singnet
+          paths: cntk-language-understanding
+
+  deploy-cntk-language-understanding:
+    executor: singnet-executor
+    environment:
+      SERVICE_NAME: cntk-language-understanding
+    steps:
+      - attach_workspace:
+          at: ~/singnet
+      - when:
+          condition: true
+          steps:
+            - deploy_service:
+                network: mainnet
+                domain: CNTK_LANGUAGE_DOMAIN
+                ssh_user_env_var: CNTK_LANGUAGE_SSH_USER
+                ssh_host_env_var: CNTK_LANGUAGE_DOMAIN
+                org: singnet
+                docker_org: singularitynet
+                container_name: cntk-language-understanding-mainnet
+                service_name: cntk-language-understanding
+                start_with_ssl: true
+                snetd_ports: -p 7048:7048
+                service_start_command: /root/anaconda3/envs/cntk-py35/bin/python run_service.py --daemon-config-path
+                daemon_config_path: config/
+                daemon_config_file: snetd.mainnet.config.json
+                container_name_backup: cntk-language-understanding-mainnet-temp-bk
+      - when:
+          condition: true
+          steps:
+            - deploy_service:
+                network: testnet
+                domain: CNTK_LANGUAGE_DOMAIN
+                ssh_user_env_var: CNTK_LANGUAGE_SSH_USER
+                ssh_host_env_var: CNTK_LANGUAGE_DOMAIN
+                org: singnet
+                docker_org: singularitynet
+                container_name: cntk-language-understanding-testnet
+                service_name: cntk-language-understanding
+                start_with_ssl: true
+                snetd_ports: -p 7068:7068
+                service_start_command: /root/anaconda3/envs/cntk-py35/bin/python run_service.py --daemon-config-path
+                daemon_config_path: config/
+                daemon_config_file: snetd.testnet.config.json
+                container_name_backup: cntk-language-understanding-testnet-temp-bk
+
+  build-opennmt-romance-translator-container:
+    executor: singnet-executor
+    environment:
+      SERVICE_NAME: opennmt-romance-translator
+      CACHE_MODELS_PATH: opennmt-romance-translator/caches/models
+    steps:
+      - checkout
+      - build_and_test_service:
+          service_name: opennmt-romance-translator
+          org: singnet
+          docker_org: singularitynet
+          service_start_command: python3 run_service.py --daemon-config-path
+          daemon_config_path: config/
+          daemon_config_file: snetd.testnet.config.json
+          service_test_command: bash -c 'sleep 10;python3 test_service.py auto'
+      - persist_to_workspace:
+          root: ~/singnet
+          paths: opennmt-romance-translator
+
+  deploy-opennmt-romance-translator:
+    executor: singnet-executor
+    environment:
+      SERVICE_NAME: opennmt-romance-translator
+    steps:
+      - attach_workspace:
+          at: ~/singnet
+      - when:
+          condition: true
+          steps:
+            - deploy_service:
+                network: mainnet
+                domain: OPENNMT_ROMANCE_DOMAIN
+                ssh_user_env_var: OPENNMT_ROMANCE_SSH_USER
+                ssh_host_env_var: OPENNMT_ROMANCE_DOMAIN
+                org: singnet
+                docker_org: singularitynet
+                container_name: opennmt-romance-translator-mainnet
+                service_name: opennmt-romance-translator
+                start_with_ssl: true
+                snetd_ports: -p 7049:7049
+                service_start_command: python3 run_service.py --daemon-config-path
+                daemon_config_path: config/
+                daemon_config_file: snetd.mainnet.config.json
+                container_name_backup: opennmt-romance-translator-mainnet-temp-bk
+      - when:
+          condition: true
+          steps:
+            - deploy_service:
+                network: testnet
+                domain: OPENNMT_ROMANCE_DOMAIN
+                ssh_user_env_var: OPENNMT_ROMANCE_SSH_USER
+                ssh_host_env_var: OPENNMT_ROMANCE_DOMAIN
+                org: singnet
+                docker_org: singularitynet
+                container_name: opennmt-romance-translator-testnet
+                service_name: opennmt-romance-translator
+                start_with_ssl: true
+                snetd_ports: -p 7069:7069
+                service_start_command: python3 run_service.py --daemon-config-path
+                daemon_config_path: config/
+                daemon_config_file: snetd.testnet.config.json
+                container_name_backup: opennmt-romance-translator-testnet-temp-bk
 
 workflows:
   version: 2.1
@@ -529,9 +647,17 @@ workflows:
           filters:
             branches:
               only: master
-#  build-and-deploy-cntk:
-#    jobs:
-#      - deploy-cntk-language-understanding
-#  build-and-deploy-opennmt:
-#    jobs:
-#      - deploy-opennmt-romance-translator
+      - build-cntk-language-understanding-container
+      - deploy-cntk-language-understanding:
+          requires:
+            - build-cntk-language-understanding-container
+          filters:
+            branches:
+              only: master
+      - build-opennmt-romance-translator-container
+      - deploy-opennmt-romance-translator:
+          requires:
+            - build-opennmt-romance-translator-container
+          filters:
+            branches:
+              only: master
