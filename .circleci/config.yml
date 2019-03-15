@@ -279,9 +279,9 @@ jobs:
           steps:
             - deploy_service:
                 network: mainnet
-                domain: MAINNET_SSH_HOST_TRANSLATION
-                ssh_user_env_var: MAINNET_SSH_USER_TRANSLATION
-                ssh_host_env_var: MAINNET_SSH_HOST_TRANSLATION
+                domain: ${MAINNET_SSH_HOST_TRANSLATION}
+                ssh_user_env_var: ${MAINNET_SSH_USER_TRANSLATION}
+                ssh_host_env_var: ${MAINNET_SSH_HOST_TRANSLATION}
                 org: singnet
                 docker_org: singularitynet
                 container_name: translation-mainnet
@@ -297,9 +297,9 @@ jobs:
           steps:
             - deploy_service:
                 network: testnet
-                domain: TESTNET_SSH_HOST_TRANSLATION
-                ssh_user_env_var: TESTNET_SSH_USER_TRANSLATION
-                ssh_host_env_var: TESTNET_SSH_HOST_TRANSLATION
+                domain: ${TESTNET_SSH_HOST_TRANSLATION}
+                ssh_user_env_var: ${TESTNET_SSH_USER_TRANSLATION}
+                ssh_host_env_var: ${TESTNET_SSH_HOST_TRANSLATION}
                 org: singnet
                 docker_org: singularitynet
                 container_name: translation-testnet
@@ -338,9 +338,9 @@ jobs:
           steps:
             - deploy_service:
                 network: mainnet
-                domain: MAINNET_SSH_HOST_TEXT_SUMMARIZATION
-                ssh_user_env_var: MAINNET_SSH_USER_TEXT_SUMMARIZATION
-                ssh_host_env_var: MAINNET_SSH_HOST_TEXT_SUMMARIZATION
+                domain: ${MAINNET_SSH_HOST_TEXT_SUMMARIZATION}
+                ssh_user_env_var: ${MAINNET_SSH_USER_TEXT_SUMMARIZATION}
+                ssh_host_env_var: ${MAINNET_SSH_HOST_TEXT_SUMMARIZATION}
                 org: singnet
                 docker_org: singularitynet
                 container_name: text-summarization-mainnet
@@ -356,9 +356,9 @@ jobs:
           steps:
             - deploy_service:
                 network: testnet
-                domain: TESTNET_SSH_HOST_TEXT_SUMMARIZATION
-                ssh_user_env_var: TESTNET_SSH_USER_TEXT_SUMMARIZATION
-                ssh_host_env_var: TESTNET_SSH_HOST_TEXT_SUMMARIZATION
+                domain: ${TESTNET_SSH_HOST_TEXT_SUMMARIZATION}
+                ssh_user_env_var: ${TESTNET_SSH_USER_TEXT_SUMMARIZATION}
+                ssh_host_env_var: ${TESTNET_SSH_HOST_TEXT_SUMMARIZATION}
                 org: singnet
                 docker_org: singularitynet
                 container_name: text-summarization-testnet
@@ -397,9 +397,9 @@ jobs:
           steps:
             - deploy_service:
                 network: mainnet
-                domain: $MAINNET_SSH_HOST_SENTIMENT_ANALYSIS
-                ssh_user_env_var: $MAINNET_SSH_USER_SENTIMENT_ANALYSIS
-                ssh_host_env_var: $MAINNET_SSH_HOST_SENTIMENT_ANALYSIS
+                domain: ${MAINNET_SSH_HOST_SENTIMENT_ANALYSIS}
+                ssh_user_env_var: ${MAINNET_SSH_USER_SENTIMENT_ANALYSIS}
+                ssh_host_env_var: ${MAINNET_SSH_HOST_SENTIMENT_ANALYSIS}
                 org: singnet
                 docker_org: singularitynet
                 container_name: sentiment-analysis-mainnet
@@ -415,9 +415,9 @@ jobs:
           steps:
             - deploy_service:
                 network: testnet
-                domain: $TESTNET_SSH_HOST_SENTIMENT_ANALYSIS
-                ssh_user_env_var: $TESTNET_SSH_USER_SENTIMENT_ANALYSIS
-                ssh_host_env_var: $TESTNET_SSH_HOST_SENTIMENT_ANALYSIS
+                domain: ${TESTNET_SSH_HOST_SENTIMENT_ANALYSIS}
+                ssh_user_env_var: ${TESTNET_SSH_USER_SENTIMENT_ANALYSIS}
+                ssh_host_env_var: ${TESTNET_SSH_HOST_SENTIMENT_ANALYSIS}
                 org: singnet
                 docker_org: singularitynet
                 container_name: sentiment-analysis-testnet
@@ -457,9 +457,9 @@ jobs:
           steps:
             - deploy_service:
                 network: mainnet
-                domain: $MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION
-                ssh_user_env_var: $MAINNET_SSH_USER_NAMED_ENTITY_RECOGNITION
-                ssh_host_env_var: $MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION
+                domain: ${MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
+                ssh_user_env_var: ${MAINNET_SSH_USER_NAMED_ENTITY_RECOGNITION}
+                ssh_host_env_var: ${MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
                 org: singnet
                 docker_org: singularitynet
                 container_name: named-entity-recognition-mainnet
@@ -475,9 +475,9 @@ jobs:
           steps:
             - deploy_service:
                 network: testnet
-                domain: $TESTNET_SSH_HOST_NAMED_ENTITY_RECOGNITION
-                ssh_user_env_var: $TESTNET_SSH_USER_NAMED_ENTITY_RECOGNITION
-                ssh_host_env_var: $TESTNET_SSH_HOST_NAMED_ENTITY_RECOGNITION
+                domain: ${TESTNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
+                ssh_user_env_var: ${TESTNET_SSH_USER_NAMED_ENTITY_RECOGNITION}
+                ssh_host_env_var: ${TESTNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
                 org: singnet
                 docker_org: singularitynet
                 container_name: named-entity-recognition-testnet
@@ -520,9 +520,9 @@ jobs:
           steps:
             - deploy_service:
                 network: mainnet
-                domain: $MAINNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING
-                ssh_user_env_var: $MAINNET_SSH_USER_CNTK_LANGUAGE_UDERSTANDING
-                ssh_host_env_var: $MAINNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING
+                domain: ${MAINNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
+                ssh_user_env_var: ${MAINNET_SSH_USER_CNTK_LANGUAGE_UDERSTANDING}
+                ssh_host_env_var: ${MAINNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
                 org: singnet
                 docker_org: singularitynet
                 container_name: cntk-language-understanding-mainnet
@@ -538,9 +538,9 @@ jobs:
           steps:
             - deploy_service:
                 network: testnet
-                domain: $TESTNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING
-                ssh_user_env_var: $TESTNET_SSH_USER_CNTK_LANGUAGE_UDERSTANDING
-                ssh_host_env_var: $TESTNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING
+                domain: ${TESTNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
+                ssh_user_env_var: ${TESTNET_SSH_USER_CNTK_LANGUAGE_UDERSTANDING}
+                ssh_host_env_var: ${TESTNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
                 org: singnet
                 docker_org: singularitynet
                 container_name: cntk-language-understanding-testnet
@@ -580,9 +580,9 @@ jobs:
           steps:
             - deploy_service:
                 network: mainnet
-                domain: $MAINNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR
-                ssh_user_env_var: $MAINNET_SSH_USER_OPENNMT_ROMANCE_TRANSLATOR
-                ssh_host_env_var: $MAINNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR
+                domain: ${MAINNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
+                ssh_user_env_var: ${MAINNET_SSH_USER_OPENNMT_ROMANCE_TRANSLATOR}
+                ssh_host_env_var: ${MAINNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
                 org: singnet
                 docker_org: singularitynet
                 container_name: opennmt-romance-translator-mainnet
@@ -598,9 +598,9 @@ jobs:
           steps:
             - deploy_service:
                 network: testnet
-                domain: $TESTNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR
-                ssh_user_env_var: $TESTNET_SSH_USER_OPENNMT_ROMANCE_TRANSLATOR
-                ssh_host_env_var: $TESTNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR
+                domain: ${TESTNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
+                ssh_user_env_var: ${TESTNET_SSH_USER_OPENNMT_ROMANCE_TRANSLATOR}
+                ssh_host_env_var: ${TESTNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
                 org: singnet
                 docker_org: singularitynet
                 container_name: opennmt-romance-translator-testnet
