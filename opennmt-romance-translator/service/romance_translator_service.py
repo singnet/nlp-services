@@ -56,11 +56,7 @@ class RomanceTranslatorServicer(grpc_bt_grpc.RomanceTranslatorServicer):
             acquire_gpu(gpu_queue_id)
 
             # In our case, request is an Input() object (from .proto file)
-            self.source_lang = request.source_lang
-            self.target_lang = request.target_lang
-            self.sentences_url = request.sentences_url
-
-            mst = RomanceTranslator(self.source_lang, self.target_lang, self.sentences_url)
+            mst = RomanceTranslator(request.source_lang, request.target_lang, request.sentences_url)
 
             tmp_response = mst.translate()
 
