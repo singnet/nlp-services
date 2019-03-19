@@ -12,28 +12,28 @@ then
     cd $data
 
     echo "Downloading models...(~2.5Gb)"
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/model_esit.t7
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/model_esro.t7
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/model_fres.t7
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/model_frit.t7
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/model_frro.t7
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/model_ptes.t7
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/model_ptfr.t7
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/model_ptit.t7
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/model_ptro.t7
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/model_roit.t7
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_esit.t7
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_esro.t7
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_fres.t7
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_frit.t7
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_frro.t7
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_ptes.t7
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_ptfr.t7
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_ptit.t7
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_ptro.t7
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_roit.t7
 
     echo "Downloading BPEs..."
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/ptes.bpe32000
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/ptfr.bpe32000
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/ptit.bpe32000
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/ptro.bpe32000
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/roit.bpe32000
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/fres.bpe32000
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/frit.bpe32000
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/frro.bpe32000
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/esit.bpe32000
-    wget http://54.203.198.53:7000/Translation/OpenNMT/Romance/esro.bpe32000
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/ptes.bpe32000
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/ptfr.bpe32000
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/ptit.bpe32000
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/ptro.bpe32000
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/roit.bpe32000
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/fres.bpe32000
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/frit.bpe32000
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/frro.bpe32000
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/esit.bpe32000
+    wget https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/esro.bpe32000
 
     cd ..
 fi

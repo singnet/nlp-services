@@ -1,0 +1,5 @@
+{
+    "model_urls": [
+        ["https://snet-models.s3.amazonaws.com/bh/Translation/OpenNMT/Romance/model_esit.t7",null]
+    ]
+}

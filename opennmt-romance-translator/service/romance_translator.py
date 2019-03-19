@@ -4,6 +4,7 @@ import requests
 import hashlib
 import datetime
 import subprocess
+import base64
 import logging
 import traceback
 
@@ -18,6 +19,20 @@ class RomanceTranslator:
         self.sentences_url = sentences_url
 
         self.response = dict()
+
+    @staticmethod
+    def _is_base64(sb):
+        try:
+            if type(sb) == str:
+                sb_bytes = bytes(sb, 'ascii')
+            elif type(sb) == bytes:
+                sb_bytes = sb
+            else:
+                raise ValueError("Argument must be string or bytes")
+            return base64.b64encode(base64.b64decode(sb_bytes)) == sb_bytes
+        except Exception as e:
+            log.error("Not Base64: " + str(e))
+            return False
 
     def translate(self):
 
@@ -39,9 +54,10 @@ class RomanceTranslator:
                 r = requests.get(self.sentences_url, headers=header, allow_redirects=True)
                 sentences = r.text
             else:
-                self.response["translation"] = "Not a valid URL!"
-                log.error("Not a valid URL!")
-                return self.response
+                if self._is_base64(self.sentences_url):
+                    sentences = base64.b64decode(self.sentences_url)
+                else:
+                    sentences = self.sentences_url
 
             in_sentences = "input_{}.txt".format(uid)
             out_sentences = "output_{}.txt".format(uid)
