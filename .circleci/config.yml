@@ -259,7 +259,7 @@ jobs:
       SERVICE_NAME: translation
     steps:
       - when:
-          condition: ${COND_TRANSLATION_BUILD}
+          condition: true
           steps:
             - checkout
             - build_and_test_service:
@@ -278,7 +278,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: ${COND_TRANSLATION_MAINNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -296,7 +296,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: translation-mainnet-temp-bk
       - when:
-          condition: ${COND_TRANSLATION_TESTNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: testnet
@@ -320,7 +320,7 @@ jobs:
       SERVICE_NAME: text-summarization
     steps:
       - when:
-          condition: ${COND_TEXT_SUMMARIZATION_BUILD}
+          condition: true
           steps:
             - checkout
             - build_and_test_service:
@@ -340,7 +340,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: ${COND_TEXT_SUMMARIZATION_MAINNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -358,7 +358,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: text-summarization-mainnet-temp-bk
       - when:
-          condition: ${COND_TEXT_SUMMARIZATION_TESTNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: testnet
@@ -382,7 +382,7 @@ jobs:
       SERVICE_NAME: sentiment-analysis
     steps:
       - when:
-          condition: ${COND_SENTIMENT_ANALYSIS_BUILD}
+          condition: true
           steps:
             - checkout
             - build_and_test_service:
@@ -402,7 +402,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: ${COND_SENTIMENT_ANALYSIS_MAINNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -420,7 +420,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: sentiment-analysis-mainnet-temp-bk
       - when:
-          condition: ${COND_SENTIMENT_ANALYSIS_TESTNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: testnet
@@ -445,7 +445,7 @@ jobs:
       CACHE_MODELS_PATH: named-entity-recognition/caches/models
     steps:
       - when:
-          condition: ${COND_NAMED_ENTITY_RECOGNITION_BUILD}
+          condition: true
           steps:
             - checkout
             - build_and_test_service:
@@ -465,7 +465,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: ${COND_NAMED_ENTITY_RECOGNITION_MAINNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -483,7 +483,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: named-entity-recognition-mainnet-temp-bk
       - when:
-          condition: ${COND_NAMED_ENTITY_RECOGNITION_TESTNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: testnet
@@ -508,7 +508,7 @@ jobs:
       CACHE_MODELS_PATH: cntk-language-understanding/caches/models
     steps:
       - when:
-          condition: ${COND_CNTK_LANGUAGE_UDERSTANDING_BUILD}
+          condition: true
           steps:
             - checkout
             - build_and_test_service:
@@ -531,7 +531,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: ${COND_CNTK_LANGUAGE_UDERSTANDING_MAINNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -549,7 +549,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: cntk-language-understanding-mainnet-temp-bk
       - when:
-          condition: ${COND_CNTK_LANGUAGE_UDERSTANDING_TESTNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: testnet
@@ -574,7 +574,7 @@ jobs:
       CACHE_MODELS_PATH: opennmt-romance-translator/caches/models
     steps:
       - when:
-          condition: ${COND_OPENNMT_ROMANCE_TRANSLATOR_BUILD}
+          condition: true
           steps:
             - checkout
             - build_and_test_service:
@@ -594,7 +594,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: ${COND_OPENNMT_ROMANCE_TRANSLATOR_MAINNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -612,7 +612,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: opennmt-romance-translator-mainnet-temp-bk
       - when:
-          condition: ${COND_OPENNMT_ROMANCE_TRANSLATOR_TESTNET_DEPLOY}
+          condition: true
           steps:
             - deploy_service:
                 network: testnet
