@@ -258,15 +258,18 @@ jobs:
     environment:
       SERVICE_NAME: translation
     steps:
-      - checkout
-      - build_and_test_service:
-          service_name: translation
-          org: singnet
-          docker_org: singularitynet
-          run_test: false
-      - persist_to_workspace:
-          root: ~/singnet
-          paths: translation
+      - when:
+          condition: ${COND_TRANSLATION_BUILD}
+          steps:
+            - checkout
+            - build_and_test_service:
+                service_name: translation
+                org: singnet
+                docker_org: singularitynet
+                run_test: false
+            - persist_to_workspace:
+                root: ~/singnet
+                paths: translation
   deploy-translation:
     executor: singnet-executor
     environment:
@@ -275,7 +278,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: ${COND_TRANSLATION_MAINNET_DEPLOY}
           steps:
             - deploy_service:
                 network: mainnet
@@ -293,7 +296,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: translation-mainnet-temp-bk
       - when:
-          condition: true
+          condition: ${COND_TRANSLATION_TESTNET_DEPLOY}
           steps:
             - deploy_service:
                 network: testnet
@@ -306,7 +309,7 @@ jobs:
                 service_name: translation
                 start_with_ssl: true
                 snetd_ports: -p 6308:6308
-                service_start_command: python3 run_service.py --daemon-config-path
+                service_start_command: python3.6 run_service.py --daemon-config-path
                 daemon_config_path:
                 daemon_config_file: snetd.testnet.config.json
                 container_name_backup: translation-testnet-temp-bk
@@ -316,15 +319,18 @@ jobs:
     environment:
       SERVICE_NAME: text-summarization
     steps:
-      - checkout
-      - build_and_test_service:
-          service_name: text-summarization
-          org: singnet
-          docker_org: singularitynet
-          run_test: false
-      - persist_to_workspace:
-          root: ~/singnet
-          paths: text-summarization
+      - when:
+          condition: ${COND_TEXT_SUMMARIZATION_BUILD}
+          steps:
+            - checkout
+            - build_and_test_service:
+                service_name: text-summarization
+                org: singnet
+                docker_org: singularitynet
+                run_test: false
+            - persist_to_workspace:
+                root: ~/singnet
+                paths: text-summarization
 
   deploy-summarization:
     executor: singnet-executor
@@ -334,7 +340,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: ${COND_TEXT_SUMMARIZATION_MAINNET_DEPLOY}
           steps:
             - deploy_service:
                 network: mainnet
@@ -352,7 +358,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: text-summarization-mainnet-temp-bk
       - when:
-          condition: true
+          condition: ${COND_TEXT_SUMMARIZATION_TESTNET_DEPLOY}
           steps:
             - deploy_service:
                 network: testnet
@@ -375,15 +381,18 @@ jobs:
     environment:
       SERVICE_NAME: sentiment-analysis
     steps:
-      - checkout
-      - build_and_test_service:
-          service_name: sentiment-analysis
-          org: singnet
-          docker_org: singularitynet
-          service_test_command: bash -c 'cd tests;pytest'
-      - persist_to_workspace:
-          root: ~/singnet
-          paths: sentiment-analysis
+      - when:
+          condition: ${COND_SENTIMENT_ANALYSIS_BUILD}
+          steps:
+            - checkout
+            - build_and_test_service:
+                service_name: sentiment-analysis
+                org: singnet
+                docker_org: singularitynet
+                service_test_command: bash -c 'cd tests;pytest'
+            - persist_to_workspace:
+                root: ~/singnet
+                paths: sentiment-analysis
 
   deploy-sentiment-analysis:
     executor: singnet-executor
@@ -393,7 +402,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: ${COND_SENTIMENT_ANALYSIS_MAINNET_DEPLOY}
           steps:
             - deploy_service:
                 network: mainnet
@@ -411,7 +420,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: sentiment-analysis-mainnet-temp-bk
       - when:
-          condition: true
+          condition: ${COND_SENTIMENT_ANALYSIS_TESTNET_DEPLOY}
           steps:
             - deploy_service:
                 network: testnet
@@ -435,15 +444,18 @@ jobs:
       SERVICE_NAME: named-entity-recognition
       CACHE_MODELS_PATH: named-entity-recognition/caches/models
     steps:
-      - checkout
-      - build_and_test_service:
-          service_name: named-entity-recognition
-          org: singnet
-          docker_org: singularitynet
-          service_test_command: bash -c 'cd tests;pytest'
-      - persist_to_workspace:
-          root: ~/singnet
-          paths: named-entity-recognition
+      - when:
+          condition: ${COND_NAMED_ENTITY_RECOGNITION_BUILD}
+          steps:
+            - checkout
+            - build_and_test_service:
+                service_name: named-entity-recognition
+                org: singnet
+                docker_org: singularitynet
+                service_test_command: bash -c 'cd tests;pytest'
+            - persist_to_workspace:
+                root: ~/singnet
+                paths: named-entity-recognition
 
   deploy-named-entity-recognition:
     executor: singnet-executor
@@ -453,7 +465,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: ${COND_NAMED_ENTITY_RECOGNITION_MAINNET_DEPLOY}
           steps:
             - deploy_service:
                 network: mainnet
@@ -471,7 +483,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: named-entity-recognition-mainnet-temp-bk
       - when:
-          condition: true
+          condition: ${COND_NAMED_ENTITY_RECOGNITION_TESTNET_DEPLOY}
           steps:
             - deploy_service:
                 network: testnet
@@ -495,18 +507,21 @@ jobs:
       SERVICE_NAME: cntk-language-understanding
       CACHE_MODELS_PATH: cntk-language-understanding/caches/models
     steps:
-      - checkout
-      - build_and_test_service:
-          service_name: cntk-language-understanding
-          org: singnet
-          docker_org: singularitynet
-          service_start_command: /root/anaconda3/envs/cntk-py35/bin/python run_service.py --daemon-config-path
-          daemon_config_path: config/
-          daemon_config_file: snetd.testnet.config.json
-          service_test_command: bash -c 'sleep 10;/root/anaconda3/envs/cntk-py35/bin/python test_service.py auto'
-      - persist_to_workspace:
-          root: ~/singnet
-          paths: cntk-language-understanding
+      - when:
+          condition: ${COND_CNTK_LANGUAGE_UDERSTANDING_BUILD}
+          steps:
+            - checkout
+            - build_and_test_service:
+                service_name: cntk-language-understanding
+                org: singnet
+                docker_org: singularitynet
+                service_start_command: /root/anaconda3/envs/cntk-py35/bin/python run_service.py --daemon-config-path
+                daemon_config_path: config/
+                daemon_config_file: snetd.testnet.config.json
+                service_test_command: bash -c 'sleep 10;/root/anaconda3/envs/cntk-py35/bin/python test_service.py auto'
+            - persist_to_workspace:
+                root: ~/singnet
+                paths: cntk-language-understanding
 
   deploy-cntk-language-understanding:
     executor: singnet-executor
@@ -516,7 +531,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: ${COND_CNTK_LANGUAGE_UDERSTANDING_MAINNET_DEPLOY}
           steps:
             - deploy_service:
                 network: mainnet
@@ -534,7 +549,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: cntk-language-understanding-mainnet-temp-bk
       - when:
-          condition: true
+          condition: ${COND_CNTK_LANGUAGE_UDERSTANDING_TESTNET_DEPLOY}
           steps:
             - deploy_service:
                 network: testnet
@@ -558,15 +573,18 @@ jobs:
       SERVICE_NAME: opennmt-romance-translator
       CACHE_MODELS_PATH: opennmt-romance-translator/caches/models
     steps:
-      - checkout
-      - build_and_test_service:
-          service_name: opennmt-romance-translator
-          org: singnet
-          docker_org: singularitynet
-          run_test: false
-      - persist_to_workspace:
-          root: ~/singnet
-          paths: opennmt-romance-translator
+      - when:
+          condition: ${COND_OPENNMT_ROMANCE_TRANSLATOR_BUILD}
+          steps:
+            - checkout
+            - build_and_test_service:
+                service_name: opennmt-romance-translator
+                org: singnet
+                docker_org: singularitynet
+                run_test: false
+            - persist_to_workspace:
+                root: ~/singnet
+                paths: opennmt-romance-translator
 
   deploy-opennmt-romance-translator:
     executor: singnet-executor
@@ -576,7 +594,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: ${COND_OPENNMT_ROMANCE_TRANSLATOR_MAINNET_DEPLOY}
           steps:
             - deploy_service:
                 network: mainnet
@@ -594,7 +612,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: opennmt-romance-translator-mainnet-temp-bk
       - when:
-          condition: true
+          condition: ${COND_OPENNMT_ROMANCE_TRANSLATOR_TESTNET_DEPLOY}
           steps:
             - deploy_service:
                 network: testnet
