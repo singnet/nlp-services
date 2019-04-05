@@ -16,15 +16,12 @@ def main():
     all_p = [start_snetd(root_path, args.daemon_config_path), start_service(root_path)]
     
     # Continuous checking all subprocess
-    try:
-        while True:
-            for p in all_p:
-                p.poll()
-                if p.returncode and p.returncode != 0:
-                    kill_and_exit(all_p)
-            time.sleep(1)
-    except Exception as e:
-        print(e)
+    while True:
+        for p in all_p:
+            p.poll()
+            if p.returncode and p.returncode != 0:
+                kill_and_exit(all_p)
+        time.sleep(1)
 
 
 def start_snetd(cwd, daemon_config_path=None):
