@@ -244,7 +244,6 @@ commands:
             docker rm << parameters.container_name_backup >> || true
             EOF
             fi
-
 version: 2.1
 executors:
   singnet-executor:
@@ -258,8 +257,11 @@ jobs:
     environment:
       SERVICE_NAME: translation
     steps:
+      - run:
+          name: Starting container building
+          command: echo container building
       - when:
-          condition: true
+          condition: false
           steps:
             - checkout
             - build_and_test_service:
@@ -270,6 +272,7 @@ jobs:
             - persist_to_workspace:
                 root: ~/singnet
                 paths: translation
+
   deploy-translation:
     executor: singnet-executor
     environment:
@@ -278,7 +281,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: mainnet
@@ -296,7 +299,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: translation-mainnet-temp-bk
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: testnet
@@ -319,8 +322,11 @@ jobs:
     environment:
       SERVICE_NAME: text-summarization
     steps:
+      - run:
+          name: Starting container building
+          command: echo container building
       - when:
-          condition: true
+          condition: false
           steps:
             - checkout
             - build_and_test_service:
@@ -340,7 +346,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: mainnet
@@ -358,7 +364,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: text-summarization-mainnet-temp-bk
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: testnet
@@ -381,6 +387,9 @@ jobs:
     environment:
       SERVICE_NAME: sentiment-analysis
     steps:
+      - run:
+          name: Starting container building
+          command: echo container building
       - when:
           condition: true
           steps:
@@ -402,7 +411,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: mainnet
@@ -444,6 +453,9 @@ jobs:
       SERVICE_NAME: named-entity-recognition
       CACHE_MODELS_PATH: named-entity-recognition/caches/models
     steps:
+      - run:
+          name: Starting container building
+          command: echo container building
       - when:
           condition: true
           steps:
@@ -465,7 +477,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: mainnet
@@ -507,8 +519,11 @@ jobs:
       SERVICE_NAME: cntk-language-understanding
       CACHE_MODELS_PATH: cntk-language-understanding/caches/models
     steps:
+      - run:
+          name: Starting container building
+          command: echo container building
       - when:
-          condition: true
+          condition: false
           steps:
             - checkout
             - build_and_test_service:
@@ -531,7 +546,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: mainnet
@@ -549,7 +564,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: cntk-language-understanding-mainnet-temp-bk
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: testnet
@@ -573,8 +588,11 @@ jobs:
       SERVICE_NAME: opennmt-romance-translator
       CACHE_MODELS_PATH: opennmt-romance-translator/caches/models
     steps:
+      - run:
+          name: Starting container building
+          command: echo container building
       - when:
-          condition: true
+          condition: false
           steps:
             - checkout
             - build_and_test_service:
@@ -594,7 +612,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: mainnet
@@ -612,7 +630,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: opennmt-romance-translator-mainnet-temp-bk
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: testnet

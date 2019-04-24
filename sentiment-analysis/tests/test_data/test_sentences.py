@@ -1,0 +1,2 @@
+def senteces():
+    return "[{\"id\": \"1\", \"sentence\": \"Grat price, fast shipping, great product.\"},{\"id\": \"2\", \"sentence\": \"@Oielayus I want to go to promote GEAR AND GROOVE but unfornately no ride there  I may b going to the one in Anaheim in May though.\"},{\"id\": \"3\" , \"sentence\": \"@mja_dren2, is still sick, and worrying the orange she just ate is going to come back up... ugh.\"}]"

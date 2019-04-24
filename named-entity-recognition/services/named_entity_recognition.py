@@ -1,6 +1,6 @@
 import sys
 import grpc
-import base64
+import json
 import concurrent.futures as futures
 from services.modules import entity_recognizer_mod
 from services.service_spec import named_entity_recognition_rpc_pb2_grpc as grpc_bt_grpc
@@ -37,26 +37,36 @@ class RecognizeMessageServicer(grpc_bt_grpc.RecognizeMessageServicer):
         self.result = OutputMessage()
 
         # Base64 decoding
-        sentence = base64.b64decode(self.value).decode('utf-8')
+        # decoded_senteces = base64.b64decode(self.value).decode('utf-8')
 
-        # Classifying sentences
-        entities = self.recognizer.stanford_recognizer(sentence)
+        # Convert in json array
+        sentence_list = json.loads(self.value)
 
-        # Building result list
+        # Result list
         result_list = []
 
-        for item in entities:
-            start_index = sentence.find(item[0])
-            end_index = start_index + len(item[0])
-            result_list.append((item[0], item[1], 'Start span:', start_index, 'End span:', end_index))
+        for sentence_item in sentence_list:
+            # Classifying sentences
+            entities = self.recognizer.stanford_recognizer(sentence_item["sentence"])
 
-        # Encoding result
-        resultBase64 = base64.b64encode(str(result_list).encode('utf-8'))
+            # Building entity list
+            entity_list = []
+
+            for entity_item in entities:
+                start_index = sentence_item["sentence"].find(entity_item[0])
+                end_index = start_index + len(entity_item[0])
+                entity_list.append({
+                    "name": entity_item[0],
+                    "type": entity_item[1],
+                    'Start span': start_index,
+                    'End span': end_index
+                })
+
+            result_list.append({"id": sentence_item["id"], "entities": entity_list})
 
         # To respond we need to create a OutputMessage() object (from .proto file)
         self.result = OutputMessage()
-        self.result.value = resultBase64
-        # logger.debug('add({},{})={}'.format(self.a, self.b, self.result.value))
+        self.result.value = json.dumps(result_list)
         return self.result
 
 
