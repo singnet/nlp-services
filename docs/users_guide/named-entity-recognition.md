@@ -33,34 +33,30 @@ Assuming that you have an open channel (`id: 0`) to this service:
 
 #### Input data example:
 
-For this example use this sentence as input data:
+For this example use these three sentences as input data:
 
-Our concept of operations is to flow in our military assets with a priority to build up southern Texas, and then Arizona, and then California," Donald Trump said Monday, adding that the soldiers normally assigned weapons will be carrying them at the border. "We'll reinforce along priority points of entry, and while this happens, Trump Hotels is falling down in stock market.
+* Microsoft is headquartered in the United States
+* United States is a big country
+* Mike lives in Brazil
 
-Encode in base64 utf-8 text and the result will be like this:
+Convert the sentences to json format:
 ```
-T3VyIGNvbmNlcHQgb2Ygb3BlcmF0aW9ucyBpcyB0byBmbG93IGluIG91ciBtaWxpdGFyeSBhc3NldHMgd2l0aCBhIHByaW9yaXR5IHRvIGJ1aWxkIHVwIHNvdXRoZXJuIFRleGFzLCBhbmQgdGhlbiBBcml6b25hLCBhbmQgdGhlbiBDYWxpZm9ybmlhLCIgRG9uYWxkIFRydW1wIHNhaWQgTW9uZGF5LCBhZGRpbmcgdGhhdCB0aGUgc29sZGllcnMgbm9ybWFsbHkgYXNzaWduZWQgd2VhcG9ucyB3aWxsIGJlIGNhcnJ5aW5nIHRoZW0gYXQgdGhlIGJvcmRlci4gIldlJ2xsIHJlaW5mb3JjZSBhbG9uZyBwcmlvcml0eSBwb2ludHMgb2YgZW50cnksIGFuZCB3aGlsZSB0aGlzIGhhcHBlbnMsIFRydW1wIEhvdGVscyBpcyBmYWxsaW5nIGRvd24gaW4gc3RvY2sgbWFya2V0Lg==
+{"value": "[{\"id\": \"1\", \"sentence\": \"Microsoft is headquartered in the United States\"}, {\"id\": \"2\", \"sentence\": \"United States is a big country\"}, {\"id\": \"3\", \"sentence\": \"Mike lives in Brazil\"}]"}
 ```
+Then save it as json file like test.json
 
 #### Service call example:
 ```
 
-$ snet client call 0 0.00000001 54.203.198.53:7012 Recognize '{"value": "T3VyIGNvbmNlcHQgb2Ygb3BlcmF0aW9ucyBpcyB0byBmbG93IGluIG91ciBtaWxpdGFyeSBhc3NldHMgd2l0aCBhIHByaW9yaXR5IHRvIGJ1aWxkIHVwIHNvdXRoZXJuIFRleGFzLCBhbmQgdGhlbiBBcml6b25hLCBhbmQgdGhlbiBDYWxpZm9ybmlhLCIgRG9uYWxkIFRydW1wIHNhaWQgTW9uZGF5LCBhZGRpbmcgdGhhdCB0aGUgc29sZGllcnMgbm9ybWFsbHkgYXNzaWduZWQgd2VhcG9ucyB3aWxsIGJlIGNhcnJ5aW5nIHRoZW0gYXQgdGhlIGJvcmRlci4gIldlJ2xsIHJlaW5mb3JjZSBhbG9uZyBwcmlvcml0eSBwb2ludHMgb2YgZW50cnksIGFuZCB3aGlsZSB0aGlzIGhhcHBlbnMsIFRydW1wIEhvdGVscyBpcyBmYWxsaW5nIGRvd24gaW4gc3RvY2sgbWFya2V0Lg=="}'
+$ snet client call snet named-entity-recognition Recognize test.json -y
 ```
 
 #### Output example:
 
-The result will be a base64 text like this:
+The result will be like this:
 
 ```
-WygnVGV4YXMnLCAnTE9DQVRJT04nLCAnU3RhcnQgc3BhbjonLCA5NywgJ0VuZCBzcGFuOicsIDEwMiksICgnQXJpem9uYScsICdMT0NBVElPTicsICdTdGFydCBzcGFuOicsIDExMywgJ0VuZCBzcGFuOicsIDEyMCksICgnQ2FsaWZvcm5pYScsICdMT0NBVElPTicsICdTdGFydCBzcGFuOicsIDEzMSwgJ0VuZCBzcGFuOicsIDE0MSksICgnRG9uYWxkIFRydW1wJywgJ1BFUlNPTicsICdTdGFydCBzcGFuOicsIDE0NCwgJ0VuZCBzcGFuOicsIDE1NiksICgnVHJ1bXAgSG90ZWxzJywgJ09SR0FOSVpBVElPTicsICdTdGFydCBzcGFuOicsIDMzMSwgJ0VuZCBzcGFuOicsIDM0Myld
-```
-
-After you decode the base64 result the output will be like this:
-
-```
-$ [('Texas', 'LOCATION', 'Start span:', 97, 'End span:', 102), ('Arizona', 'LOCATION', 'Start span:', 113, 'End span:', 120), ('California', 'LOCATION', 'Start span:', 131, 'End span:', 141), ('Donald Trump', 'PERSON', 'Start span:', 144, 'End span:', 156), ('Trump Hotels', 'ORGANIZATION', 'Start span:', 331, 'End span:', 343)]
-
+{ value : [{"id": "1", "entities": [{"name": "Microsoft", "type": "ORGANIZATION", "Start span": 0, "End span": 9}, {"name": "United States", "type": "LOCATION", "Start span": 34, "End span": 47}]}, {"id": "2", "entities": [{"name": "United States", "type": "LOCATION", "Start span": 0, "End span": 13}]}, {"id": "3", "entities": [{"name": "Mike", "type": "PERSON", "Start span": 0, "End span": 4}, {"name": "Brazil", "type": "LOCATION", "Start span": 14, "End span": 20}]}] }
 ```
 
 For more details about how to call SingularityNET services, please read our [How to publish a service](https://github.com/singnet/wiki/tree/master/tutorials/howToPublishService) tutorial.

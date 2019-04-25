@@ -2,7 +2,7 @@ import path_setup
 import grpc
 from services.service_spec import sentiment_analysis_rpc_pb2_grpc as grpc_services
 from services.service_spec import sentiment_analysis_rpc_pb2 as rpc
-from test_data import b64_sentences
+from test_data import test_sentences
 from services import registry
 from log import log_config
 
@@ -28,7 +28,7 @@ if __name__ == '__main__':
         # create a stub (client)
         stub = grpc_services.SentimentAnalysisStub(channel)
         # create a valid request message
-        test_data = b64_sentences.senteces()
+        test_data = test_sentences.senteces()
         message = rpc.InputMessage(value=test_data)
         # make the call
         response = stub.Analyze(message)

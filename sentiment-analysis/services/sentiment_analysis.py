@@ -1,6 +1,6 @@
 import os
 import sys
-import base64
+import json
 import grpc
 import concurrent.futures as futures
 from services.service_spec import sentiment_analysis_rpc_pb2_grpc as grpc_services
@@ -36,32 +36,23 @@ class SentimentAnalysisServicer(grpc_services.SentimentAnalysisServicer):
         # In our case, request is a InputMessage() object (from .proto file)
         self.value = request.value
 
-        # Decode do string
-        temp = base64.b64decode(self.value).decode('utf-8')
-        # Convert in array
-        tempArray = temp.split("\n")
-        # Result of sentences
-        stringResult = ''
+        # Convert in json array
+        sentence_list = json.loads(self.value)
+
+        # Result list
+        result_list = []
 
         # Sentiment Analyser Instance
         analizer = SentimentIntensityAnalyzer()
 
-        # Generating result
-        for line in tempArray:
-            if line is not None:
-                if len(line) > 1:
-                    stringResult += line
-                    stringResult += '\n'
-                    stringResult += str(analizer.polarity_scores(line))
-                    stringResult += '\n\n'
-
-        # Encoding result
-        resultBase64 = base64.b64encode(str(stringResult).encode('utf-8'))
+        for sentence_item in sentence_list:
+            # Classifying sentences
+            analysis = str(analizer.polarity_scores(sentence_item["sentence"]))
+            result_list.append({"id": sentence_item["id"], "analysis": analysis})
 
         # To respond we need to create a OutputMessage() object (from .proto file)
         self.result = OutputMessage()
-        self.result.value = resultBase64
-        logger.debug('call => Analyze({})={}'.format(self.value, self.result.value))
+        self.result.value = json.dumps(result_list)
         return self.result
 
 

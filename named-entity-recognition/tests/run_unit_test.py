@@ -1,8 +1,7 @@
 import path_setup
-import base64
 import compile_proto
 from services import named_entity_recognition as ner
-from test_data import b64_sentences
+from test_data import test_sentences
 from log import log_config
 logger = log_config.getLogger('run_unit_test.py', test=True)
 
@@ -24,12 +23,11 @@ def test_recognize():
 
     servicer = ner.RecognizeMessageServicer()
     request = Request()
-    request.value = b64_sentences.senteces()
+    request.value = test_sentences.senteces()
     context = object()
     response = servicer.Recognize(request, context)
-    decoded_result = base64.b64decode(response.value).decode('utf-8')
 
-    if "PERSON" in str(decoded_result) or "ORGANIZATION" in str(decoded_result) or "LOCATION" in str(decoded_result):
+    if "PERSON" in str(response.value) or "ORGANIZATION" in str(response.value) or "LOCATION" in str(response.value):
         logger.debug("test_recognize() - OK")
         assert True
     else:
