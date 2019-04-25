@@ -58,8 +58,8 @@ class RecognizeMessageServicer(grpc_bt_grpc.RecognizeMessageServicer):
                 entity_list.append({
                     "name": entity_item[0],
                     "type": entity_item[1],
-                    'Start span': start_index,
-                    'End span': end_index
+                    "start_span": start_index,
+                    "end_span": end_index
                 })
 
             result_list.append({"id": sentence_item["id"], "entities": entity_list})
