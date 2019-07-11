@@ -261,7 +261,7 @@ jobs:
           name: Starting container building
           command: echo container building
       - when:
-          condition: false
+          condition: true
           steps:
             - checkout
             - build_and_test_service:
@@ -281,7 +281,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: false
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -299,7 +299,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: translation-mainnet-temp-bk
       - when:
-          condition: false
+          condition: true
           steps:
             - deploy_service:
                 network: testnet
@@ -326,7 +326,7 @@ jobs:
           name: Starting container building
           command: echo container building
       - when:
-          condition: false
+          condition: true
           steps:
             - checkout
             - build_and_test_service:
@@ -346,7 +346,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: false
+          condition: true
           steps:
             - deploy_service:
                 network: mainnet
@@ -364,7 +364,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: text-summarization-mainnet-temp-bk
       - when:
-          condition: false
+          condition: true
           steps:
             - deploy_service:
                 network: testnet
