@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ARG GITHUB_ACCOUNT="singnet"
 ARG GITHUB_BRANCH="master"
 ARG GITHUB_REPO="nlp-services"
-ARG SNETD_VERSION="v0.1.8"
+ARG SNETD_VERSION="v1.0.0"
 
 ENV SERVICE_FOLDER="text-summarization"
 
