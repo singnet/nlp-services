@@ -220,6 +220,8 @@ commands:
             if [[ << parameters.start_with_ssl >> = true ]]; then
               echo Starting with ssl
               docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"ssl_cert\": \"${SSL_PATH}/<<parameters.domain>>/fullchain.pem\", \"ssl_key\": \"${SSL_PATH}/<<parameters.domain>>/privkey.pem\"' << parameters.daemon_config_file >>
+              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"pvt_key_for_metering\": \"${PVT_KEY_FOR_METERING}\"' << parameters.daemon_config_file >>
+              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"payent_channel_cert_path\": \"${SSL_PATH}/<<parameters.domain>>/client.pem\", \"payent_channel_ca_path\": \"${SSL_PATH}/<<parameters.domain>>/ca.pem\", \"payent_channel_key_path\": \"${SSL_PATH}/<<parameters.domain>>/client-key.pem\"' << parameters.daemon_config_file >>
               docker restart << parameters.container_name >>
             fi
             docker rm << parameters.container_name_backup >> || true
@@ -239,6 +241,8 @@ commands:
             if [[ << parameters.start_with_ssl >> = true ]]; then
               echo Starting with ssl
               docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"ssl_cert\": \"${SSL_PATH}/<<parameters.domain>>/fullchain.pem\", \"ssl_key\": \"${SSL_PATH}/<<parameters.domain>>/privkey.pem\"' << parameters.daemon_config_file >>
+              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"pvt_key_for_metering\": \"${PVT_KEY_FOR_METERING}\"' << parameters.daemon_config_file >>
+              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"payent_channel_cert_path\": \"${SSL_PATH}/<<parameters.domain>>/client.pem\", \"payent_channel_ca_path\": \"${SSL_PATH}/<<parameters.domain>>/ca.pem\", \"payent_channel_key_path\": \"${SSL_PATH}/<<parameters.domain>>/client-key.pem\"' << parameters.daemon_config_file >>
               docker restart << parameters.container_name >>
             fi
             docker rm << parameters.container_name_backup >> || true
@@ -261,7 +265,7 @@ jobs:
           name: Starting container building
           command: echo container building
       - when:
-          condition: true
+          condition: false
           steps:
             - checkout
             - build_and_test_service:
@@ -281,7 +285,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: mainnet
@@ -299,7 +303,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: translation-mainnet-temp-bk
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: testnet
@@ -326,7 +330,7 @@ jobs:
           name: Starting container building
           command: echo container building
       - when:
-          condition: true
+          condition: false
           steps:
             - checkout
             - build_and_test_service:
@@ -346,7 +350,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: mainnet
@@ -364,7 +368,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: text-summarization-mainnet-temp-bk
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: testnet
@@ -423,7 +427,7 @@ jobs:
                 container_name: sentiment-analysis-mainnet
                 service_name: sentiment-analysis
                 start_with_ssl: true
-                snetd_ports: -p 7010:7010
+                snetd_ports: -p 7046:7046
                 service_start_command: python3 run_service.py --daemon-config-path
                 daemon_config_path: config/
                 daemon_config_file: snetd.mainnet.config.json
@@ -489,7 +493,7 @@ jobs:
                 container_name: named-entity-recognition-mainnet
                 service_name: named-entity-recognition
                 start_with_ssl: true
-                snetd_ports: -p 7012:7012
+                snetd_ports: -p 7047:7047
                 service_start_command: python3 run_service.py --daemon-config-path
                 daemon_config_path: config/
                 daemon_config_file: snetd.mainnet.config.json
@@ -523,7 +527,7 @@ jobs:
           name: Starting container building
           command: echo container building
       - when:
-          condition: true
+          condition: false
           steps:
             - checkout
             - build_and_test_service:
@@ -546,7 +550,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: mainnet
@@ -564,7 +568,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: cntk-language-understanding-mainnet-temp-bk
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: testnet
@@ -592,7 +596,7 @@ jobs:
           name: Starting container building
           command: echo container building
       - when:
-          condition: true
+          condition: false
           steps:
             - checkout
             - build_and_test_service:
@@ -612,7 +616,7 @@ jobs:
       - attach_workspace:
           at: ~/singnet
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: mainnet
@@ -630,7 +634,7 @@ jobs:
                 daemon_config_file: snetd.mainnet.config.json
                 container_name_backup: opennmt-romance-translator-mainnet-temp-bk
       - when:
-          condition: true
+          condition: false
           steps:
             - deploy_service:
                 network: testnet

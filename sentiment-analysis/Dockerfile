@@ -4,7 +4,7 @@ FROM ubuntu:18.04
 ARG GITHUB_ACCOUNT="singnet"
 ARG GITHUB_BRANCH="master"
 ARG GITHUB_REPO="nlp-services"
-ARG SNETD_VERSION="v0.1.8"
+ARG SNETD_VERSION="v2.0.2"
 
 ENV SERVICE_FOLDER="sentiment-analysis"
 
