@@ -15,7 +15,18 @@ RUN apt-get update && apt-get install -y locales software-properties-common git
 RUN add-apt-repository -y ppa:deadsnakes/ppa && \
       apt-get update && \
       apt-get upgrade -y && \
-      apt-get install -y python3.6 python3.6-dev build-essential cmake libgtk2.0-dev python3.6-tk && \
+      apt-get install -y \
+      python3.6 \
+      python3.6-dev \
+      build-essential \
+      cmake \
+      git \
+      wget \
+      curl \
+      nano \
+      default-jre \
+      libgtk2.0-dev \
+      python3.6-tk && \
       curl https://bootstrap.pypa.io/get-pip.py | python3.6
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     dpkg-reconfigure --frontend=noninteractive locales && \
@@ -30,7 +41,8 @@ RUN SNETD_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/rele
     mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd
 
 ADD https://raw.githubusercontent.com/OpenNMT/OpenNMT-py/master/requirements.txt /tmp/opennmt_requirements.txt
-RUN apt-get install -y git default-jre && pip3.6 install -r /tmp/opennmt_requirements.txt && pip3.6 install numpy -I
+RUN pip3.6 install -r /tmp/opennmt_requirements.txt && \
+    pip3.6 install numpy -I
 
 RUN cd ${SINGNET_DIR} && \
     git clone -b ${git_branch} https://github.com/${git_owner}/${git_repo}.git
