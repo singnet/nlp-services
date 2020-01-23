@@ -95,7 +95,6 @@ RUN apt-get update && \
         curl \
         git \
         python3-pip \
-        python3-dev \
         python3 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -122,8 +121,6 @@ RUN SNETD_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/rele
     tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
     mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd
 
-RUN mkdir -p ${SINGNET_DIR}
-
 RUN cd ${SINGNET_DIR} && \
     git clone -b ${GITHUB_BRANCH} https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPO}.git
 
@@ -131,7 +128,7 @@ RUN cd ${SINGNET_DIR}/${GITHUB_REPO}/${SERVICE_NAME} && \
     pip3 install -r requirements.txt && \
     sh buildproto.sh
 
-RUN cd ${SINGNET_DIR}/${GITHUB_REPO}/${SERVICE_NAME} && \
+RUN cd ${SINGNET_DIR}/${GITHUB_REPO}/${SERVICE_NAME}/utils && \
     bash prepare_data.sh ./data
 
 RUN cd ${SINGNET_DIR}/${GITHUB_REPO}/${SERVICE_NAME} && \
