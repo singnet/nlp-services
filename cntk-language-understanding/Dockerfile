@@ -27,7 +27,8 @@ RUN cd ${SINGNET_DIR} && \
     git clone -b ${git_branch} https://github.com/${git_owner}/${git_repo}.git
 
 RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
-    /root/anaconda3/envs/cntk-py35/bin/python -m pip install -r requirements.txt && \
+    source /cntk/activate-cntk && \
+    pip install -r requirements.txt && \
     sh buildproto.sh
 
 WORKDIR ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME}
