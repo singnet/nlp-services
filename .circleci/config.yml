@@ -189,8 +189,8 @@ jobs:
       SERVICE_NAME: cntk-language-understanding
       SERVICE_DIR: cntk-language-understanding
       CERTS_DIR: singnet/.certs
-      SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "sleep 10;python3 test_service.py auto"
+      SERVICE_RUN_COMMAND: bash -c "git pull;/root/anaconda3/envs/cntk-py35/bin/python run_service.py --ssl --metering"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;/root/anaconda3/envs/cntk-py35/bin/python test_service.py auto"
       SNETD_PORT_MAINNET: 7048
       SNETD_PORT_ROPSTEN: 7068
     steps:

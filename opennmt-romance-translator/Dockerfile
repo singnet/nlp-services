@@ -83,6 +83,8 @@ ARG GITHUB_BRANCH="master"
 ENV SINGNET_DIR=/opt/singnet
 ENV SERVICE_NAME=opennmt-romance-translator
 
+RUN mkdir -p ${SINGNET_DIR}
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         libgomp1 \
