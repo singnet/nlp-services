@@ -2,3 +2,4 @@ pyyaml
 grpcio
 grpcio-tools
 protobuf
+torch==1.1.0
