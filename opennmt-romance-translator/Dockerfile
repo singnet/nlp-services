@@ -134,4 +134,4 @@ RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME}/utils && \
 RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
     bash buildproto.sh
 
-WORKDIR ${SINGNET_DIR}/${GITHUB_REPO}/${SERVICE_NAME}
+WORKDIR ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME}
