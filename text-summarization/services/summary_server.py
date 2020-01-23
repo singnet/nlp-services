@@ -22,14 +22,12 @@ class TextSummaryServicer(ss_grpc.TextSummaryServicer):
         pass
 
     def summary(self, request, context):
-
         self.q.send((request.article_content,))
         result = self.q.recv()
         if isinstance(result, Exception):
             raise result
         print(result)
         pb_result = ss_pb.Result(article_summary=result)
-
         return pb_result
 
 
@@ -48,7 +46,10 @@ def serve(dispatch_queue, max_workers=1, port=7777):
     return server
 
 
-def main_loop(dispatch_queue, grpc_serve_function, grpc_port, grpc_args={}):
+def main_loop(dispatch_queue, grpc_serve_function, grpc_port, grpc_args=None):
+    if grpc_args is None:
+        grpc_args = dict()
+
     server = None
     if grpc_serve_function is not None:
         server = grpc_serve_function(dispatch_queue, port=grpc_port, **grpc_args)
