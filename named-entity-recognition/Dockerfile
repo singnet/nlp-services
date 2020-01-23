@@ -33,7 +33,7 @@ RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
     pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     python3 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
-    bash buildproto.sh
+    sh buildproto.sh
 
 # Install snet daemon
 RUN SNETD_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")'` && \
