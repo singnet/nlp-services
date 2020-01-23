@@ -88,7 +88,7 @@ def start_service(cwd, service_module, run_daemon, run_ssl, run_metering):
         """Add Extra keys to snetd.config.json"""
         with open(conf, "r") as f:
             _network = "mainnet"
-            if "testnet" in conf:
+            if "ropsten" in conf:
                 _network = "ropsten"
             snetd_configs = json.load(f)
             if run_ssl:
@@ -101,8 +101,7 @@ def start_service(cwd, service_module, run_daemon, run_ssl, run_metering):
                 snetd_configs["payment_channel_ca_path"] = "/opt/singnet/.certs/ca.pem"
                 snetd_configs["payment_channel_cert_path"] = "/opt/singnet/.certs/client.pem"
                 snetd_configs["payment_channel_key_path"] = "/opt/singnet/.certs/client-key.pem"
-                snetd_configs["metering_end_point"] = "https://{}-marketplace.singularitynet.io/metering".format(
-                    _network)
+                snetd_configs["metering_end_point"] = "https://{}-marketplace.singularitynet.io/metering".format(_network)
                 snetd_configs["free_call_signer_address"] = "0x3Bb9b2499c283cec176e7C707Ecb495B7a961ebf"
                 snetd_configs["pvt_key_for_metering"] = os.environ.get("PVT_KEY_FOR_METERING", "")
             infura_key = os.environ.get("INFURA_API_KEY", "")
