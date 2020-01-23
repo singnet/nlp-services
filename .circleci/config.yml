@@ -216,7 +216,7 @@ jobs:
       SERVICE_DIR: named-entity-recognition
       CERTS_DIR: singnet/.certs
       SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "git pull;cd tests;pytest"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;cd tests;pytest"
       SNETD_PORT_MAINNET: 7047
       SNETD_PORT_ROPSTEN: 7014
     steps:
@@ -267,7 +267,7 @@ jobs:
       SERVICE_DIR: sentiment-analysis
       CERTS_DIR: singnet/.certs
       SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "git pull;cd tests;pytest"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;cd tests;pytest"
       SNETD_PORT_MAINNET: 7046
       SNETD_PORT_ROPSTEN: 7013
     steps:
@@ -293,7 +293,7 @@ jobs:
       SERVICE_DIR: text-summarization
       CERTS_DIR: singnet/.certs
       SERVICE_RUN_COMMAND: bash -c "git pull;python3.6 run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "git pull;python3.6 test_service.py auto"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;python3.6 test_service.py auto"
       SNETD_PORT_MAINNET: 6407
       SNETD_PORT_ROPSTEN: 6307
     steps:
@@ -319,7 +319,7 @@ jobs:
       SERVICE_DIR: translation
       CERTS_DIR: singnet/.certs
       SERVICE_RUN_COMMAND: bash -c "git pull;python3.6 run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "git pull;python3.6 test_service.py auto"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;python3.6 test_service.py auto"
       SNETD_PORT_MAINNET: 6408
       SNETD_PORT_ROPSTEN: 6308
     steps:
