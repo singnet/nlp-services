@@ -3,6 +3,7 @@
   "ipfs_end_point": "http://ipfs.singularitynet.io:80",
   "passthrough_enabled": true,
   "passthrough_endpoint": "http://localhost:7013",
+  "blockchain_network_selected": "main",
   "organization_id": "snet",
   "service_id": "named-entity-recognition",
   "log": {
