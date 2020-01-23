@@ -90,6 +90,7 @@ RUN apt-get update && \
         libzmq1 \
         nano \
         wget \
+        curl \
         git \
         python3-pip \
         python3 && \
