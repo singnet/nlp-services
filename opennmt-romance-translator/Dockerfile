@@ -121,6 +121,8 @@ RUN SNETD_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/rele
     tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
     mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd
 
+RUN mkdir -p ${SINGNET_DIR}
+
 RUN cd ${SINGNET_DIR} && \
     git clone -b ${GITHUB_BRANCH} https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPO}.git
 
