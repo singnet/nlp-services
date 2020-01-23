@@ -76,9 +76,9 @@ RUN git clone https://github.com/OpenNMT/lua-sentencepiece.git /root/lua-sentenc
 FROM nvidia/cuda:8.0-runtime-ubuntu16.04
 MAINTAINER OpenNMT <http://opennmt.net/>
 
-ARG GITHUB_ACCOUNT="singnet"
-ARG GITHUB_REPO="nlp-services"
-ARG GITHUB_BRANCH="master"
+ARG git_owner="singnet"
+ARG git_repo="nlp-services"
+ARG git_branch="master"
 
 ENV SINGNET_DIR=/opt/singnet
 ENV SERVICE_NAME=opennmt-romance-translator
@@ -122,16 +122,16 @@ RUN SNETD_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/rele
     mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd
 
 RUN cd ${SINGNET_DIR} && \
-    git clone -b ${GITHUB_BRANCH} https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPO}.git
+    git clone -b ${git_branch} https://github.com/${git_owner}/${git_repo}.git
 
-RUN cd ${SINGNET_DIR}/${GITHUB_REPO}/${SERVICE_NAME} && \
+RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
     pip3 install -r requirements.txt && \
     sh buildproto.sh
 
-RUN cd ${SINGNET_DIR}/${GITHUB_REPO}/${SERVICE_NAME}/utils && \
+RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME}/utils && \
     bash prepare_data.sh ./data
 
-RUN cd ${SINGNET_DIR}/${GITHUB_REPO}/${SERVICE_NAME} && \
+RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
     bash buildproto.sh
 
 WORKDIR ${SINGNET_DIR}/${GITHUB_REPO}/${SERVICE_NAME}
