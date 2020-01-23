@@ -207,6 +207,31 @@ jobs:
           docker_etcd_host_dir: singnet/etcd/${SERVICE_NAME}/
           docker_etcd_container_dir: opt/singnet/${CIRCLE_PROJECT_REPONAME}/${SERVICE_DIR}/etcd/
 
+  named-entity-recognition:
+    docker:
+      - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
+    environment:
+      SERVICE_NAME: named-entity-recognition
+      SERVICE_DIR: named-entity-recognition
+      CERTS_DIR: singnet/.certs
+      SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
+      SERVICE_TEST_COMMAND: bash -c "git pull;cd tests;pytest"
+      SNETD_PORT_MAINNET: 7047
+      SNETD_PORT_ROPSTEN: 7014
+    steps:
+      - checkout
+      - build_and_deploy:
+          domain: ${DOMAIN_NAMED_ENTITY_RECOGNITION}
+          ssh_user_env_var: ${MAINNET_SSH_USER_NAMED_ENTITY_RECOGNITION}
+          ssh_host_env_var: ${MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
+          infura_api_key: ${INFURA_API_KEY}
+          daemon_pk: ${PK_NAMED_ENTITY_RECOGNITION}
+          docker_image_name: named_entity_recognition
+          docker_container_name: NAMED_ENTITY_RECOGNITION
+          docker_etcd_host_dir: singnet/etcd/${SERVICE_NAME}/
+          docker_etcd_container_dir: opt/singnet/${CIRCLE_PROJECT_REPONAME}/${SERVICE_DIR}/etcd/
+
   opennmt-romance-translator:
     docker:
       - image: circleci/python:3.6.6-node
@@ -238,4 +263,5 @@ workflows:
   build_deploy:
     jobs:
       - cntk-language-understanding
+      - named-entity-recognition
       - opennmt-romance-translator

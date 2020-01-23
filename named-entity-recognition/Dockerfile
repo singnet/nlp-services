@@ -1,11 +1,13 @@
 FROM ubuntu:18.04
 
-ARG GITHUB_ACCOUNT="singnet"
-ARG GITHUB_BRANCH="master"
-ARG GITHUB_REPO="nlp-services"
-ARG SNETD_VERSION="v2.0.2"
+ARG git_owner="singnet"
+ARG git_repo="nlp-services"
+ARG git_branch="master"
 
-ENV SERVICE_FOLDER="named-entity-recognition"
+ENV SINGNET_DIR=/opt/singnet
+ENV SERVICE_NAME=named-entity-recognition
+
+RUN mkdir -p ${SINGNET_DIR}
 
 RUN apt-get update && \
     apt-get -y upgrade && \
@@ -24,25 +26,20 @@ RUN apt-get update && \
 RUN apt-get install -y default-jre
 RUN apt-get install -y python3 python3-pip
 
-ADD https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPO}/raw/${GITHUB_BRANCH}/${SERVICE_FOLDER}/requirements.txt /tmp/service_requirements.txt
-RUN pip3 install -r /tmp/service_requirements.txt
+RUN cd ${SINGNET_DIR} && \
+    git clone -b ${git_branch} https://github.com/${git_owner}/${git_repo}.git
 
-ADD https://api.github.com/repos/${GITHUB_ACCOUNT}/${GITHUB_REPO}/compare/${GITHUB_BRANCH}...HEAD /dev/null
-RUN git clone -b ${GITHUB_BRANCH} https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPO}.git && \
-    cd ${GITHUB_REPO}/${SERVICE_FOLDER} && \
-    python3 ../fetch_models.py && \
-    cd .. && mv ${SERVICE_FOLDER}/ /${SERVICE_FOLDER} && \
-    rm -rf /${GITHUB_REPO}
-
-RUN cd /${SERVICE_FOLDER} && \
+RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
+    pip3 install -r requirements.txt && \
     python3 -c "import nltk; nltk.download('punkt')" && \
     python3 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
     bash buildproto.sh
 
-ADD https://github.com/singnet/snet-daemon/releases/download/${SNETD_VERSION}/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz /tmp/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz
-RUN cd /tmp && \
+# Install snet daemon
+RUN SNETD_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")'` && \
+    cd /tmp && \
+    wget https://github.com/singnet/snet-daemon/releases/download/${SNETD_VERSION}/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
     tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
-    mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd && \
-    rm -rf snet-daemon-${SNETD_VERSION}-linux-amd64*
+    mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd
 
-WORKDIR /${SERVICE_FOLDER}
+WORKDIR ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME}
