@@ -40,17 +40,17 @@ RUN SNETD_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/rele
     tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
     mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd
 
-ADD https://raw.githubusercontent.com/OpenNMT/OpenNMT-py/master/requirements.txt /tmp/opennmt_requirements.txt
-RUN pip3.6 install -r /tmp/opennmt_requirements.txt && \
-    pip3.6 install numpy -I
-
 RUN cd ${SINGNET_DIR} && \
     git clone -b ${git_branch} https://github.com/${git_owner}/${git_repo}.git
 
 RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
     pip3.6 install -r requirements.txt && \
-    git submodule update --init -- opennmt-py && \
     sh buildproto.sh
+
+RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
+    git submodule update --init -- opennmt-py && \
+    cd opennmt-py && \
+    pip3.6 install -r requirements.txt
 
 RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
     python3.6 ../fetch_models.py
