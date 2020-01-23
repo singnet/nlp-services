@@ -1,4 +1,4 @@
 pyyaml
-grpcio==1.16.0
-grpcio-tools==1.16.0
+grpcio
+grpcio-tools
 protobuf

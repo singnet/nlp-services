@@ -1,7 +1,6 @@
 import sys
 import logging
 import argparse
-import io
 import os
 import grpc
 import concurrent.futures
@@ -15,6 +14,7 @@ import services.service_spec.summary_pb2_grpc as ss_grpc
 
 
 log = logging.getLogger(__package__ + "." + __name__)
+
 
 class TextSummaryServicer(ss_grpc.TextSummaryServicer):
     def __init__(self, q):
@@ -31,6 +31,7 @@ class TextSummaryServicer(ss_grpc.TextSummaryServicer):
         pb_result = ss_pb.Result(article_summary=result)
 
         return pb_result
+
 
 def summarise_text(text):
     tokens = stanford_ptb_tokenizer(text)
@@ -59,6 +60,7 @@ def main_loop(dispatch_queue, grpc_serve_function, grpc_port, grpc_args={}):
     except KeyboardInterrupt:
         server.stop(0)
 
+
 def worker(q):
     while True:
         try:
@@ -74,7 +76,11 @@ if __name__ == "__main__":
     script_name = __file__
     parser = argparse.ArgumentParser(prog=script_name)
     server_name = os.path.splitext(os.path.basename(script_name))[0]
-    parser.add_argument("--grpc-port", help="port to bind grpc services to", default=registry[server_name]['grpc'], type=int, required=False)
+    parser.add_argument("--grpc-port",
+                        help="port to bind grpc services to",
+                        default=registry[server_name]['grpc'],
+                        type=int,
+                        required=False)
     args = parser.parse_args(sys.argv[1:])
 
     # Need queue system and spawning grpc server in separate process because of:

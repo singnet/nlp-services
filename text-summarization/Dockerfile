@@ -1,12 +1,15 @@
 FROM nvidia/cuda:9.1-cudnn7-devel-ubuntu16.04
 
-ENV DEBIAN_FRONTEND noninteractive
-ARG GITHUB_ACCOUNT="singnet"
-ARG GITHUB_BRANCH="master"
-ARG GITHUB_REPO="nlp-services"
-ARG SNETD_VERSION="v1.0.0"
+ARG git_owner="singnet"
+ARG git_repo="nlp-services"
+ARG git_branch="master"
 
-ENV SERVICE_FOLDER="text-summarization"
+ENV SINGNET_DIR=/opt/singnet
+ENV SERVICE_NAME=text-summarization
+
+RUN mkdir -p ${SINGNET_DIR}
+
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y locales software-properties-common git
 RUN add-apt-repository -y ppa:deadsnakes/ppa && \
@@ -19,25 +22,25 @@ RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     update-locale LANG=en_US.UTF-8
 ENV LANG en_US.UTF-8
 
+# Install snet daemon
+RUN SNETD_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")'` && \
+    cd /tmp && \
+    wget https://github.com/singnet/snet-daemon/releases/download/${SNETD_VERSION}/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
+    tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
+    mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd
+
 ADD https://raw.githubusercontent.com/OpenNMT/OpenNMT-py/master/requirements.txt /tmp/opennmt_requirements.txt
 RUN apt-get install -y git default-jre && pip3.6 install -r /tmp/opennmt_requirements.txt && pip3.6 install numpy -I
 
-ADD https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPO}/raw/${GITHUB_BRANCH}/${SERVICE_FOLDER}/requirements.txt /tmp/service_requirements.txt
-RUN pip3.6 install -r /tmp/service_requirements.txt
+RUN cd ${SINGNET_DIR} && \
+    git clone -b ${git_branch} https://github.com/${git_owner}/${git_repo}.git
 
-ADD https://api.github.com/repos/${GITHUB_ACCOUNT}/${GITHUB_REPO}/compare/${GITHUB_BRANCH}...HEAD /dev/null
-RUN git clone -b ${GITHUB_BRANCH} https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPO}.git && \
-    cd ${GITHUB_REPO}/${SERVICE_FOLDER} && \
-    python3.6 ../fetch_models.py && \
+RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
+    pip3.6 install -r requirements.txt && \
     git submodule update --init -- opennmt-py && \
-    cd .. && mv ${SERVICE_FOLDER}/ /${SERVICE_FOLDER} && \
-    rm -rf /${GITHUB_REPO}
+    sh buildproto.sh
 
-ADD https://github.com/singnet/snet-daemon/releases/download/${SNETD_VERSION}/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz /tmp/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz
-RUN cd /tmp && \
-    tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
-    mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd && \
-    rm -rf snet-daemon-${SNETD_VERSION}-linux-amd64*
+RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
+    python3.6 ../fetch_models.py
 
-WORKDIR /${SERVICE_FOLDER}
-RUN bash buildproto.sh
+WORKDIR ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME}

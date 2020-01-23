@@ -6,11 +6,11 @@ import argparse
 ROOT_DIR = os.path.join(os.path.dirname(__file__), '..')
 sys.path.insert(0, os.path.join(ROOT_DIR, 'opennmt-py'))
 
-import torch
 from onmt.translate.translator import build_translator
 import onmt.opts
 
 CORENLP_PATH = os.path.join(ROOT_DIR, "models/stanford-corenlp-full-2018-01-31/stanford-corenlp-3.9.0.jar")
+
 
 def stanford_ptb_tokenizer(text):
     os.environ["CLASSPATH"] = CORENLP_PATH
@@ -56,14 +56,13 @@ def summary(tokenized):
         'beta': 5,
         'length_penalty': 'wu',
         'alpha': 0.9,
-        'verbose': True, 
         'block_ngram_repeat': 3,
         'ignore_when_blocking': "." "</t>" "<t>",
         'replace_unk': True,
-        'gpu': 0
+        'gpu': 0,
+        'model': os.path.join(ROOT_DIR, 'models', summary_model),
+        'src': "dummy_src"
     }
-    opt['model'] = os.path.join(ROOT_DIR, 'models', summary_model)
-    opt['src'] = "dummy_src"
 
     for (k, v) in opt.items():
         if type(v) == bool:
@@ -76,9 +75,6 @@ def summary(tokenized):
     sys.argv = prec_argv
 
     translator = build_translator(opt, report_score=False, out_file=open(os.devnull, "w"))
-
-    scores = []
-    predictions = []
 
     scores, predictions = translator.translate(src_data_iter=[tokenized], batch_size=1)
 
