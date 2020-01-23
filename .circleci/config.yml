@@ -187,7 +187,7 @@ jobs:
     working_directory: ~/singnet
     environment:
       SERVICE_NAME: cntk-language-understanding
-      SERVICE_DIR: .
+      SERVICE_DIR: cntk-language-understanding
       CERTS_DIR: singnet/.certs
       SERVICE_RUN_COMMAND: bash -c "git pull;python run_service.py --ssl --metering"
       SERVICE_TEST_COMMAND: bash -c "sleep 10;python test_service.py auto"
@@ -213,7 +213,7 @@ jobs:
     working_directory: ~/singnet
     environment:
       SERVICE_NAME: opennmt-romance-translator
-      SERVICE_DIR: .
+      SERVICE_DIR: opennmt-romance-translator
       CERTS_DIR: singnet/.certs
       SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
       SERVICE_TEST_COMMAND: bash -c "sleep 10;python3 test_service.py auto"
