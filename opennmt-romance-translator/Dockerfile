@@ -76,12 +76,14 @@ RUN git clone https://github.com/OpenNMT/lua-sentencepiece.git /root/lua-sentenc
 FROM nvidia/cuda:8.0-runtime-ubuntu16.04
 MAINTAINER OpenNMT <http://opennmt.net/>
 
-ARG GITHUB_ACCOUNT="singnet"
-ARG GITHUB_BRANCH="master"
-ARG GITHUB_REPO="nlp-services"
-ARG SNETD_VERSION="v0.1.8"
+ARG git_owner="singnet"
+ARG git_repo="nlp-services"
+ARG git_branch="master"
 
-ENV SERVICE_FOLDER="opennmt-romance-translator"
+ENV SINGNET_DIR=/opt/singnet
+ENV SERVICE_NAME=opennmt-romance-translator
+
+RUN mkdir -p ${SINGNET_DIR}
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -90,6 +92,7 @@ RUN apt-get update && \
         libzmq1 \
         nano \
         wget \
+        curl \
         git \
         python3-pip \
         python3 && \
@@ -111,24 +114,24 @@ ENV THC_CACHING_ALLOCATOR=0
 ENV ONMT_DIR=/root/opennmt
 COPY . $ONMT_DIR
 
-ADD https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPO}/raw/${GITHUB_BRANCH}/${SERVICE_FOLDER}/requirements.txt /tmp/service_requirements.txt
-RUN pip3 install -r /tmp/service_requirements.txt
+# Install snet daemon
+RUN SNETD_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")'` && \
+    cd /tmp && \
+    wget https://github.com/singnet/snet-daemon/releases/download/${SNETD_VERSION}/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
+    tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
+    mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd
 
-ADD https://api.github.com/repos/${GITHUB_ACCOUNT}/${GITHUB_REPO}/compare/${GITHUB_BRANCH}...HEAD /dev/null
-RUN git clone -b ${GITHUB_BRANCH} https://github.com/${GITHUB_ACCOUNT}/${GITHUB_REPO}.git && \
-    mv /${GITHUB_REPO}/${SERVICE_FOLDER}/ /${SERVICE_FOLDER} && \
-    rm -rf /${GITHUB_REPO}
+RUN cd ${SINGNET_DIR} && \
+    git clone -b ${git_branch} https://github.com/${git_owner}/${git_repo}.git
 
-RUN cd /${SERVICE_FOLDER}/utils && \
+RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
+    pip3 install -r requirements.txt && \
+    sh buildproto.sh
+
+RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME}/utils && \
     bash prepare_data.sh ./data
 
-RUN cd /${SERVICE_FOLDER} && \
+RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
     bash buildproto.sh
 
-ADD https://github.com/singnet/snet-daemon/releases/download/${SNETD_VERSION}/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz /tmp/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz
-RUN cd /tmp && \
-    tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
-    mv snet-daemon-${SNETD_VERSION}-linux-amd64/snetd /usr/bin/snetd && \
-    rm -rf snet-daemon-${SNETD_VERSION}-linux-amd64*
-
-WORKDIR /${SERVICE_FOLDER}
+WORKDIR ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME}

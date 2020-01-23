@@ -1,136 +1,8 @@
 commands:
-  build_and_test_service:
-    description: "Build and test services"
+  build_and_deploy:
+    description: "Build/Test and Deploy SingularityNET Services"
     parameters:
-      service_name:
-        type: string
-        default: ""
-      org:
-        type: string
-        default: ""
-      docker_org:
-        type: string
-        default: ""
-      run_test:
-        type: boolean
-        default: true
-      use_cache:
-        type: boolean
-        default: true
-      service_start_command:
-        type: string
-        default: ""
-      daemon_config_path:
-        type: string
-        default: ""
-      daemon_config_file:
-        type: string
-        default: ""
-      service_test_command:
-        type: string
-        default: ""
-    steps:
-      - run:
-          name: Container setup
-          command: |
-            pyenv global 3.6.5
-            pip install --upgrade pip
-            pip install requests tqdm
-            sudo mkdir -p << parameters.service_name >>/caches/models
-            sudo chown -R circleci:circleci << parameters.service_name >>
-      - restore_cache:
-          keys:
-            - service-cache-v1-{{ .Branch }}-{{ checksum "<< parameters.service_name >>/Dockerfile" }}
-            - service-cache-v1-{{ .Branch }}-
-            - service-cache-v1-
-      - run:
-          name: Fetch models
-          command: |
-            cd << parameters.service_name >>
-            python ../fetch_models.py
-      - when:
-          condition: << parameters.use_cache >>
-          steps:
-            - run:
-                name: Load docker image cache.
-                command: |
-                  docker load -i << parameters.service_name >>/caches/docker_image.tar || true
-      - run:
-          name: Build application Docker image
-          command: |
-            echo Github Account: ${CIRCLE_PROJECT_USERNAME}
-            cd << parameters.service_name >>
-            export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
-            if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
-            	echo "PRODUCTION DEPLOYMENT"
-            	docker build --cache-from=<< parameters.docker_org >>/<< parameters.service_name >>:latest \
-            	  -t << parameters.docker_org >>/<< parameters.service_name >>:latest \
-            	  --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} \
-                  --build-arg GITHUB_BRANCH=${CIRCLE_BRANCH} \
-            	  --build-arg SNETD_VERSION=${SNETD_VERSION} .
-            else
-            	echo "DEVELOPMENT DEPLOYMENT"
-            	docker build --cache-from=$DEV_DOCKER_ORG/<< parameters.service_name >>:latest \
-            	  -t $DEV_DOCKER_ORG/<< parameters.service_name >>:latest \
-            	  --build-arg GITHUB_ACCOUNT=${CIRCLE_PROJECT_USERNAME} \
-                  --build-arg GITHUB_BRANCH=${CIRCLE_BRANCH} \
-            	  --build-arg SNETD_VERSION=${SNETD_VERSION} .
-            fi
-      - when:
-          condition: << parameters.run_test >>
-          steps:
-            - run:
-                name: Run tests
-                command: |
-                  export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
-                  if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
-                      echo "PRODUCTION DEPLOYMENT"
-                      docker run \
-                        --name << parameters.service_name >> \
-                        -idt << parameters.docker_org >>/<< parameters.service_name >>:latest \
-                        << parameters.service_start_command >> << parameters.daemon_config_path >><< parameters.daemon_config_file >>
-                  else
-                  	echo "DEVELOPMENT DEPLOYMENT"
-                      docker run \
-                        --name << parameters.service_name >> \
-                        -idt $DEV_DOCKER_ORG/<< parameters.service_name >>:latest \
-                        << parameters.service_start_command >> << parameters.daemon_config_path >><< parameters.daemon_config_file >>
-                  fi
-                  docker exec \
-                    -it << parameters.service_name >> \
-                    << parameters.service_test_command >>
-      - run:
-          name: Save docker image
-          no_output_timeout: 40m
-          command: |
-            pwd
-            mkdir -p << parameters.service_name >>/caches
-            export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
-            if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
-                echo "PRODUCTION DEPLOYMENT"
-                docker save -o << parameters.service_name >>/caches/docker_image.tar << parameters.docker_org >>/<< parameters.service_name >>:latest
-                ls -sh << parameters.service_name >>/caches
-            else
-            	echo "DEVELOPMENT DEPLOYMENT"
-                docker save -o << parameters.service_name >>/caches/docker_image.tar $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
-                ls -sh << parameters.service_name >>/caches
-            fi
-      - save_cache:
-          key: service-cache-v1-{{ .Branch }}-{{ checksum "<< parameters.service_name >>/Dockerfile" }}
-          paths:
-            - << parameters.service_name >>/caches/docker_image.tar
-            - << parameters.service_name >>/caches/models
-
-  deploy_service:
-    description: "Deploy services"
-    parameters:
-      network:
-        type: string
-        default: ""
       domain:
-        type: string
-        default: ""
-      host_address:
         type: string
         default: ""
       ssh_user_env_var:
@@ -139,549 +11,338 @@ commands:
       ssh_host_env_var:
         type: string
         default: ""
-      ssl_cert_path_env_var:
+      infura_api_key:
         type: string
         default: ""
-      ssl_key_path_env_var:
+      daemon_pk:
         type: string
         default: ""
-      start_with_ssl:
+      docker_nvidia:
         type: boolean
         default: false
-      service_name:
+      docker_image_name:
         type: string
         default: ""
-      org:
+      docker_container_name:
         type: string
         default: ""
-      docker_org:
+      docker_etcd_host_dir:
         type: string
         default: ""
-      container_name:
+      docker_etcd_container_dir:
         type: string
         default: ""
-      container_name_backup:
+      docker_mount_volumes:
+        type: boolean
+        default: false
+      docker_mount_src:
         type: string
         default: ""
-      snetd_ports:
-        type: string
-        default: ""
-      service_start_command:
-        type: string
-        default: ""
-      daemon_config_path:
-        type: string
-        default: ""
-      daemon_config_file:
+      docker_mount_dest:
         type: string
         default: ""
     steps:
       - run:
-          name: Deploying network environment
+          name: Setting Up
           command: |
-            echo Deploying on << parameters.network >>
+            export SSH_USER=<< parameters.ssh_user_env_var >>
+            export SSH_HOST=<< parameters.ssh_host_env_var >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}"/"${CIRCLE_BRANCH}" = "singnet/master" ] && echo "true" || echo "false")
+            export PROD_TAG=$([ "${DOCKER_DEPLOY}" = "true" ] && echo "PROD_" || echo "")
+            echo "Setting Up..."
+            echo $(.circleci/check_md5.sh) >> docker_rebuild
+            echo "FILES_CHANGED=$(cat docker_rebuild)"
+
       - run:
-          name: Load docker image cache
+          name: Removing old Docker Container (Previous Builds)
           command: |
-            docker load -i << parameters.service_name >>/caches/docker_image.tar
-      - run:
-          name: Deploy docker image
-          command: |
-            export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
-            if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
-            	echo "PRODUCTION DEPLOYMENT"
-              echo $DOCKER_HUB_PWD | docker login -u $DOCKER_HUB_USER_ID --password-stdin
-              docker tag $DOCKER_ORG/<< parameters.service_name >>:latest $DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
-              docker push << parameters.docker_org >>/<< parameters.service_name >>:$CIRCLE_SHA1
-              docker push << parameters.docker_org >>/<< parameters.service_name >>:latest
-            else
-            	echo "DEVELOPMENT DEPLOYMENT"
-              echo $DEV_DOCKER_HUB_PWD | docker login -u $DEV_DOCKER_HUB_USER_ID --password-stdin
-              docker tag $DEV_DOCKER_ORG/<< parameters.service_name >>:latest $DEV_DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
-              docker push $DEV_DOCKER_ORG/<< parameters.service_name >>:$CIRCLE_SHA1
-              docker push $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
-            fi
-      - run:
-          name: Deploy service over SSH
-          command: |
-            export DEPLOY_ENVIRONMENT=$([ "${CIRCLE_PROJECT_USERNAME}" = "singnet" ] && echo "true" || echo "false")
-            if [ "$DEPLOY_ENVIRONMENT" = "true" ]; then
-              echo "PRODUCTION DEPLOYMENT"
-              ssh -o "StrictHostKeyChecking no" << parameters.ssh_user_env_var >>@<< parameters.ssh_host_env_var >> \<<-EOF
-            echo $DOCKER_HUB_PWD | docker login -u $DOCKER_HUB_USER_ID --password-stdin
-            docker pull << parameters.docker_org >>/<< parameters.service_name >>:latest
-            docker stop << parameters.container_name >> || true
-            docker rename << parameters.container_name >> << parameters.container_name_backup >> || true
-            docker run --runtime=nvidia --name << parameters.container_name >> --restart unless-stopped << parameters.snetd_ports >> \
-            -v ${CERTS_FOLDER}:${CERTS_FOLDER} \
-            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/etcd:/<< parameters.service_name >>/etcd \
-            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/storage-data-dir-1.etcd:/<< parameters.service_name >>/storage-data-dir-1.etcd \
-            -di << parameters.docker_org >>/<< parameters.service_name >>:latest << parameters.service_start_command >> << parameters.daemon_config_path >><< parameters.daemon_config_file >>
-            if [[ << parameters.start_with_ssl >> = true ]]; then
-              echo Starting with ssl
-              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"ssl_cert\": \"${SSL_PATH}/<<parameters.domain>>/fullchain.pem\", \"ssl_key\": \"${SSL_PATH}/<<parameters.domain>>/privkey.pem\"' << parameters.daemon_config_file >>
-              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"pvt_key_for_metering\": \"${PVT_KEY_FOR_METERING}\"' << parameters.daemon_config_file >>
-              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"payent_channel_cert_path\": \"${SSL_PATH}/<<parameters.domain>>/client.pem\", \"payent_channel_ca_path\": \"${SSL_PATH}/<<parameters.domain>>/ca.pem\", \"payent_channel_key_path\": \"${SSL_PATH}/<<parameters.domain>>/client-key.pem\"' << parameters.daemon_config_file >>
-              docker restart << parameters.container_name >>
-            fi
-            docker rm << parameters.container_name_backup >> || true
+            export SSH_USER=<< parameters.ssh_user_env_var >>
+            export SSH_HOST=<< parameters.ssh_host_env_var >>
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}"/"${CIRCLE_BRANCH}" = "singnet/master" ] && echo "true" || echo "false")
+            export PROD_TAG=$([ "${DOCKER_DEPLOY}" = "true" ] && echo "PROD_" || echo "")
+            echo "Removing old Container (from previous builds)..."
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+              docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
+              docker rm ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
             EOF
-            else
-              echo "DEVELOPMENT DEPLOYMENT"
-              ssh -o "StrictHostKeyChecking no" << parameters.ssh_user_env_var >>@<< parameters.ssh_host_env_var >> \<<-EOF
-            echo $DEV_DOCKER_HUB_PWD | docker login -u $DEV_DOCKER_HUB_USER_ID --password-stdin
-            docker pull $DEV_DOCKER_ORG/<< parameters.service_name >>:latest
-            docker stop << parameters.container_name >> || true
-            docker rename << parameters.container_name >> << parameters.container_name_backup >> || true
-            docker run --runtime=nvidia --name << parameters.container_name >> --restart unless-stopped << parameters.snetd_ports >> \
-            -v ${CERTS_FOLDER}:${CERTS_FOLDER} \
-            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/etcd:/<< parameters.service_name >>/etcd \
-            -v ~/${CIRCLE_PROJECT_REPONAME}/<< parameters.service_name >>/storage-data-dir-1.etcd:/<< parameters.service_name >>/storage-data-dir-1.etcd \
-            -di $DEV_DOCKER_ORG/<< parameters.service_name >>:latest << parameters.service_start_command >> << parameters.daemon_config_path >><< parameters.daemon_config_file >>
-            if [[ << parameters.start_with_ssl >> = true ]]; then
-              echo Starting with ssl
-              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"ssl_cert\": \"${SSL_PATH}/<<parameters.domain>>/fullchain.pem\", \"ssl_key\": \"${SSL_PATH}/<<parameters.domain>>/privkey.pem\"' << parameters.daemon_config_file >>
-              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"pvt_key_for_metering\": \"${PVT_KEY_FOR_METERING}\"' << parameters.daemon_config_file >>
-              docker exec -w /<< parameters.service_name >>/<< parameters.daemon_config_path >> << parameters.container_name >> sed -i '\$i \,\"payent_channel_cert_path\": \"${SSL_PATH}/<<parameters.domain>>/client.pem\", \"payent_channel_ca_path\": \"${SSL_PATH}/<<parameters.domain>>/ca.pem\", \"payent_channel_key_path\": \"${SSL_PATH}/<<parameters.domain>>/client-key.pem\"' << parameters.daemon_config_file >>
-              docker restart << parameters.container_name >>
-            fi
-            docker rm << parameters.container_name_backup >> || true
+
+      - run:
+          name: Building
+          command: |
+            echo "=========================================== Build Configs ==========================================="
+            export SSH_USER=<< parameters.ssh_user_env_var >>
+            export SSH_HOST=<< parameters.ssh_host_env_var >>
+            export DOCKER_NVIDIA=<< parameters.docker_nvidia >>
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            export DOCKER_MOUNT_VOLUMES=<< parameters.docker_mount_volumes >>
+            export DOCKER_MOUNT_SRC=<< parameters.docker_mount_src >>
+            export DOCKER_MOUNT_DEST=<< parameters.docker_mount_dest >>
+            export ETCD_HOST_DIR=<< parameters.docker_etcd_host_dir >>
+            export ETCD_CONTAINER_DIR=<< parameters.docker_etcd_container_dir >>
+            export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}"/"${CIRCLE_BRANCH}" = "singnet/master" ] && echo "true" || echo "false")
+            export PROD_TAG=$([ "${DOCKER_DEPLOY}" = "true" ] && echo "PROD_" || echo "")
+            echo            git_user  : ${CIRCLE_PROJECT_USERNAME}
+            echo            git_repo  : ${CIRCLE_PROJECT_REPONAME}
+            echo            git_branch: ${CIRCLE_BRANCH}
+            echo SSH_USER             : ${SSH_USER}
+            echo SSH_HOST             : ${SSH_HOST}
+            echo DOCKER_NOCACHE       : ${DOCKER_NOCACHE}
+            echo DOCKER_NVIDIA        : ${DOCKER_NVIDIA}
+            echo DOCKER_IMAGE_NAME    : ${DOCKER_IMAGE_NAME}
+            echo DOCKER_CONTAINER_NAME: ${DOCKER_CONTAINER_NAME}
+            echo DOCKER_MOUNT_VOLUMES : ${DOCKER_MOUNT_VOLUMES}
+            echo DOCKER_MOUNT_SRC     : ${DOCKER_MOUNT_SRC}
+            echo DOCKER_MOUNT_DEST    : ${DOCKER_MOUNT_DEST}
+            echo "====================================================================================================="
+            DOCKER_IMAGE_EXISTS=`ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} docker images -q ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME}`
+            FILES_CHANGED=`cat docker_rebuild`
+            echo DOCKER_IMAGE_EXISTS=${DOCKER_IMAGE_EXISTS}
+            echo FILES_CHANGED=${FILES_CHANGED}
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+              if [ "$DOCKER_IMAGE_EXISTS" = "" ] || [ "$FILES_CHANGED" != 0 ]; then
+                echo "Building..."
+                docker build \
+                  --build-arg git_owner=${CIRCLE_PROJECT_USERNAME} \
+                  --build-arg git_repo=${CIRCLE_PROJECT_REPONAME} \
+                  --build-arg git_branch=${CIRCLE_BRANCH} \
+                  $([ "${DOCKER_NOCACHE}" = "true" ] && echo "--no-cache" || echo "") \
+                  -t ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} https://raw.githubusercontent.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}/${SERVICE_DIR}/Dockerfile
+              else
+                echo "Not Building..."
+              fi
             EOF
-            fi
+
+      - run:
+          name: Running new Docker Container
+          command: |
+            echo "============================================ Run Configs ============================================"
+            export SSH_USER=<< parameters.ssh_user_env_var >>
+            export SSH_HOST=<< parameters.ssh_host_env_var >>
+            export INFURA_API_KEY=<< parameters.infura_api_key >>
+            export PVT_KEY_FOR_METERING=<< parameters.daemon_pk >>
+            export DOCKER_NVIDIA=<< parameters.docker_nvidia >>
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            export DOCKER_MOUNT_VOLUMES=<< parameters.docker_mount_volumes >>
+            export DOCKER_MOUNT_SRC=<< parameters.docker_mount_src >>
+            export DOCKER_MOUNT_DEST=<< parameters.docker_mount_dest >>
+            export ETCD_HOST_DIR=<< parameters.docker_etcd_host_dir >>
+            export ETCD_CONTAINER_DIR=<< parameters.docker_etcd_container_dir >>
+            export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}"/"${CIRCLE_BRANCH}" = "singnet/master" ] && echo "true" || echo "false")
+            export PROD_TAG=$([ "${DOCKER_DEPLOY}" = "true" ] && echo "PROD_" || echo "")
+            echo            git_user  : ${CIRCLE_PROJECT_USERNAME}
+            echo            git_repo  : ${CIRCLE_PROJECT_REPONAME}
+            echo            git_branch: ${CIRCLE_BRANCH}
+            echo SSH_USER             : ${SSH_USER}
+            echo SSH_HOST             : ${SSH_HOST}
+            echo DOCKER_NOCACHE       : ${DOCKER_NOCACHE}
+            echo DOCKER_NVIDIA        : ${DOCKER_NVIDIA}
+            echo DOCKER_IMAGE_NAME    : ${DOCKER_IMAGE_NAME}
+            echo DOCKER_CONTAINER_NAME: ${DOCKER_CONTAINER_NAME}
+            echo DOCKER_MOUNT_VOLUMES : ${DOCKER_MOUNT_VOLUMES}
+            echo DOCKER_MOUNT_SRC     : ${DOCKER_MOUNT_SRC}
+            echo DOCKER_MOUNT_DEST    : ${DOCKER_MOUNT_DEST}
+            echo "====================================================================================================="
+            echo "Running new Container..."
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<<-EOF
+                  docker stop ${PROD_TAG}${DOCKER_CONTAINER_NAME} || true
+                  docker rename ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${PROD_TAG}${DOCKER_CONTAINER_NAME}_old || true
+                  docker run \
+                  $([ "${DOCKER_NVIDIA}" = "true" ] && echo "--runtime=nvidia" || echo "") \
+                  --name ${PROD_TAG}${DOCKER_CONTAINER_NAME} \
+                  --restart unless-stopped \
+                  -e INFURA_API_KEY=${INFURA_API_KEY} \
+                  -e PVT_KEY_FOR_METERING=${PVT_KEY_FOR_METERING} \
+                  $([ "${DOCKER_DEPLOY}" = "true" ] && echo "-p ${SNETD_PORT_MAINNET}:${SNETD_PORT_MAINNET}" || echo "") \
+                  $([ "${DOCKER_DEPLOY}" = "true" ] && echo "-p ${SNETD_PORT_ROPSTEN}:${SNETD_PORT_ROPSTEN}" || echo "") \
+                  -v ~/${CERTS_DIR}:/opt/singnet/.certs \
+                  $([ "${DOCKER_DEPLOY}" = "true" ] && echo "-v ~/${ETCD_HOST_DIR}:/${ETCD_CONTAINER_DIR}" || echo "") \
+                  $([ "${DOCKER_MOUNT_VOLUMES}" = "true" ] && echo "-v ${DOCKER_MOUNT_SRC}:${DOCKER_MOUNT_DEST}" || echo "") \
+                  -tdi ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} ${SERVICE_RUN_COMMAND}
+            EOF
+
+      - run:
+          name: Testing local
+          no_output_timeout: 60m
+          command: |
+            export SSH_USER=<< parameters.ssh_user_env_var >>
+            export SSH_HOST=<< parameters.ssh_host_env_var >>
+            export DOCKER_IMAGE_NAME=<< parameters.docker_image_name >>
+            export DOCKER_CONTAINER_NAME=<< parameters.docker_container_name >>
+            export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}"/"${CIRCLE_BRANCH}" = "singnet/master" ] && echo "true" || echo "false")
+            export PROD_TAG=$([ "${DOCKER_DEPLOY}" = "true" ] && echo "PROD_" || echo "")
+            ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
+              docker exec -i ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${SERVICE_TEST_COMMAND}
+            EOF
+
 version: 2.1
-executors:
-  singnet-executor:
-    machine:
-      image: circleci/classic:201808-01
-    working_directory: ~/singnet
-
 jobs:
-  build-translation-container:
-    executor: singnet-executor
-    environment:
-      SERVICE_NAME: translation
-    steps:
-      - run:
-          name: Starting container building
-          command: echo container building
-      - when:
-          condition: false
-          steps:
-            - checkout
-            - build_and_test_service:
-                service_name: translation
-                org: singnet
-                docker_org: singularitynet
-                run_test: false
-            - persist_to_workspace:
-                root: ~/singnet
-                paths: translation
-
-  deploy-translation:
-    executor: singnet-executor
-    environment:
-      SERVICE_NAME: translation
-    steps:
-      - attach_workspace:
-          at: ~/singnet
-      - when:
-          condition: false
-          steps:
-            - deploy_service:
-                network: mainnet
-                domain: ${MAINNET_SSH_HOST_TRANSLATION}
-                ssh_user_env_var: ${MAINNET_SSH_USER_TRANSLATION}
-                ssh_host_env_var: ${MAINNET_SSH_HOST_TRANSLATION}
-                org: singnet
-                docker_org: singularitynet
-                container_name: translation-mainnet
-                service_name: translation
-                start_with_ssl: true
-                snetd_ports: -p 6408:6408
-                service_start_command: python3.6 run_service.py --daemon-config-path
-                daemon_config_path:
-                daemon_config_file: snetd.mainnet.config.json
-                container_name_backup: translation-mainnet-temp-bk
-      - when:
-          condition: false
-          steps:
-            - deploy_service:
-                network: testnet
-                domain: ${TESTNET_SSH_HOST_TRANSLATION}
-                ssh_user_env_var: ${TESTNET_SSH_USER_TRANSLATION}
-                ssh_host_env_var: ${TESTNET_SSH_HOST_TRANSLATION}
-                org: singnet
-                docker_org: singularitynet
-                container_name: translation-testnet
-                service_name: translation
-                start_with_ssl: true
-                snetd_ports: -p 6308:6308
-                service_start_command: python3.6 run_service.py --daemon-config-path
-                daemon_config_path:
-                daemon_config_file: snetd.testnet.config.json
-                container_name_backup: translation-testnet-temp-bk
-
-  build-summarization-container:
-    executor: singnet-executor
-    environment:
-      SERVICE_NAME: text-summarization
-    steps:
-      - run:
-          name: Starting container building
-          command: echo container building
-      - when:
-          condition: false
-          steps:
-            - checkout
-            - build_and_test_service:
-                service_name: text-summarization
-                org: singnet
-                docker_org: singularitynet
-                run_test: false
-            - persist_to_workspace:
-                root: ~/singnet
-                paths: text-summarization
-
-  deploy-summarization:
-    executor: singnet-executor
-    environment:
-      SERVICE_NAME: text-summarization
-    steps:
-      - attach_workspace:
-          at: ~/singnet
-      - when:
-          condition: false
-          steps:
-            - deploy_service:
-                network: mainnet
-                domain: ${MAINNET_SSH_HOST_TEXT_SUMMARIZATION}
-                ssh_user_env_var: ${MAINNET_SSH_USER_TEXT_SUMMARIZATION}
-                ssh_host_env_var: ${MAINNET_SSH_HOST_TEXT_SUMMARIZATION}
-                org: singnet
-                docker_org: singularitynet
-                container_name: text-summarization-mainnet
-                service_name: text-summarization
-                start_with_ssl: true
-                snetd_ports: -p 6407:6407
-                service_start_command: python3.6 run_service.py --daemon-config-path
-                daemon_config_path:
-                daemon_config_file: snetd.mainnet.config.json
-                container_name_backup: text-summarization-mainnet-temp-bk
-      - when:
-          condition: false
-          steps:
-            - deploy_service:
-                network: testnet
-                domain: ${TESTNET_SSH_HOST_TEXT_SUMMARIZATION}
-                ssh_user_env_var: ${TESTNET_SSH_USER_TEXT_SUMMARIZATION}
-                ssh_host_env_var: ${TESTNET_SSH_HOST_TEXT_SUMMARIZATION}
-                org: singnet
-                docker_org: singularitynet
-                container_name: text-summarization-testnet
-                service_name: text-summarization
-                start_with_ssl: true
-                snetd_ports: -p 6307:6307
-                service_start_command: python3.6 run_service.py --daemon-config-path
-                daemon_config_path:
-                daemon_config_file: snetd.testnet.config.json
-                container_name_backup: text-summarization-testnet-temp-bk
-
-  build-sentiment-analysis-container:
-    executor: singnet-executor
-    environment:
-      SERVICE_NAME: sentiment-analysis
-    steps:
-      - run:
-          name: Starting container building
-          command: echo container building
-      - when:
-          condition: true
-          steps:
-            - checkout
-            - build_and_test_service:
-                service_name: sentiment-analysis
-                org: singnet
-                docker_org: singularitynet
-                service_test_command: bash -c 'cd tests;pytest'
-            - persist_to_workspace:
-                root: ~/singnet
-                paths: sentiment-analysis
-
-  deploy-sentiment-analysis:
-    executor: singnet-executor
-    environment:
-      SERVICE_NAME: sentiment-analysis
-    steps:
-      - attach_workspace:
-          at: ~/singnet
-      - when:
-          condition: true
-          steps:
-            - deploy_service:
-                network: mainnet
-                domain: ${MAINNET_SSH_HOST_SENTIMENT_ANALYSIS}
-                ssh_user_env_var: ${MAINNET_SSH_USER_SENTIMENT_ANALYSIS}
-                ssh_host_env_var: ${MAINNET_SSH_HOST_SENTIMENT_ANALYSIS}
-                org: singnet
-                docker_org: singularitynet
-                container_name: sentiment-analysis-mainnet
-                service_name: sentiment-analysis
-                start_with_ssl: true
-                snetd_ports: -p 7046:7046
-                service_start_command: python3 run_service.py --daemon-config-path
-                daemon_config_path: config/
-                daemon_config_file: snetd.mainnet.config.json
-                container_name_backup: sentiment-analysis-mainnet-temp-bk
-      - when:
-          condition: true
-          steps:
-            - deploy_service:
-                network: testnet
-                domain: ${TESTNET_SSH_HOST_SENTIMENT_ANALYSIS}
-                ssh_user_env_var: ${TESTNET_SSH_USER_SENTIMENT_ANALYSIS}
-                ssh_host_env_var: ${TESTNET_SSH_HOST_SENTIMENT_ANALYSIS}
-                org: singnet
-                docker_org: singularitynet
-                container_name: sentiment-analysis-testnet
-                service_name: sentiment-analysis
-                start_with_ssl: true
-                snetd_ports: -p 7013:7013
-                service_start_command: python3 run_service.py --daemon-config-path
-                daemon_config_path: config/
-                daemon_config_file: snetd.testnet.config.json
-                container_name_backup: sentiment-analysis-testnet-temp-bk
-
-  build-named-entity-recognition-container:
-    executor: singnet-executor
-    environment:
-      SERVICE_NAME: named-entity-recognition
-      CACHE_MODELS_PATH: named-entity-recognition/caches/models
-    steps:
-      - run:
-          name: Starting container building
-          command: echo container building
-      - when:
-          condition: true
-          steps:
-            - checkout
-            - build_and_test_service:
-                service_name: named-entity-recognition
-                org: singnet
-                docker_org: singularitynet
-                service_test_command: bash -c 'cd tests;pytest'
-            - persist_to_workspace:
-                root: ~/singnet
-                paths: named-entity-recognition
-
-  deploy-named-entity-recognition:
-    executor: singnet-executor
-    environment:
-      SERVICE_NAME: named-entity-recognition
-    steps:
-      - attach_workspace:
-          at: ~/singnet
-      - when:
-          condition: true
-          steps:
-            - deploy_service:
-                network: mainnet
-                domain: ${MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
-                ssh_user_env_var: ${MAINNET_SSH_USER_NAMED_ENTITY_RECOGNITION}
-                ssh_host_env_var: ${MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
-                org: singnet
-                docker_org: singularitynet
-                container_name: named-entity-recognition-mainnet
-                service_name: named-entity-recognition
-                start_with_ssl: true
-                snetd_ports: -p 7047:7047
-                service_start_command: python3 run_service.py --daemon-config-path
-                daemon_config_path: config/
-                daemon_config_file: snetd.mainnet.config.json
-                container_name_backup: named-entity-recognition-mainnet-temp-bk
-      - when:
-          condition: true
-          steps:
-            - deploy_service:
-                network: testnet
-                domain: ${TESTNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
-                ssh_user_env_var: ${TESTNET_SSH_USER_NAMED_ENTITY_RECOGNITION}
-                ssh_host_env_var: ${TESTNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
-                org: singnet
-                docker_org: singularitynet
-                container_name: named-entity-recognition-testnet
-                service_name: named-entity-recognition
-                start_with_ssl: true
-                snetd_ports: -p 7014:7014
-                service_start_command: python3 run_service.py --daemon-config-path
-                daemon_config_path: config/
-                daemon_config_file: snetd.testnet.config.json
-                container_name_backup: named-entity-recognition-testnet-temp-bk
-
-  build-cntk-language-understanding-container:
-    executor: singnet-executor
+  cntk-language-understanding:
+    docker:
+    - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
     environment:
       SERVICE_NAME: cntk-language-understanding
-      CACHE_MODELS_PATH: cntk-language-understanding/caches/models
+      SERVICE_DIR: cntk-language-understanding
+      CERTS_DIR: singnet/.certs
+      SERVICE_RUN_COMMAND: bash -c "source '/cntk/activate-cntk';git pull;python run_service.py --ssl --metering"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;source '/cntk/activate-cntk';python test_service.py auto"
+      SNETD_PORT_MAINNET: 7048
+      SNETD_PORT_ROPSTEN: 7068
     steps:
-      - run:
-          name: Starting container building
-          command: echo container building
-      - when:
-          condition: false
-          steps:
-            - checkout
-            - build_and_test_service:
-                service_name: cntk-language-understanding
-                org: singnet
-                docker_org: singularitynet
-                service_start_command: /root/anaconda3/envs/cntk-py35/bin/python run_service.py --daemon-config-path
-                daemon_config_path: config/
-                daemon_config_file: snetd.testnet.config.json
-                service_test_command: bash -c 'sleep 10;/root/anaconda3/envs/cntk-py35/bin/python test_service.py auto'
-            - persist_to_workspace:
-                root: ~/singnet
-                paths: cntk-language-understanding
+      - checkout
+      - build_and_deploy:
+          domain: ${DOMAIN_CNTK_LANGUAGE_UNDERSTANDING}
+          ssh_user_env_var: ${MAINNET_SSH_USER_CNTK_LANGUAGE_UDERSTANDING}
+          ssh_host_env_var: ${MAINNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
+          infura_api_key: ${INFURA_API_KEY}
+          daemon_pk: ${PK_CNTK_LANGUAGE_UNDERSTANDING}
+          docker_nvidia: true
+          docker_image_name: cntk_language_understanding
+          docker_container_name: CNTK_LANGUAGE_UNDERSTANDING
+          docker_etcd_host_dir: singnet/etcd/${SERVICE_NAME}/
+          docker_etcd_container_dir: opt/singnet/${CIRCLE_PROJECT_REPONAME}/${SERVICE_DIR}/etcd/
 
-  deploy-cntk-language-understanding:
-    executor: singnet-executor
+  named-entity-recognition:
+    docker:
+      - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
     environment:
-      SERVICE_NAME: cntk-language-understanding
+      SERVICE_NAME: named-entity-recognition
+      SERVICE_DIR: named-entity-recognition
+      CERTS_DIR: singnet/.certs
+      SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;cd tests;pytest"
+      SNETD_PORT_MAINNET: 7047
+      SNETD_PORT_ROPSTEN: 7014
     steps:
-      - attach_workspace:
-          at: ~/singnet
-      - when:
-          condition: false
-          steps:
-            - deploy_service:
-                network: mainnet
-                domain: ${MAINNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
-                ssh_user_env_var: ${MAINNET_SSH_USER_CNTK_LANGUAGE_UDERSTANDING}
-                ssh_host_env_var: ${MAINNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
-                org: singnet
-                docker_org: singularitynet
-                container_name: cntk-language-understanding-mainnet
-                service_name: cntk-language-understanding
-                start_with_ssl: true
-                snetd_ports: -p 7048:7048
-                service_start_command: /root/anaconda3/envs/cntk-py35/bin/python run_service.py --daemon-config-path
-                daemon_config_path: config/
-                daemon_config_file: snetd.mainnet.config.json
-                container_name_backup: cntk-language-understanding-mainnet-temp-bk
-      - when:
-          condition: false
-          steps:
-            - deploy_service:
-                network: testnet
-                domain: ${TESTNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
-                ssh_user_env_var: ${TESTNET_SSH_USER_CNTK_LANGUAGE_UDERSTANDING}
-                ssh_host_env_var: ${TESTNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
-                org: singnet
-                docker_org: singularitynet
-                container_name: cntk-language-understanding-testnet
-                service_name: cntk-language-understanding
-                start_with_ssl: true
-                snetd_ports: -p 7068:7068
-                service_start_command: /root/anaconda3/envs/cntk-py35/bin/python run_service.py --daemon-config-path
-                daemon_config_path: config/
-                daemon_config_file: snetd.testnet.config.json
-                container_name_backup: cntk-language-understanding-testnet-temp-bk
+      - checkout
+      - build_and_deploy:
+          domain: ${DOMAIN_NAMED_ENTITY_RECOGNITION}
+          ssh_user_env_var: ${MAINNET_SSH_USER_NAMED_ENTITY_RECOGNITION}
+          ssh_host_env_var: ${MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
+          infura_api_key: ${INFURA_API_KEY}
+          daemon_pk: ${PK_NAMED_ENTITY_RECOGNITION}
+          docker_image_name: named_entity_recognition
+          docker_container_name: NAMED_ENTITY_RECOGNITION
+          docker_etcd_host_dir: singnet/etcd/${SERVICE_NAME}/
+          docker_etcd_container_dir: opt/singnet/${CIRCLE_PROJECT_REPONAME}/${SERVICE_DIR}/etcd/
 
-  build-opennmt-romance-translator-container:
-    executor: singnet-executor
+  opennmt-romance-translator:
+    docker:
+      - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
     environment:
       SERVICE_NAME: opennmt-romance-translator
-      CACHE_MODELS_PATH: opennmt-romance-translator/caches/models
+      SERVICE_DIR: opennmt-romance-translator
+      CERTS_DIR: singnet/.certs
+      SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;python3 test_service.py auto"
+      SNETD_PORT_MAINNET: 7049
+      SNETD_PORT_ROPSTEN: 7069
     steps:
-      - run:
-          name: Starting container building
-          command: echo container building
-      - when:
-          condition: false
-          steps:
-            - checkout
-            - build_and_test_service:
-                service_name: opennmt-romance-translator
-                org: singnet
-                docker_org: singularitynet
-                run_test: false
-            - persist_to_workspace:
-                root: ~/singnet
-                paths: opennmt-romance-translator
+      - checkout
+      - build_and_deploy:
+          domain: ${DOMAIN_OPENNMT_ROMANCE_TRANSLATOR}
+          ssh_user_env_var: ${MAINNET_SSH_USER_OPENNMT_ROMANCE_TRANSLATOR}
+          ssh_host_env_var: ${MAINNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
+          infura_api_key: ${INFURA_API_KEY}
+          daemon_pk: ${PK_OPENNMT_ROMANCE_TRANSLATOR}
+          docker_nvidia: true
+          docker_image_name: opennmt_romance_translator
+          docker_container_name: OPENNMT_ROMANCE_TRANSLATOR
+          docker_etcd_host_dir: singnet/etcd/${SERVICE_NAME}/
+          docker_etcd_container_dir: opt/singnet/${CIRCLE_PROJECT_REPONAME}/${SERVICE_DIR}/etcd/
 
-  deploy-opennmt-romance-translator:
-    executor: singnet-executor
+  sentiment-analysis:
+    docker:
+      - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
     environment:
-      SERVICE_NAME: opennmt-romance-translator
+      SERVICE_NAME: sentiment-analysis
+      SERVICE_DIR: sentiment-analysis
+      CERTS_DIR: singnet/.certs
+      SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;cd tests;pytest"
+      SNETD_PORT_MAINNET: 7046
+      SNETD_PORT_ROPSTEN: 7013
     steps:
-      - attach_workspace:
-          at: ~/singnet
-      - when:
-          condition: false
-          steps:
-            - deploy_service:
-                network: mainnet
-                domain: ${MAINNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
-                ssh_user_env_var: ${MAINNET_SSH_USER_OPENNMT_ROMANCE_TRANSLATOR}
-                ssh_host_env_var: ${MAINNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
-                org: singnet
-                docker_org: singularitynet
-                container_name: opennmt-romance-translator-mainnet
-                service_name: opennmt-romance-translator
-                start_with_ssl: true
-                snetd_ports: -p 7049:7049
-                service_start_command: python3 run_service.py --daemon-config-path
-                daemon_config_path: config/
-                daemon_config_file: snetd.mainnet.config.json
-                container_name_backup: opennmt-romance-translator-mainnet-temp-bk
-      - when:
-          condition: false
-          steps:
-            - deploy_service:
-                network: testnet
-                domain: ${TESTNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
-                ssh_user_env_var: ${TESTNET_SSH_USER_OPENNMT_ROMANCE_TRANSLATOR}
-                ssh_host_env_var: ${TESTNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
-                org: singnet
-                docker_org: singularitynet
-                container_name: opennmt-romance-translator-testnet
-                service_name: opennmt-romance-translator
-                start_with_ssl: true
-                snetd_ports: -p 7069:7069
-                service_start_command: python3 run_service.py --daemon-config-path
-                daemon_config_path: config/
-                daemon_config_file: snetd.testnet.config.json
-                container_name_backup: opennmt-romance-translator-testnet-temp-bk
+      - checkout
+      - build_and_deploy:
+          domain: ${DOMAIN_SENTIMENT_ANALYSIS}
+          ssh_user_env_var: ${MAINNET_SSH_USER_SENTIMENT_ANALYSIS}
+          ssh_host_env_var: ${MAINNET_SSH_HOST_SENTIMENT_ANALYSIS}
+          infura_api_key: ${INFURA_API_KEY}
+          daemon_pk: ${PK_SENTIMENT_ANALYSIS}
+          docker_nvidia: true
+          docker_image_name: sentiment_analysis
+          docker_container_name: SENTIMENT_ANALYSIS
+          docker_etcd_host_dir: singnet/etcd/${SERVICE_NAME}/
+          docker_etcd_container_dir: opt/singnet/${CIRCLE_PROJECT_REPONAME}/${SERVICE_DIR}/etcd/
+
+  text-summarization:
+    docker:
+      - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
+    environment:
+      SERVICE_NAME: text-summarization
+      SERVICE_DIR: text-summarization
+      CERTS_DIR: singnet/.certs
+      SERVICE_RUN_COMMAND: bash -c "git pull;python3.6 run_service.py --ssl --metering"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;python3.6 test_service.py auto"
+      SNETD_PORT_MAINNET: 6407
+      SNETD_PORT_ROPSTEN: 6307
+    steps:
+      - checkout
+      - build_and_deploy:
+          domain: ${DOMAIN_TEXT_SUMMARIZATION}
+          ssh_user_env_var: ${MAINNET_SSH_USER_TEXT_SUMMARIZATION}
+          ssh_host_env_var: ${MAINNET_SSH_HOST_TEXT_SUMMARIZATION}
+          infura_api_key: ${INFURA_API_KEY}
+          daemon_pk: ${PK_TEXT_SUMMARIZATION}
+          docker_nvidia: true
+          docker_image_name: text_summarization
+          docker_container_name: TEXT_SUMMARIZATION
+          docker_etcd_host_dir: singnet/etcd/${SERVICE_NAME}/
+          docker_etcd_container_dir: opt/singnet/${CIRCLE_PROJECT_REPONAME}/${SERVICE_DIR}/etcd/
+
+  translation:
+    docker:
+      - image: circleci/python:3.6.6-node
+    working_directory: ~/singnet
+    environment:
+      SERVICE_NAME: translation
+      SERVICE_DIR: translation
+      CERTS_DIR: singnet/.certs
+      SERVICE_RUN_COMMAND: bash -c "git pull;python3.6 run_service.py --ssl --metering"
+      SERVICE_TEST_COMMAND: bash -c "sleep 10;python3.6 test_service.py auto"
+      SNETD_PORT_MAINNET: 6408
+      SNETD_PORT_ROPSTEN: 6308
+    steps:
+      - checkout
+      - build_and_deploy:
+          domain: ${DOMAIN_TRANSLATION}
+          ssh_user_env_var: ${MAINNET_SSH_USER_TRANSLATION}
+          ssh_host_env_var: ${MAINNET_SSH_HOST_TRANSLATION}
+          infura_api_key: ${INFURA_API_KEY}
+          daemon_pk: ${PK_TRANSLATION}
+          docker_nvidia: true
+          docker_image_name: translation
+          docker_container_name: TRANSLATION
+          docker_etcd_host_dir: singnet/etcd/${SERVICE_NAME}/
+          docker_etcd_container_dir: opt/singnet/${CIRCLE_PROJECT_REPONAME}/${SERVICE_DIR}/etcd/
 
 workflows:
   version: 2.1
-  build-and-maybe-deploy:
+  build_deploy:
     jobs:
-      - build-translation-container
-      - deploy-translation:
-          requires:
-            - build-translation-container
-
-      - build-summarization-container
-      - deploy-summarization:
-          requires:
-            - build-summarization-container
-
-      - build-sentiment-analysis-container
-      - deploy-sentiment-analysis:
-          requires:
-            - build-sentiment-analysis-container
-
-      - build-named-entity-recognition-container
-      - deploy-named-entity-recognition:
-          requires:
-            - build-named-entity-recognition-container
-
-      - build-cntk-language-understanding-container
-      - deploy-cntk-language-understanding:
-          requires:
-            - build-cntk-language-understanding-container
-
-      - build-opennmt-romance-translator-container
-      - deploy-opennmt-romance-translator:
-          requires:
-            - build-opennmt-romance-translator-container
+      - cntk-language-understanding
+      - named-entity-recognition
+      - opennmt-romance-translator
+      - sentiment-analysis
+      - text-summarization
+      - translation

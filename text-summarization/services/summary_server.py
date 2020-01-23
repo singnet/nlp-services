@@ -1,7 +1,6 @@
 import sys
 import logging
 import argparse
-import io
 import os
 import grpc
 import concurrent.futures
@@ -16,21 +15,21 @@ import services.service_spec.summary_pb2_grpc as ss_grpc
 
 log = logging.getLogger(__package__ + "." + __name__)
 
+
 class TextSummaryServicer(ss_grpc.TextSummaryServicer):
     def __init__(self, q):
         self.q = q
         pass
 
     def summary(self, request, context):
-
         self.q.send((request.article_content,))
         result = self.q.recv()
         if isinstance(result, Exception):
             raise result
         print(result)
         pb_result = ss_pb.Result(article_summary=result)
-
         return pb_result
+
 
 def summarise_text(text):
     tokens = stanford_ptb_tokenizer(text)
@@ -47,7 +46,10 @@ def serve(dispatch_queue, max_workers=1, port=7777):
     return server
 
 
-def main_loop(dispatch_queue, grpc_serve_function, grpc_port, grpc_args={}):
+def main_loop(dispatch_queue, grpc_serve_function, grpc_port, grpc_args=None):
+    if grpc_args is None:
+        grpc_args = dict()
+
     server = None
     if grpc_serve_function is not None:
         server = grpc_serve_function(dispatch_queue, port=grpc_port, **grpc_args)
@@ -58,6 +60,7 @@ def main_loop(dispatch_queue, grpc_serve_function, grpc_port, grpc_args={}):
             time.sleep(0.1)
     except KeyboardInterrupt:
         server.stop(0)
+
 
 def worker(q):
     while True:
@@ -74,7 +77,11 @@ if __name__ == "__main__":
     script_name = __file__
     parser = argparse.ArgumentParser(prog=script_name)
     server_name = os.path.splitext(os.path.basename(script_name))[0]
-    parser.add_argument("--grpc-port", help="port to bind grpc services to", default=registry[server_name]['grpc'], type=int, required=False)
+    parser.add_argument("--grpc-port",
+                        help="port to bind grpc services to",
+                        default=registry[server_name]['grpc'],
+                        type=int,
+                        required=False)
     args = parser.parse_args(sys.argv[1:])
 
     # Need queue system and spawning grpc server in separate process because of:
