@@ -162,7 +162,8 @@ commands:
                   -v ~/${CERTS_DIR}:/opt/singnet/.certs \
                   $([ "${DOCKER_DEPLOY}" = "true" ] && echo "-v ~/${ETCD_HOST_DIR}:/${ETCD_CONTAINER_DIR}" || echo "") \
                   $([ "${DOCKER_MOUNT_VOLUMES}" = "true" ] && echo "-v ${DOCKER_MOUNT_SRC}:${DOCKER_MOUNT_DEST}" || echo "") \
-                  -tdi ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} ${SERVICE_RUN_COMMAND}
+                  -tdi ${DOCKER_IMAGE_NAME}:${CIRCLE_PROJECT_USERNAME} \
+                  bash -c "git fetch;git checkout ${CIRCLE_BRANCH};git pull;${SERVICE_RUN_COMMAND}"
             EOF
 
       - run:
@@ -176,7 +177,7 @@ commands:
             export DOCKER_DEPLOY=$([ "${CIRCLE_PROJECT_USERNAME}"/"${CIRCLE_BRANCH}" = "singnet/master" ] && echo "true" || echo "false")
             export PROD_TAG=$([ "${DOCKER_DEPLOY}" = "true" ] && echo "PROD_" || echo "")
             ssh -o "StrictHostKeyChecking no" ${SSH_USER}@${SSH_HOST} \<< EOF
-              docker exec -i ${PROD_TAG}${DOCKER_CONTAINER_NAME} ${SERVICE_TEST_COMMAND}
+              docker exec -i ${PROD_TAG}${DOCKER_CONTAINER_NAME} bash -c "${SERVICE_TEST_COMMAND}"
             EOF
 
 version: 2.1
@@ -189,8 +190,8 @@ jobs:
       SERVICE_NAME: cntk-language-understanding
       SERVICE_DIR: cntk-language-understanding
       CERTS_DIR: singnet/.certs
-      SERVICE_RUN_COMMAND: bash -c "source '/cntk/activate-cntk';git pull;python run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "sleep 10;source '/cntk/activate-cntk';python test_service.py auto"
+      SERVICE_RUN_COMMAND: source '/cntk/activate-cntk';python run_service.py --ssl --metering
+      SERVICE_TEST_COMMAND: sleep 20;source '/cntk/activate-cntk';python test_service.py auto
       SNETD_PORT_MAINNET: 7048
       SNETD_PORT_ROPSTEN: 7068
     steps:
@@ -215,8 +216,8 @@ jobs:
       SERVICE_NAME: named-entity-recognition
       SERVICE_DIR: named-entity-recognition
       CERTS_DIR: singnet/.certs
-      SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "sleep 10;cd tests;pytest"
+      SERVICE_RUN_COMMAND: python3 run_service.py --ssl --metering
+      SERVICE_TEST_COMMAND: sleep 20;cd tests;pytest
       SNETD_PORT_MAINNET: 7047
       SNETD_PORT_ROPSTEN: 7014
     steps:
@@ -240,8 +241,8 @@ jobs:
       SERVICE_NAME: opennmt-romance-translator
       SERVICE_DIR: opennmt-romance-translator
       CERTS_DIR: singnet/.certs
-      SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "sleep 10;python3 test_service.py auto"
+      SERVICE_RUN_COMMAND: python3 run_service.py --ssl --metering
+      SERVICE_TEST_COMMAND: sleep 20;python3 test_service.py auto
       SNETD_PORT_MAINNET: 7049
       SNETD_PORT_ROPSTEN: 7069
     steps:
@@ -266,8 +267,8 @@ jobs:
       SERVICE_NAME: sentiment-analysis
       SERVICE_DIR: sentiment-analysis
       CERTS_DIR: singnet/.certs
-      SERVICE_RUN_COMMAND: bash -c "git pull;python3 run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "sleep 10;cd tests;pytest"
+      SERVICE_RUN_COMMAND: python3 run_service.py --ssl --metering
+      SERVICE_TEST_COMMAND: sleep 20;cd tests;pytest
       SNETD_PORT_MAINNET: 7046
       SNETD_PORT_ROPSTEN: 7013
     steps:
@@ -292,8 +293,8 @@ jobs:
       SERVICE_NAME: text-summarization
       SERVICE_DIR: text-summarization
       CERTS_DIR: singnet/.certs
-      SERVICE_RUN_COMMAND: bash -c "git pull;python3.6 run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "sleep 10;python3.6 test_service.py auto"
+      SERVICE_RUN_COMMAND: python3.6 run_service.py --ssl --metering
+      SERVICE_TEST_COMMAND: sleep 10;python3.6 test_service.py auto
       SNETD_PORT_MAINNET: 6407
       SNETD_PORT_ROPSTEN: 6307
     steps:
@@ -318,8 +319,8 @@ jobs:
       SERVICE_NAME: translation
       SERVICE_DIR: translation
       CERTS_DIR: singnet/.certs
-      SERVICE_RUN_COMMAND: bash -c "git pull;python3.6 run_service.py --ssl --metering"
-      SERVICE_TEST_COMMAND: bash -c "sleep 10;python3.6 test_service.py auto"
+      SERVICE_RUN_COMMAND: python3.6 run_service.py --ssl --metering
+      SERVICE_TEST_COMMAND: sleep 10;python3.6 test_service.py auto
       SNETD_PORT_MAINNET: 6408
       SNETD_PORT_ROPSTEN: 6308
     steps:
