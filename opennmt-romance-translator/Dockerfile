@@ -23,9 +23,9 @@ RUN apt update && \
 
 # Fetch Intel MKL.
 RUN mkdir /root/mkl && \
-    wget https://anaconda.org/intel/mkl/2018.0.1/download/linux-64/mkl-2018.0.1-intel_4.tar.bz2 && \
-    tar -xf mkl-2018.0.1-intel_4.tar.bz2 -C /root/mkl && \
-    rm mkl-2018.0.1-intel_4.tar.bz2
+    wget https://anaconda.org/intel/mkl/2020.0/download/linux-64/mkl-2020.0-intel_166.tar.bz2 && \
+    tar -xf mkl-2020.0-intel_166.tar.bz2 -C /root/mkl && \
+    rm mkl-2020.0-intel_166.tar.bz2
 ENV MKL_ROOT=/root/mkl
 RUN rm -f $MKL_ROOT/lib/*vml* \
           $MKL_ROOT/lib/*ilp64* \
@@ -79,6 +79,7 @@ MAINTAINER OpenNMT <http://opennmt.net/>
 ARG git_owner="singnet"
 ARG git_repo="nlp-services"
 ARG git_branch="master"
+ARG snetd_version=""
 
 ENV SINGNET_DIR=/opt/singnet
 ENV SERVICE_NAME=opennmt-romance-translator
@@ -115,7 +116,8 @@ ENV ONMT_DIR=/root/opennmt
 COPY . $ONMT_DIR
 
 # Install snet daemon
-RUN SNETD_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")'` && \
+RUN SNETD_GIT_VERSION=`curl -s https://api.github.com/repos/singnet/snet-daemon/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")' || echo "v2.0.2"` && \
+    SNETD_VERSION=${snetd_version:-${SNETD_GIT_VERSION}} && \
     cd /tmp && \
     wget https://github.com/singnet/snet-daemon/releases/download/${SNETD_VERSION}/snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
     tar -xvf snet-daemon-${SNETD_VERSION}-linux-amd64.tar.gz && \
