@@ -127,13 +127,13 @@ jobs:
       - ssh-deployment/deploy:
           ssh-host: ${MAINNET_SSH_HOST_TRANSLATION}
           ssh-user: ${MAINNET_SSH_USER_TRANSLATION}
-          service-dir: "text-summarization"
+          service-dir: "translation"
           mainnet-port: "6408"
           testnet-port: "6308"
           run-command: "python3.6 run_service.py --ssl --metering"
           test-command: "sleep 10;python3.6 test_service.py auto"
           docker-test-files: "Dockerfile, requirements.txt"
-          docker-file-path: "text-summarization/Dockerfile"
+          docker-file-path: "translation/Dockerfile"
           docker-no-cache: true
           docker-image: "translation"
           docker-container: "TRANSLATION"
