@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  ssh-deployment: singularitynet/ssh-deployment@1.1.7
+  ssh-deployment: singularitynet/ssh-deployment@2.2.0
 
 jobs:
   cntk-language-understanding:
@@ -16,7 +16,6 @@ jobs:
           mainnet-port: "7048"
           testnet-port: "7068"
           run-command: "source '/cntk/activate-cntk';python run_service.py --ssl --metering"
-          test-command: "sleep 20;source '/cntk/activate-cntk';python test_service.py auto"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "cntk-language-understanding/Dockerfile"
           docker-no-cache: true
@@ -39,7 +38,6 @@ jobs:
           mainnet-port: "7047"
           testnet-port: "7014"
           run-command: "python3 run_service.py --ssl --metering"
-          test-command: "sleep 20;cd tests;pytest"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "named-entity-recognition/Dockerfile"
           docker-no-cache: true
@@ -62,7 +60,6 @@ jobs:
           mainnet-port: "7049"
           testnet-port: "7069"
           run-command: "python3 run_service.py --ssl --metering"
-          test-command: "sleep 20;python3 test_service.py auto"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "opennmt-romance-translator/Dockerfile"
           docker-no-cache: true
@@ -85,7 +82,6 @@ jobs:
           mainnet-port: "7046"
           testnet-port: "7013"
           run-command: "python3 run_service.py --ssl --metering"
-          test-command: "sleep 20;cd tests;pytest"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "sentiment-analysis/Dockerfile"
           docker-no-cache: true
@@ -108,7 +104,6 @@ jobs:
           mainnet-port: "6407"
           testnet-port: "6307"
           run-command: "python3.6 run_service.py --ssl --metering"
-          test-command: "sleep 10;python3.6 test_service.py auto"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "text-summarization/Dockerfile"
           docker-no-cache: true
@@ -131,7 +126,6 @@ jobs:
           mainnet-port: "6408"
           testnet-port: "6308"
           run-command: "python3.6 run_service.py --ssl --metering"
-          test-command: "sleep 10;python3.6 test_service.py auto"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "translation/Dockerfile"
           docker-no-cache: true
@@ -143,6 +137,41 @@ jobs:
           daemon-version: ${CI_SNETD_VERSION}
           daemon-pk: ${PK_TRANSLATION}
 
+  testing:
+    docker:
+      - image: circleci/python:3.6.6-node
+    steps:
+        - ssh-deployment/test:
+              ssh-host: ${MAINNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
+              ssh-user: ${MAINNET_SSH_USER_CNTK_LANGUAGE_UDERSTANDING}
+              test-command: "sleep 10;source '/cntk/activate-cntk';python test_service.py auto"
+              docker-container: "CNTK_LANGUAGE_UNDERSTANDING"
+        - ssh-deployment/test:
+              ssh-host: ${MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
+              ssh-user: ${MAINNET_SSH_USER_NAMED_ENTITY_RECOGNITION}
+              test-command: "sleep 10;cd tests;pytest"
+              docker-container: "NAMED_ENTITY_RECOGNITION"
+        - ssh-deployment/test:
+              ssh-host: ${MAINNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
+              ssh-user: ${MAINNET_SSH_USER_OPENNMT_ROMANCE_TRANSLATOR}
+              test-command: "sleep 10;python3 test_service.py auto"
+              docker-container: "OPENNMT_ROMANCE_TRANSLATOR"
+        - ssh-deployment/test:
+              ssh-host: ${MAINNET_SSH_HOST_SENTIMENT_ANALYSIS}
+              ssh-user: ${MAINNET_SSH_USER_SENTIMENT_ANALYSIS}
+              test-command: "sleep 10;cd tests;pytest"
+              docker-container: "SENTIMENT_ANALYSIS"
+        - ssh-deployment/test:
+              ssh-host: ${MAINNET_SSH_HOST_TEXT_SUMMARIZATION}
+              ssh-user: ${MAINNET_SSH_USER_TEXT_SUMMARIZATION}
+              test-command: "sleep 10;python3.6 test_service.py auto"
+              docker-container: "TEXT_SUMMARIZATION"
+        - ssh-deployment/test:
+              ssh-host: ${MAINNET_SSH_HOST_TRANSLATION}
+              ssh-user: ${MAINNET_SSH_USER_TRANSLATION}
+              test-command: "sleep 10;python3.6 test_service.py auto"
+              docker-container: "TRANSLATION"
+
 workflows:
   build_deploy:
     jobs:
@@ -152,3 +181,11 @@ workflows:
       - sentiment-analysis
       - text-summarization
       - translation
+      - testing:
+            requires:
+                - cntk-language-understanding
+                - named-entity-recognition
+                - opennmt-romance-translator
+                - sentiment-analysis
+                - text-summarization
+                - translation
