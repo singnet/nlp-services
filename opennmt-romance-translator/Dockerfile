@@ -128,6 +128,7 @@ RUN cd ${SINGNET_DIR} && \
     git clone -b ${git_branch} https://github.com/${git_owner}/${git_repo}.git
 
 RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
+    pip3 install -U pip==20.3.4 && \
     pip3 install -r requirements.txt && \
     sh buildproto.sh
 
