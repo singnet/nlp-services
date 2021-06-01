@@ -13,7 +13,7 @@ jobs:
           ssh-host: ${MAINNET_SSH_HOST_CNTK_LANGUAGE_UDERSTANDING}
           ssh-user: ${MAINNET_SSH_USER_CNTK_LANGUAGE_UDERSTANDING}
           service-dir: "cntk-language-understanding"
-          mainnet-port: "7048"
+          mainnet-port: "7016"
           testnet-port: "7068"
           run-command: "source '/cntk/activate-cntk';python run_service.py --ssl --metering"
           docker-test-files: "Dockerfile, requirements.txt"
@@ -35,7 +35,7 @@ jobs:
           ssh-host: ${MAINNET_SSH_HOST_NAMED_ENTITY_RECOGNITION}
           ssh-user: ${MAINNET_SSH_USER_NAMED_ENTITY_RECOGNITION}
           service-dir: "named-entity-recognition"
-          mainnet-port: "7047"
+          mainnet-port: "7024"
           testnet-port: "7014"
           run-command: "python3 run_service.py --ssl --metering"
           docker-test-files: "Dockerfile, requirements.txt"
@@ -57,7 +57,7 @@ jobs:
           ssh-host: ${MAINNET_SSH_HOST_OPENNMT_ROMANCE_TRANSLATOR}
           ssh-user: ${MAINNET_SSH_USER_OPENNMT_ROMANCE_TRANSLATOR}
           service-dir: "opennmt-romance-translator"
-          mainnet-port: "7049"
+          mainnet-port: "7026"
           testnet-port: "7069"
           run-command: "python3 run_service.py --ssl --metering"
           docker-test-files: "Dockerfile, requirements.txt"
@@ -79,7 +79,7 @@ jobs:
           ssh-host: ${MAINNET_SSH_HOST_SENTIMENT_ANALYSIS}
           ssh-user: ${MAINNET_SSH_USER_SENTIMENT_ANALYSIS}
           service-dir: "sentiment-analysis"
-          mainnet-port: "7046"
+          mainnet-port: "7031"
           testnet-port: "7013"
           run-command: "python3 run_service.py --ssl --metering"
           docker-test-files: "Dockerfile, requirements.txt"
@@ -101,7 +101,7 @@ jobs:
           ssh-host: ${MAINNET_SSH_HOST_TEXT_SUMMARIZATION}
           ssh-user: ${MAINNET_SSH_USER_TEXT_SUMMARIZATION}
           service-dir: "text-summarization"
-          mainnet-port: "6407"
+          mainnet-port: "7007"
           testnet-port: "6307"
           run-command: "python3.6 run_service.py --ssl --metering"
           docker-test-files: "Dockerfile, requirements.txt"
@@ -123,7 +123,7 @@ jobs:
           ssh-host: ${MAINNET_SSH_HOST_TRANSLATION}
           ssh-user: ${MAINNET_SSH_USER_TRANSLATION}
           service-dir: "translation"
-          mainnet-port: "6408"
+          mainnet-port: "7010"
           testnet-port: "6308"
           run-command: "python3.6 run_service.py --ssl --metering"
           docker-test-files: "Dockerfile, requirements.txt"

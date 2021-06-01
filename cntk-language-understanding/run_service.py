@@ -94,12 +94,14 @@ def start_service(cwd, service_module, run_daemon, run_ssl, run_metering):
             if run_ssl:
                 snetd_configs["ssl_cert"] = "/opt/singnet/.certs/fullchain.pem"
                 snetd_configs["ssl_key"] = "/opt/singnet/.certs/privkey.pem"
-            if run_metering:
                 snetd_configs["payment_channel_ca_path"] = "/opt/singnet/.certs/ca.pem"
                 snetd_configs["payment_channel_cert_path"] = "/opt/singnet/.certs/client.pem"
                 snetd_configs["payment_channel_key_path"] = "/opt/singnet/.certs/client-key.pem"
-                snetd_configs["metering_end_point"] = "https://{}-marketplace.singularitynet.io".format(_network)
-                snetd_configs["pvt_key_for_metering"] = os.environ.get("PVT_KEY_FOR_METERING", "")
+            pvt_key_for_metering = os.environ.get("PVT_KEY_FOR_METERING", "")
+            if pvt_key_for_metering:
+                snetd_configs["metering_enabled"] = True
+                snetd_configs["metering_end_point"] = "https://marketplace-mt-v2.singularitynet.io"
+                snetd_configs["pvt_key_for_metering"] = pvt_key_for_metering
             infura_key = os.environ.get("INFURA_API_KEY", "")
             if infura_key:
                 snetd_configs["ethereum_json_rpc_endpoint"] = "https://{}.infura.io/{}".format(_network, infura_key)
