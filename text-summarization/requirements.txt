@@ -1,5 +1,5 @@
-pyyaml
-grpcio
-grpcio-tools
-protobuf
+pyyaml==5.3
+grpcio==1.27.2
+grpcio-tools==1.27.2
+protobuf==3.11.3
 torch==1.1.0
