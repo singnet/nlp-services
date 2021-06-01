@@ -52,9 +52,7 @@ RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
     sh buildproto.sh
 
 RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
-    git submodule update --init -- opennmt-py && \
-    cd opennmt-py && \
-    pip3.6 install -r requirements.txt
+    git submodule update --init -- opennmt-py
 
 RUN cd ${SINGNET_DIR}/${git_repo}/${SERVICE_NAME} && \
     python3.6 ../fetch_models.py
