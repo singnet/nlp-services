@@ -15,7 +15,7 @@ jobs:
           service-dir: "cntk-language-understanding"
           mainnet-port: "7016"
           testnet-port: "7068"
-          run-command: "source '/cntk/activate-cntk';python run_service.py --ssl --metering"
+          run-command: "source '/cntk/activate-cntk';python run_service.py --ssl"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "cntk-language-understanding/Dockerfile"
           docker-no-cache: true
@@ -37,7 +37,7 @@ jobs:
           service-dir: "named-entity-recognition"
           mainnet-port: "7024"
           testnet-port: "7014"
-          run-command: "python3 run_service.py --ssl --metering"
+          run-command: "python3 run_service.py --ssl"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "named-entity-recognition/Dockerfile"
           docker-no-cache: true
@@ -59,7 +59,7 @@ jobs:
           service-dir: "opennmt-romance-translator"
           mainnet-port: "7026"
           testnet-port: "7069"
-          run-command: "python3 run_service.py --ssl --metering"
+          run-command: "python3 run_service.py --ssl"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "opennmt-romance-translator/Dockerfile"
           docker-no-cache: true
@@ -81,7 +81,7 @@ jobs:
           service-dir: "sentiment-analysis"
           mainnet-port: "7031"
           testnet-port: "7013"
-          run-command: "python3 run_service.py --ssl --metering"
+          run-command: "python3 run_service.py --ssl"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "sentiment-analysis/Dockerfile"
           docker-no-cache: true
@@ -103,7 +103,7 @@ jobs:
           service-dir: "text-summarization"
           mainnet-port: "7007"
           testnet-port: "6307"
-          run-command: "python3.6 run_service.py --ssl --metering"
+          run-command: "python3.6 run_service.py --ssl"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "text-summarization/Dockerfile"
           docker-no-cache: true
@@ -125,7 +125,7 @@ jobs:
           service-dir: "translation"
           mainnet-port: "7010"
           testnet-port: "6308"
-          run-command: "python3.6 run_service.py --ssl --metering"
+          run-command: "python3.6 run_service.py --ssl"
           docker-test-files: "Dockerfile, requirements.txt"
           docker-file-path: "translation/Dockerfile"
           docker-no-cache: true
