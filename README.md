@@ -42,9 +42,9 @@ For feature requests and queries you can use [this template][feature-template].
 
 ## Licenses
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
 
-Each service is licensed as followed:
+Services are licensed as followed:
 
 - cntk-language-understanding - [MIT License](https://github.com/Microsoft/CNTK/blob/master/LICENSE.md)
 - opennmt-romance-translator - [MIT License](https://github.com/OpenNMT/OpenNMT/blob/master/LICENSE.md)
