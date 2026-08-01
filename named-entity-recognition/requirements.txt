@@ -1,5 +1,5 @@
 pytest==3.9.3
-numpy==1.15.3
+numpy==1.22.0
 nltk==3.4.5
 scipy==1.1.0
 msgpack==0.5.6
