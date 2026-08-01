@@ -1,4 +1,4 @@
-setuptools==46.0.0
+setuptools==65.5.1
 grpcio==1.27.2
 grpcio-tools==1.27.2
 protobuf==3.11.3
